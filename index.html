@@ -2,8 +2,12 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>逐玉·宿命书 - MBTI爱情人格测试</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>灵犀运势馆 · 先懂自己 再顺运势</title>
+    <!-- 引入 Font Awesome 6 (免费图标库，年轻潮流风格) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 引入 Google Fonts：潮流现代无衬线字体 + 锐利中英文 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,571 +16,771 @@
         }
 
         body {
-            background-color: #F5ECE0;
-            font-family: "Times New Roman", "宋体", "思源宋体", serif;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 首页样式 */
-        .hero {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .logo {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 20px;
-            background: #D9B48B;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-        }
-        .title {
-            font-size: 28px;
-            font-weight: bold;
-            color: #5D3A2A;
-            letter-spacing: 4px;
-            display: block;
-        }
-        .subtitle {
-            font-size: 14px;
-            color: #8B5A3C;
-            margin-top: 8px;
-        }
-        .card {
-            background: #FFF9F0;
-            border-radius: 48px;
-            padding: 30px 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .desc {
-            font-size: 15px;
-            color: #4A2A1A;
-            line-height: 1.5;
-            margin-bottom: 24px;
-        }
-        .btn-start {
-            background: linear-gradient(135deg, #C99B6B, #A56B3A);
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 60px;
-            padding: 12px 0;
-            width: 80%;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
-        }
-        .btn-start:active {
-            transform: scale(0.98);
-            opacity: 0.8;
-        }
-        .characters {
-            width: 100%;
-            margin-bottom: 20px;
-            overflow-x: auto;
-        }
-        .avatar-scroll {
-            display: flex;
-            gap: 20px;
-            padding-bottom: 10px;
-        }
-        .avatar-item {
-            display: inline-block;
-            width: 80px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #EADBC8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin: 0 auto;
-        }
-        .avatar-name {
-            font-size: 13px;
-            color: #5D3A2A;
-            display: block;
-            margin-top: 6px;
-        }
-        .avatar-type {
-            font-size: 11px;
-            color: #A56B3A;
-            background: #F0E0D0;
-            padding: 2px 6px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #B88A6A;
-            margin-top: 40px;
-        }
-
-        /* 测试页样式 */
-        .progress-bar {
-            background: #EADBC8;
-            height: 6px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-        .progress-fill {
-            background: #C99B6B;
-            height: 6px;
-            border-radius: 12px;
-            width: 0%;
-        }
-        .progress-text {
-            font-size: 13px;
-            color: #8B5A3C;
-            text-align: right;
-            margin-bottom: 20px;
-        }
-        .question-card {
-            background: #FFF9F0;
-            border-radius: 48px;
-            padding: 30px 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        }
-        .question {
-            font-size: 20px;
-            font-weight: bold;
-            color: #5D3A2A;
-            margin-bottom: 8px;
-        }
-        .description {
-            font-size: 14px;
-            color: #A56B3A;
-            margin-bottom: 24px;
-            border-left: 3px solid #D9B48B;
-            padding-left: 10px;
-        }
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .option {
-            background: #FDF7F0;
-            border: 1px solid #EADBC8;
-            border-radius: 36px;
-            padding: 14px 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .option:active {
-            background: #F0E0D0;
-            transform: scale(0.98);
-        }
-        .option-text {
-            font-size: 15px;
-            color: #4A2A1A;
+            background: #0a0718;
+            font-family: 'Inter', 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            color: #f0eefc;
             line-height: 1.4;
+            overflow-x: hidden;
         }
 
-        /* 结果页样式 */
-        .character-card {
-            background: #FFF9F0;
-            border-radius: 60px;
-            padding: 30px 15px 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-        }
-        .avatar-area {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 12px;
-        }
-        .role-avatar {
-            width: 140px;
-            height: 140px;
-            display: block;
-            object-fit: contain;
-            background: #EADBC8;
-            border-radius: 50%;
-        }
-        .role-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #5D3A2A;
-            display: block;
-            text-align: center;
-        }
-        .role-title {
-            font-size: 14px;
-            color: #A56B3A;
-            display: block;
-            text-align: center;
-        }
-        .quote-card {
-            background: #2B1E1A;
-            border-radius: 32px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        .quote {
-            font-size: 14px;
-            color: #F0E0D0;
-            font-style: italic;
-            line-height: 1.4;
-            text-align: center;
-            display: block;
-        }
-        .section {
-            background: #FFF9F0;
-            border-radius: 40px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        .section-title {
-            font-size: 17px;
-            font-weight: bold;
-            color: #5D3A2A;
-            border-left: 5px solid #C99B6B;
-            padding-left: 10px;
-            display: block;
-            margin-bottom: 12px;
-        }
-        .content, .psycho-item, .behavior-item {
-            font-size: 14px;
-            color: #4A2A1A;
-            line-height: 1.5;
-            margin-bottom: 8px;
-        }
-        .match {
-            background: #FFF0E0;
-            text-align: center;
-        }
-        .match-name {
-            font-size: 20px;
-            font-weight: bold;
-            color: #C99B6B;
-            display: block;
-            margin: 8px 0;
-        }
-        .advice {
-            background: #E8D9CC;
-        }
-        .actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        .btn-share, .btn-restart {
-            flex: 1;
-            background: #5D3A2A;
-            color: white;
-            border-radius: 60px;
-            font-size: 15px;
-            padding: 12px 0;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .btn-share {
-            background: #C99B6B;
-            color: #2B1E1A;
-        }
-        .btn-share:active, .btn-restart:active {
-            transform: scale(0.98);
-        }
-        .loading-mask {
+        /* 潮流噪点背景 + 动态光晕 */
+        body::before {
+            content: "";
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            background: radial-gradient(circle at 20% 30%, rgba(110, 70, 200, 0.15), transparent 60%),
+                        repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
         }
-        .loading-content {
-            background: #FFF9F0;
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Banner 主视觉区 (模拟图片样式+炫彩) */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 1rem 2.5rem;
+            background: rgba(15, 12, 32, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            border: 1px solid rgba(255, 100, 220, 0.3);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "✨";
+            font-size: 180px;
+            opacity: 0.05;
+            position: absolute;
+            bottom: -40px;
+            right: -30px;
+            pointer-events: none;
+            transform: rotate(10deg);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 8vw, 4.2rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFFFFF, #D9B4FF, #FF87C8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .hero .sub {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #cbbaff;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .hero .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 1.2rem 0 0.6rem;
+        }
+
+        .hero .badge {
+            background: rgba(255, 120, 210, 0.18);
+            backdrop-filter: blur(4px);
+            padding: 0.4rem 1.1rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 0.5px solid rgba(255, 130, 200, 0.5);
+            color: #ffd6f0;
+        }
+
+        .hero .slogan {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #aba4e6;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 四大入口卡片区 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.8rem;
+            margin: 3rem 0 2.8rem;
+        }
+
+        .entry-card {
+            background: rgba(18, 16, 40, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.8rem 1rem 1.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.2s;
+            border: 1px solid rgba(210, 140, 255, 0.3);
+            box-shadow: 0 12px 25px -12px rgba(0,0,0,0.4);
+        }
+
+        .entry-card:hover {
+            transform: translateY(-8px);
+            border-color: #ff77c6;
+            box-shadow: 0 25px 35px -15px #ff44aa40;
+            background: rgba(28, 22, 58, 0.85);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(145deg, #f0a6ff, #b77eff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .entry-card h3 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .entry-card p {
+            font-size: 0.8rem;
+            color: #b6adf0;
+            font-weight: 400;
+        }
+
+        /* 互动测试主面板 (填转子页面) */
+        .test-panel {
+            margin-top: 2rem;
+            background: rgba(8, 6, 22, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 2.5rem;
+            padding: 1.8rem 2rem 2.2rem;
+            border: 1px solid rgba(255, 135, 200, 0.4);
+            transition: all 0.2s;
+            box-shadow: 0 20px 35px -10px black;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed rgba(255, 150, 220, 0.4);
+            padding-bottom: 0.75rem;
+        }
+
+        .panel-header h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #fff, #e9bcff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .reset-btn {
+            background: none;
+            border: 1px solid #ff86c6;
+            color: #ffb3e2;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
-            padding: 30px 40px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .reset-btn:hover {
+            background: #ff44aa30;
+            color: white;
+            border-color: #ff69b4;
+        }
+
+        .question-area {
+            margin: 1.5rem 0;
+        }
+
+        .question-group {
+            background: rgba(25, 20, 50, 0.6);
+            border-radius: 1.5rem;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-group label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.7rem;
+            font-size: 1rem;
+            letter-spacing: -0.2px;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255,255,240,0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .option-item.selected {
+            background: #bf5eff30;
+            border-color: #e27eff;
+            color: white;
+        }
+        input[type="radio"] {
+            accent-color: #d96eff;
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+        }
+
+        .action-btn {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.9rem 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #0a041a;
+            cursor: pointer;
+            margin: 0.8rem 0 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 260px;
+            font-family: inherit;
+            box-shadow: 0 5px 12px #ff5aaa40;
+        }
+
+        .action-btn:hover {
+            transform: scale(0.97);
+            box-shadow: 0 8px 18px #ff51ae70;
+            background: linear-gradient(95deg, #c87cff, #ff80cb);
+        }
+
+        .result-box {
+            background: rgba(0,0,0,0.45);
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.2rem;
+            margin-top: 1rem;
+            border-left: 4px solid #ff7bc2;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #f2e9ff;
+        }
+
+        .extra-lingxi {
+            margin-top: 2rem;
             text-align: center;
         }
-        .loading-text {
-            font-size: 18px;
-            color: #5D3A2A;
-            margin-bottom: 15px;
+        .lingxi-btn {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #bd8eff;
+            border-radius: 80px;
+            padding: 0.6rem 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            transition: 0.2s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
         }
-        .loading-spinner {
-            width: 30px;
-            height: 30px;
-            margin: 0 auto;
-            border: 3px solid #EADBC8;
-            border-top-color: #C99B6B;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .lingxi-btn i {
+            font-size: 1.2rem;
+            color: #ffb86b;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .lingxi-tip {
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: #cbb1ff;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .hidden {
-            display: none;
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6b62a0;
+            border-top: 0.5px solid rgba(255,255,255,0.1);
+            padding-top: 2rem;
+        }
+
+        @media (max-width: 680px) {
+            .container {
+                padding: 1rem 1rem 2rem;
+            }
+            .test-panel {
+                padding: 1rem;
+            }
+            .panel-header h2 {
+                font-size: 1.5rem;
+            }
+            .options {
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="app"></div>
+<div class="container">
+    <!-- 主视觉区 banner 风格 -->
+    <div class="hero">
+        <h1>先懂自己，再顺运势</h1>
+        <div class="sub">每一次选择都有答案</div>
+        <div class="badge-group">
+            <span class="badge"><i class="fas fa-moon"></i> 玄学风水专业度</span>
+            <span class="badge"><i class="fas fa-brain"></i> 正统心理学底层逻辑</span>
+            <span class="badge"><i class="fas fa-bolt"></i> 极致年轻化潮流玩法</span>
+        </div>
+        <div class="slogan">
+            <i class="fas fa-crystal-ball"></i> 拒绝土味 · 拒绝废话 · 犀利戳心 · 灵魂共鸣 · 不贩卖焦虑 · 只给正向指引
+        </div>
+    </div>
 
-    <script>
-        // --------------------------------------------------------------
-        // 直接从你的 app.js 移植的完整数据（题库 + 人格类型）
-        // --------------------------------------------------------------
-        const globalData = {
-            questions: [
-                { id: 1, dimension: 'IE', question: '周末的充电方式', description: '忙碌一周后，最能让你恢复元气的是：', options: [{ text: '一个人宅家追剧、打游戏、撸猫，谁也别烦我', type: 'I', character: '谢征' }, { text: '约朋友聚餐、唱K、剧本杀，越热闹越嗨', type: 'E', character: '俞浅浅' }] },
-                { id: 2, dimension: 'IE', question: '吵架后的你', description: '和对象闹矛盾后，你通常会：', options: [{ text: '独自冷静，写日记或打游戏消化情绪，之后再谈', type: 'I', character: '公孙鄞' }, { text: '立刻找闺蜜/兄弟吐槽，或者直接打电话说清楚', type: 'E', character: '樊长玉' }] },
-                { id: 3, dimension: 'IE', question: '朋友圈秀恩爱', description: '关于发朋友圈秀恩爱，你的态度是：', options: [{ text: '很少发，觉得私事没必要公开，偶尔发也是仅自己可见', type: 'I', character: '李怀安' }, { text: '经常发，恨不得让全世界都知道我有多幸福', type: 'E', character: '俞浅浅' }] },
-                { id: 4, dimension: 'IE', question: '新认识的朋友', description: '在一个聚会上，面对一群陌生人，你会：', options: [{ text: '默默坐在角落，等别人来找我聊天', type: 'I', character: '齐旻' }, { text: '主动出击，挨个敬酒加微信，迅速打成一片', type: 'E', character: '魏严' }] },
-                { id: 5, dimension: 'IE', question: '旅行方式', description: '和TA去旅行，你更喜欢：', options: [{ text: '安静的海边或山中小屋，两人独处，享受二人世界', type: 'I', character: '谢征' }, { text: '热闹的都市或主题乐园，打卡网红地，和朋友结伴', type: 'E', character: '樊长玉' }] },
-                { id: 6, dimension: 'SN', question: '记住什么细节', description: '和TA约会后，你更容易记住：', options: [{ text: '他今天穿的衬衫颜色、香水味道、我们吃了什么', type: 'S', character: '李怀安' }, { text: '我们聊天时的氛围、他看我的眼神、那种心动的感觉', type: 'N', character: '公孙鄞' }] },
-                { id: 7, dimension: 'SN', question: '礼物偏好', description: '你更希望收到TA送的哪种礼物？', options: [{ text: '实用型：我提过的耳机、好用的厨具、每天能用的东西', type: 'S', character: '魏严' }, { text: '浪漫型：亲手写的信、定制的纪念品、充满惊喜的体验', type: 'N', character: '俞浅浅' }] },
-                { id: 8, dimension: 'SN', question: '聊天话题', description: '和TA深夜聊天时，你们聊得最多的是：', options: [{ text: '今天发生的事、工作上的烦恼、周末去哪儿吃', type: 'S', character: '樊长玉' }, { text: '如果中彩票了会怎样、我们十年后的样子、人生的意义', type: 'N', character: '谢征' }] },
-                { id: 9, dimension: 'SN', question: '解读情话', description: 'TA说“我想和你一起看星星”，你第一反应是：', options: [{ text: '查今晚天气，找最佳观星地点，准备毯子和零食', type: 'S', character: '齐旻' }, { text: '觉得好浪漫，开始想象星空下的接吻和未来', type: 'N', character: '公孙鄞' }] },
-                { id: 10, dimension: 'SN', question: '解决问题', description: '感情中出现矛盾，你倾向于：', options: [{ text: '就事论事，把具体问题拆开，一步步解决', type: 'S', character: '魏严' }, { text: '先探讨两人关系的本质，是不是三观不合、未来方向不同', type: 'N', character: '谢征' }] },
-                { id: 11, dimension: 'TF', question: '安慰的方式', description: 'TA因为工作受挫而难过，你会：', options: [{ text: '帮TA分析原因，给出具体建议，一起想办法', type: 'T', character: '公孙鄞' }, { text: '先抱抱TA，说“没关系，你已经很棒了”，陪TA发泄情绪', type: 'F', character: '樊长玉' }] },
-                { id: 12, dimension: 'TF', question: '做决定时', description: '面临重大感情抉择（如是否同居、结婚），你更依赖：', options: [{ text: '理性分析利弊，列个表格，看哪个选择更合理', type: 'T', character: '谢征' }, { text: '听从内心，选那个让我更心动、更舒服的方向', type: 'F', character: '俞浅浅' }] },
-                { id: 13, dimension: 'TF', question: '表达爱意', description: '你更习惯用哪种方式说“我爱你”？', options: [{ text: '用行动证明：默默记住TA的喜好，为TA解决实际困难', type: 'T', character: '李怀安' }, { text: '直接说出来：每天说情话，发甜蜜消息，公开示爱', type: 'F', character: '樊长玉' }] },
-                { id: 14, dimension: 'TF', question: '吵架时的逻辑', description: '吵架时，你更在意：', options: [{ text: '谁对谁错，事情的原委和逻辑', type: 'T', character: '魏严' }, { text: '对方的态度，有没有顾及我的感受', type: 'F', character: '齐旻' }] },
-                { id: 15, dimension: 'TF', question: '看待承诺', description: '你觉得“承诺”最重要的是：', options: [{ text: '说到做到，兑现每一个具体的诺言', type: 'T', character: '谢征' }, { text: '那份心意和愿意承诺的勇气', type: 'F', character: '俞浅浅' }] },
-                { id: 16, dimension: 'JP', question: '约会计划', description: '周末约会，你更倾向：', options: [{ text: '提前定好餐厅、电影票，做好时间表，按计划进行', type: 'J', character: '魏严' }, { text: '随性一点，走到哪算哪，遇见什么吃什么', type: 'P', character: '樊长玉' }] },
-                { id: 17, dimension: 'JP', question: '房间整洁度', description: '你的房间/桌面通常是：', options: [{ text: '井井有条，每样东西都有固定位置', type: 'J', character: '李怀安' }, { text: '乱中有序，我知道东西在哪，但别人看来像被炸过', type: 'P', character: '俞浅浅' }] },
-                { id: 18, dimension: 'JP', question: '做旅游攻略', description: '出去旅游前，你会：', options: [{ text: '做好详细攻略，订好所有酒店和车票，行程精确到小时', type: 'J', character: '谢征' }, { text: '订好往返票，剩下的到了再说，喜欢惊喜', type: 'P', character: '樊长玉' }] },
-                { id: 19, dimension: 'JP', question: '面对截止日期', description: '工作/学习任务的截止日期快到了，你通常：', options: [{ text: '提前规划，每天做一点，从容完成', type: 'J', character: '公孙鄞' }, { text: '前期摸鱼，最后一天爆肝通宵，效率奇高', type: 'P', character: '齐旻' }] },
-                { id: 20, dimension: 'JP', question: '感情进展', description: '对于恋爱关系的发展节奏，你希望：', options: [{ text: '有明确的时间表：多久见家长、多久订婚、多久结婚', type: 'J', character: '魏严' }, { text: '顺其自然，感觉到了自然会发生，不想被计划束缚', type: 'P', character: '俞浅浅' }] }
-            ],
-            personalityTypes: {
-                INTJ: { name: '谢征型', title: '孤城执棋者', quote: '铁甲未冷，心已先守。你算尽天下，却甘愿为她破例。', lovePortrait: '你是谢征式的爱人——深谋远虑，用沉默守护。你的爱藏在每一个不动声色的安排里，从不说破，却早已为她铺好了万里前程。你相信爱是责任，是承诺，是永不坍塌的城墙。', psychology: { mbti: 'INTJ（内向-直觉-思考-判断）', loveTriangle: '承诺主导型——激情:★★☆ 亲密:★★☆ 承诺:★★★', attachment: '回避型依恋——需要空间，但认定便是一生' }, behavior: { expression: '暗中解决她的麻烦，为她规划最稳妥的未来', conflict: '独自消化情绪，理性分析后给出解决方案', security: '可控的局面和长远的承诺', fear: '情绪失控、计划被打乱' }, dramaQuote: '我守的不是这座城，是城里有你的每一个清晨。', advice: '你的可靠令人安心，但偶尔也要让她看见你的脆弱。爱不是永远正确，是愿意一起狼狈。', match: 'ESTP', matchName: '樊长玉型', matchReason: 'TA的热烈能融化你的沉默，你的沉稳能接住TA的横冲直撞。' },
-                ESTP: { name: '樊长玉型', title: '烈火燎原者', quote: '爱就轰轰烈烈，不爱就转身离开。你的热情能点燃一切，也能灼伤一切。', lovePortrait: '你是樊长玉式的爱人——行动派，敢爱敢恨。你从不等风来，而是自己冲进风里。你的爱是“我杀猪养你”，粗糙却滚烫，不精致但绝对真诚。', psychology: { mbti: 'ESTP（外向-实感-思考-知觉）', loveTriangle: '激情主导型——激情:★★★ 亲密:★★☆ 承诺:★☆☆', attachment: '安全型依恋——活在当下，享受关系的每一刻' }, behavior: { expression: '直接表白，制造惊喜，用行动证明', conflict: '当场解决，不拖泥带水', security: '新鲜感和刺激', fear: '无聊、被束缚' }, dramaQuote: '你留下来，我杀猪养你。', advice: '你的热情让人无法抗拒，但长久的感情需要耐心和经营。偶尔也要慢下来，听听对方心底的声音。', match: 'INTJ', matchName: '谢征型', matchReason: 'TA的沉稳能接住你的冲动，你的热情能融化TA的沉默。' },
-                ENTJ: { name: '魏严型', title: '风云掌舵者', quote: '运筹帷幄，决胜千里。你把爱情当作事业来经营，追求最高效的回报。', lovePortrait: '你是魏严式的爱人——野心家，也是守护者。你要的不是小情小爱，而是并肩征服天下的伙伴。你的爱是“跟我走，我带你去更好的地方”，霸道却可靠。', psychology: { mbti: 'ENTJ（外向-直觉-思考-判断）', loveTriangle: '承诺主导型——激情:★★☆ 亲密:★★☆ 承诺:★★★', attachment: '安全型依恋——追求目标，重视效率' }, behavior: { expression: '设定共同目标，推动关系发展', conflict: '直接面对，快速解决', security: '目标的达成和关系的进步', fear: '失败、停滞' }, dramaQuote: '要么做到最好，要么不做。', advice: '你的魄力令人钦佩，但爱情不是项目，需要耐心和包容。偶尔放下“效率”，享受无所事事的浪漫。', match: 'INFP', matchName: '公孙鄞型', matchReason: 'TA的理想主义能让你看到不同的价值，你的执行力能帮TA实现梦想。' },
-                INFJ: { name: '齐旻型', title: '月下独行者', quote: '心有千言，出口却成沉默。你在等一个能读懂你眼神的人。', lovePortrait: '你是齐旻式的爱人——深情而偏执，追求灵魂共鸣。你不轻易开始，但一旦认定就是一生。你的爱是“我懂你的痛苦，也愿意和你一起沉沦”，极致而危险。', psychology: { mbti: 'INFJ（内向-直觉-情感-判断）', loveTriangle: '亲密主导型——激情:★★☆ 亲密:★★★ 承诺:★★☆', attachment: '恐惧型依恋——既渴望亲密又害怕受伤' }, behavior: { expression: '写长信、深夜长谈、分享内心最深的秘密', conflict: '逃避冲突，宁愿内伤也不愿伤害对方', security: '深度的精神连接', fear: '被误解、被辜负' }, dramaQuote: '我不说，是因为说了你也不懂；我期待，期待有一天你能懂。', advice: '你的深度让人着迷，但爱情也需要烟火气。偶尔放下理想，享受当下的简单快乐。', match: 'ENFP', matchName: '俞浅浅型', matchReason: 'TA的热情和活力能带你走出内心的孤岛，你的深度能让TA找到归属感。' },
-                INTP: { name: '公孙鄞型', title: '星河筑梦师', quote: '在现实与理想的夹缝中，你用爱编织着属于自己的星空。', lovePortrait: '你是公孙鄞式的爱人——理性又浪漫，喜欢分析感情的本质。你相信爱可以被解构，却总在解构中越陷越深。你的爱是“我试图理解你的一切”，笨拙而真诚。', psychology: { mbti: 'INTP（内向-直觉-思考-知觉）', loveTriangle: '亲密主导型——激情:★☆☆ 亲密:★★★ 承诺:★☆☆', attachment: '回避型依恋——重视智力连接，害怕情感依赖' }, behavior: { expression: '深入交流，探讨各种话题，分享新奇的想法', conflict: '分析原因，寻找根本解', security: '智力的共鸣', fear: '被情感淹没' }, dramaQuote: '我在分析爱你的原因，却发现根本无从分析。', advice: '你的理性让你独特，但爱情有时需要放下分析，用心感受。允许自己“不讲道理”地爱一次。', match: 'ESFJ', matchName: '李怀安型', matchReason: 'TA的温暖能融化你的理性外壳，你的深度能让TA感到被理解。' },
-                ENFP: { name: '俞浅浅型', title: '追光使者', quote: '心中有火，眼中有光。你追逐着爱的每一种可能，永不疲倦。', lovePortrait: '你是俞浅浅式的爱人——热情、跳脱、充满可能性。你相信爱情有千万种模样，每一种都值得尝试。你的爱是“让我们一起探索这个世界”，永远新鲜，永远好奇。', psychology: { mbti: 'ENFP（外向-直觉-情感-知觉）', loveTriangle: '激情主导型——激情:★★★ 亲密:★★☆ 承诺:★★☆', attachment: '焦虑型依恋——渴望连接，害怕被束缚' }, behavior: { expression: '分享梦想，规划未来，创造共同经历', conflict: '积极沟通，寻找双赢方案', security: '被理解和支持', fear: '被束缚、失去可能性' }, dramaQuote: '我想和你一起，去看所有美好的风景。', advice: '你的热情让人向往，但也要学会在一段关系中深耕，而非总是寻找新可能。偶尔停下，看看身边已经拥有的宝藏。', match: 'INFJ', matchName: '齐旻型', matchReason: 'TA的深度能让你找到归属感，你的热情能带TA走出孤独。' },
-                ISFJ: { name: '李怀安型', title: '暖玉温存者', quote: '以温柔为刃，以陪伴为甲。你爱得小心翼翼，生怕惊扰了谁。', lovePortrait: '你是李怀安式的爱人——细腻、体贴、把对方的需求放在第一位。你会记得TA的每一个小习惯，在TA生病时熬好粥，在TA加班时留好灯。你的爱是细水长流的陪伴，却常常忘了问自己：我开心吗？', psychology: { mbti: 'ISFJ（内向-实感-情感-判断）', loveTriangle: '亲密主导型——激情:★☆☆ 亲密:★★★ 承诺:★★☆', attachment: '焦虑型依恋——需要被需要，害怕被抛弃' }, behavior: { expression: '无微不至的照顾，把爱藏在生活的细节里', conflict: '委屈自己先道歉，害怕关系破裂', security: '被需要和认可', fear: '付出不被看见' }, dramaQuote: '我不求轰轰烈烈，只求你在回头时，我始终在。', advice: '你的温柔是宝藏，但请记得保留一部分给自己。爱不是单向付出，是双向奔赴。', match: 'ESTP', matchName: '樊长玉型', matchReason: 'TA的直接和热情能让你感受到被珍视，你的细腻能让TA学会温柔。' },
-                ESFP: { name: '赵大娘型', title: '阳光舞者', quote: '像阳光一样灿烂，像风一样自由。你的笑容是最好的情书。', lovePortrait: '你是赵大娘式的爱人——活泼、乐观、享受当下。你是派对的核心，是人群中的焦点。你的爱是“和你在一起，每一天都是节日”，充满欢乐和惊喜。', psychology: { mbti: 'ESFP（外向-实感-情感-知觉）', loveTriangle: '激情主导型——激情:★★★ 亲密:★★☆ 承诺:★☆☆', attachment: '安全型依恋——享受关系，顺其自然' }, behavior: { expression: '大声说爱，公开示爱，制造快乐', conflict: '用幽默化解，不喜欢沉重', security: '被关注和喜欢', fear: '被忽视、关系变得沉重' }, dramaQuote: '我喜欢你，全世界都知道！', advice: '你的快乐感染着每个人，但也要学会面对关系中的深度和严肃。偶尔安静下来，倾听对方心底的风雨。', match: 'INTJ', matchName: '谢征型', matchReason: 'TA的深度能让你看到不同的世界，你的活力能让TA学会放松。' },
-                ISTJ: { name: '谢五型', title: '铁律守护者', quote: '规则是骨架，爱是血肉。你用责任撑起一片天。', lovePortrait: '你像谢征身边的忠诚侍卫长——可靠、严谨、用行动说话。你的爱是“我答应你的，就一定会做到”，不浪漫但最踏实。', psychology: { mbti: 'ISTJ（内向-实感-思考-判断）', loveTriangle: '承诺主导型——激情:★☆☆ 亲密:★★☆ 承诺:★★★', attachment: '回避型依恋——重视责任，压抑情感' }, behavior: { expression: '默默承担责任，提供物质保障', conflict: '冷处理，等情绪平复', security: '秩序和可预期性', fear: '失控、失败' }, dramaQuote: '我守的不是这座城，是城里有你的每一个清晨。', advice: '你的责任感令人敬佩，但也要学会表达柔软。偶尔卸下盔甲，让对方也为你撑一次伞。', match: 'ESFP', matchName: '赵大娘型', matchReason: 'TA的随性能让你学会放松，你的稳重能给TA安全感。' },
-                ISTP: { name: '赵大叔型', title: '市井守夜人', quote: '话不多，但事儿上见。你的爱藏在每一次默默出手的瞬间。', lovePortrait: '你是赵大叔式的爱人——朴实、可靠、用行动代替言语。你不擅长花言巧语，却在对方最需要的时候第一个出现。你的爱是“有我在，别慌”，像邻家长辈一样，粗糙却温暖。', psychology: { mbti: 'ISTP（内向-实感-思考-知觉）', loveTriangle: '激情主导型——激情:★★☆ 亲密:★☆☆ 承诺:★☆☆', attachment: '回避型依恋——需要自由空间，但不逃避责任' }, behavior: { expression: '默默帮忙修好家里的东西，在对方加班时送去一碗热汤', conflict: '先躲开，等情绪平复后直接解决问题，不翻旧账', security: '自己能掌控的小天地和对方的信任', fear: '被束缚、失去独立、被过度依赖' }, dramaQuote: '俺不会说啥好听的，但你有事，俺肯定在。', advice: '你的可靠让人安心，但偶尔也要主动表达关心。一句“我在乎你”并不丢人，别总把温柔藏进工具箱里。', match: 'ISFJ', matchName: '李怀安型', matchReason: 'TA的细腻能帮你表达情感，你的实干能让TA感到踏实。' },
-                INFP: { name: '随元青型', title: '风吟诗人', quote: '如风般自由，如青般纯粹。你的爱没有形状，却无处不在。', lovePortrait: '你是随元青式的爱人——随性、浪漫、活在当下。你不追求永恒，只在乎此刻的心动。你的爱是“和你在一起，每一秒都是礼物”，不受任何框架束缚。', psychology: { mbti: 'INFP（内向-直觉-情感-知觉）', loveTriangle: '激情主导型——激情:★★★ 亲密:★★☆ 承诺:★☆☆', attachment: '安全型依恋——享受当下，顺其自然' }, behavior: { expression: '制造惊喜，创造美好回忆', conflict: '回避冲突，用温柔化解', security: '当下的快乐', fear: '被束缚、失去自由' }, dramaQuote: '我不承诺永远，但我承诺此刻的真心。', advice: '你的浪漫让人沉醉，但长久的感情也需要责任和承诺的支撑。偶尔也想想未来，给对方一点安心。', match: 'ESTJ', matchName: '齐旻型', matchReason: 'TA的稳重能给你安全感，你的灵动能让TA的生活充满色彩。' },
-                ISFP: { name: '齐姝型', title: '长公主的抉择', quote: '我选的，便是一生。不悔，不怨。', lovePortrait: '你是齐姝式的爱人——忠于内心，敢爱敢当。你表面温柔安静，骨子里却藏着一股倔劲儿。认定了一个人，就会义无反顾地走下去，哪怕放弃荣华富贵也在所不惜。你的爱是“我选择你，不因为你是谁，只因为是你”，纯粹而坚定。', psychology: { mbti: 'ISFP（内向-实感-情感-知觉）', loveTriangle: '激情主导型——激情:★★★ 亲密:★★☆ 承诺:★★☆', attachment: '安全型依恋——忠于自我，也珍惜所爱' }, behavior: { expression: '默默关注对方，用行动表达关心，在关键时刻坚定地站在TA身边', conflict: '先退让冷静，等情绪平复后再坦诚沟通', security: '被理解和尊重自己的选择', fear: '被强迫做违背本心的事、自己的真心被辜负' }, dramaQuote: '我不在意你的过去，只在意你的现在和将来。', advice: '你的真诚和勇气让人动容，但爱情里也要学会保护自己。偶尔停下来问问：这个人值得我放弃多少？', match: 'ENTJ', matchName: '魏严型', matchReason: 'TA的理性能帮你看清现实，你的温柔能让TA学会感受。' },
-                ENFJ: { name: '魏绾型', title: '温情织梦人', quote: '用关怀编织温暖，用付出换取安心。你的爱如春风化雨，润物无声。', lovePortrait: '你是魏绾式的爱人——温暖、体贴、重视和谐。你总是把别人的需求放在第一位，努力让每个人都开心。你的爱是“只要你好，我就好”，无私而包容。', psychology: { mbti: 'ENFJ（外向-直觉-情感-判断）', loveTriangle: '亲密主导型——激情:★★☆ 亲密:★★★ 承诺:★★☆', attachment: '安全型依恋——善于沟通，乐于付出' }, behavior: { expression: '鼓励对方成长，创造共同目标', conflict: '积极沟通，寻求双赢', security: '关系的成长', fear: '对方停滞不前' }, dramaQuote: '跟我走，我带你去更好的地方。', advice: '你的领导力让人信赖，但也要学会放手，让对方有自己的空间。爱不是塑造，是接纳。', match: 'ISTP', matchName: '魏严暗卫型', matchReason: 'TA的独立能让你学会尊重边界，你的热情能让TA敞开心扉。' },
-                ESTJ: { name: '承德太子型', title: '储君之仪', quote: '规矩是方圆，社稷是责任。你的爱，是承诺里的江山如画。', lovePortrait: '你是承德太子式的爱人——稳重、有担当、凡事讲求规则与秩序。你不轻易许诺，但一旦承诺便会倾尽全力。你的爱是“我护你周全”，虽少了几分浪漫，却多了一份沉甸甸的安全感。', psychology: { mbti: 'ESTJ（外向-实感-思考-判断）', loveTriangle: '承诺主导型——激情:★☆☆ 亲密:★★☆ 承诺:★★★', attachment: '安全型依恋——重视责任，追求稳定' }, behavior: { expression: '规划未来、提供物质保障、用实际行动兑现诺言', conflict: '直接沟通，讲道理，寻找解决方案', security: '秩序和可预期性', fear: '失控、失信于人、计划被打乱' }, dramaQuote: '孤既许你，便是一生。', advice: '你的责任感令人敬佩，但也要学会倾听对方的需求，而非只按自己的标准付出。偶尔放下“储君”的架子，享受平凡的小确幸。', match: 'INFP', matchName: '随元青型', matchReason: 'TA的随性能让你学会放松，你的稳重能给TA安全感。' },
-                ESFJ: { name: '樊长宁型', title: '暖心室内人', quote: '你不说，我也懂；你需要，我就在。你的爱是缝进日子里的每一针。', lovePortrait: '你温柔、细腻、把家打理得妥妥帖帖。你记得每一个纪念日，会在对方疲惫时递上一杯热茶。你的爱是“这个家有你真好”，不张扬，却让每个人感到安心。', psychology: { mbti: 'ESFJ（外向-实感-情感-判断）', loveTriangle: '亲密主导型——激情:★★☆ 亲密:★★★ 承诺:★★☆', attachment: '焦虑型依恋——需要被认可，害怕被冷落' }, behavior: { expression: '精心准备饭菜、记住对方喜好、主动组织家庭聚会', conflict: '先委屈自己让步，希望尽快恢复和谐，但事后可能心里难受', security: '被需要、被感谢、被家人朋友围绕', fear: '被嫌弃、被遗忘、付出被当作理所当然' }, dramaQuote: '姐姐，你回来啦！饭刚热好，我等你一起。', advice: '你的体贴让身边人如沐春风，但也要记得照顾自己的情绪。爱不是单方面付出，偶尔也开口说说你的需要。', match: 'INTP', matchName: '公孙鄞型', matchReason: 'TA的理性分析能帮你理清思绪，你的温暖能让TA放下逻辑外壳。' },
-                ENTP: { name: '十三娘型', title: '山野智囊', quote: '规矩是死的，人是活的。你的爱，总藏着出人意料的解法。', lovePortrait: '你是十三娘式的爱人——聪明、机变、不拘一格。你讨厌墨守成规，总能用新奇的点子化解矛盾。你的爱是“看我的”，带着点狡黠和自信，让平淡的日子充满惊喜。', psychology: { mbti: 'ENTP（外向-直觉-思考-知觉）', loveTriangle: '激情主导型——激情:★★★ 亲密:★★☆ 承诺:★☆☆', attachment: '回避型依恋——享受智力刺激，害怕情感束缚' }, behavior: { expression: '用幽默和机智逗对方笑，喜欢辩论和智力游戏', conflict: '理性拆解问题，不喜欢情绪化纠缠', security: '精神上的共鸣和新鲜感', fear: '无聊、被控制、失去自我' }, dramaQuote: '怕什么？跟着我，保管让你见识见识。', advice: '你的机智让人着迷，但也要学会真诚地表达内心的柔软。偶尔放下“嘴硬”，认真说一句“我需要你”。', match: 'ISFJ', matchName: '李怀安型', matchReason: 'TA的温柔能让你卸下防备，你的幽默能让TA的生活充满乐趣。' }
-            }
-        };
+    <!-- 四大入口 (填转子页面入口) -->
+    <div class="cards-grid">
+        <div class="entry-card" data-test="daily">
+            <div class="card-icon"><i class="fas fa-sun"></i></div>
+            <h3>日常灵占</h3>
+            <p>每日能量指引 · 顺势而为</p>
+        </div>
+        <div class="entry-card" data-test="heart">
+            <div class="card-icon"><i class="fas fa-heart"></i></div>
+            <h3>心动密测</h3>
+            <p>情感暗号 · 心犀相通</p>
+        </div>
+        <div class="entry-card" data-test="career">
+            <div class="card-icon"><i class="fas fa-briefcase"></i></div>
+            <h3>事业命格</h3>
+            <p>职场破局 · 天命所归</p>
+        </div>
+        <div class="entry-card" data-test="star">
+            <div class="card-icon"><i class="fas fa-star-of-life"></i></div>
+            <h3>人格星盘</h3>
+            <p>星辰原型 · 心理图谱</p>
+        </div>
+    </div>
 
-        // 辅助函数：计算MBTI
-        function calculateMBTI(answers) {
-            const counts = { I:0, E:0, S:0, N:0, T:0, F:0, J:0, P:0 };
-            answers.forEach(a => { if(counts[a.selectedType] !== undefined) counts[a.selectedType]++; });
-            const dim1 = counts.I >= counts.E ? 'I' : 'E';
-            const dim2 = counts.S >= counts.N ? 'S' : 'N';
-            const dim3 = counts.T >= counts.F ? 'T' : 'F';
-            const dim4 = counts.J >= counts.P ? 'J' : 'P';
-            return dim1 + dim2 + dim3 + dim4;
-        }
+    <!-- 动态填转子页面区域 (点击入口展示对应测试表单) -->
+    <div class="test-panel" id="testPanel">
+        <div class="panel-header">
+            <h2 id="panelTitle">✨ 日常灵占 ✨</h2>
+            <button class="reset-btn" id="resetToDefaultBtn"><i class="fas fa-undo-alt"></i> 重置/换测</button>
+        </div>
+        <div id="dynamicTestContent">
+            <!-- 动态内容：初始默认“日常灵占”的填转模块 -->
+        </div>
+    </div>
 
-        // 页面状态
-        let currentPage = 'index';
-        let testAnswers = [];
-        let testIndex = 0;
-        let testQuestions = globalData.questions;
-        let testTotal = testQuestions.length;
+    <!-- 灵犀测彩蛋区 (额外正能量戳心) -->
+    <div class="extra-lingxi">
+        <div class="lingxi-btn" id="lingxiSurpriseBtn">
+            <i class="fas fa-gem"></i> 灵犀测 · 一秒戳心
+        </div>
+        <div class="lingxi-tip" id="lingxiTip">
+            ⚡ 戳一下，接收属于你的灵魂共鸣短句
+        </div>
+    </div>
 
-        function render() {
-            const appDiv = document.getElementById('app');
-            if (currentPage === 'index') {
-                renderIndex(appDiv);
-            } else if (currentPage === 'test') {
-                renderTest(appDiv);
-            } else if (currentPage === 'result') {
-                renderResult(appDiv);
-            }
-        }
-
-        function renderIndex(container) {
-            const characters = [
-                { name: '谢征', mbti: 'INTJ', emoji: '⚔️' },
-                { name: '樊长玉', mbti: 'ESTP', emoji: '🔪' },
-                { name: '魏严', mbti: 'ENTJ', emoji: '👑' },
-                { name: '齐旻', mbti: 'INFJ', emoji: '🌙' },
-                { name: '公孙鄞', mbti: 'INTP', emoji: '🧠' },
-                { name: '俞浅浅', mbti: 'ENFP', emoji: '✨' },
-                { name: '李怀安', mbti: 'ISFJ', emoji: '🌸' }
-            ];
-            container.innerHTML = `
-                <div class="container">
-                    <div class="hero">
-                        <div class="logo">📖</div>
-                        <div class="title">逐玉 · 宿命书</div>
-                        <div class="subtitle">测一测你是《逐玉》中的哪位天命之人？</div>
-                    </div>
-                    <div class="card">
-                        <div class="desc">融合 MBTI、爱情三元论与依恋理论，20 道情境题，解锁你的专属角色画像。</div>
-                        <button class="btn-start" id="startBtn">✨ 开始占命 ✨</button>
-                    </div>
-                    <div class="characters">
-                        <div style="font-size:16px; margin-bottom:12px;">🌟 亮点角色 🌟</div>
-                        <div class="avatar-scroll">
-                            ${characters.map(c => `
-                                <div class="avatar-item">
-                                    <div class="avatar">${c.emoji}</div>
-                                    <div class="avatar-name">${c.name}</div>
-                                    <div class="avatar-type">${c.mbti}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="footer">✨ 命由天定，缘由心生 ✨</div>
-                </div>
-            `;
-            document.getElementById('startBtn')?.addEventListener('click', () => {
-                currentPage = 'test';
-                testAnswers = [];
-                testIndex = 0;
-                render();
-            });
-        }
-
-        function renderTest(container) {
-            if (testIndex >= testTotal) {
-                const mbtiType = calculateMBTI(testAnswers);
-                currentPage = 'result';
-                render();
-                return;
-            }
-            const q = testQuestions[testIndex];
-            const progress = ((testIndex + 1) / testTotal) * 100;
-            container.innerHTML = `
-                <div class="container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progress}%;"></div>
-                    </div>
-                    <div class="progress-text">${testIndex+1} / ${testTotal}</div>
-                    <div class="question-card">
-                        <div class="question">${q.question}</div>
-                        <div class="description">${q.description}</div>
-                        <div class="options">
-                            ${q.options.map((opt, idx) => `
-                                <div class="option" data-type="${opt.type}">
-                                    <div class="option-text">${opt.text}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.querySelectorAll('.option').forEach(optDiv => {
-                optDiv.addEventListener('click', (e) => {
-                    const type = optDiv.dataset.type;
-                    testAnswers.push({ questionId: q.id, selectedType: type });
-                    testIndex++;
-                    renderTest(container);
-                });
-            });
-        }
-
-        function renderResult(container) {
-            const mbtiType = calculateMBTI(testAnswers);
-            const personality = globalData.personalityTypes[mbtiType];
-            if (!personality) {
-                container.innerHTML = '<div class="container">结果加载失败，请重试</div>';
-                return;
-            }
-            container.innerHTML = `
-                <div class="container">
-                    <div class="character-card">
-                        <div class="avatar-area">
-                            <div class="role-avatar" style="background:#EADBC8; display:flex; align-items:center; justify-content:center; font-size:48px;">📜</div>
-                        </div>
-                        <div class="role-name">${personality.name}</div>
-                        <div class="role-title">${personality.title}</div>
-                    </div>
-                    <div class="quote-card">
-                        <div class="quote">「 ${personality.dramaQuote} 」</div>
-                    </div>
-                    <div class="section">
-                        <div class="section-title">💘 爱情画像</div>
-                        <div class="content">${personality.lovePortrait}</div>
-                    </div>
-                    <div class="section">
-                        <div class="section-title">📚 心理学解析</div>
-                        <div class="psycho-item">MBTI：${personality.psychology.mbti}</div>
-                        <div class="psycho-item">爱情三元论：${personality.psychology.loveTriangle}</div>
-                        <div class="psycho-item">依恋类型：${personality.psychology.attachment}</div>
-                    </div>
-                    <div class="section">
-                        <div class="section-title">⚔️ 行为模式</div>
-                        <div class="behavior-item">表达爱意：${personality.behavior.expression}</div>
-                        <div class="behavior-item">冲突处理：${personality.behavior.conflict}</div>
-                        <div class="behavior-item">安全感来源：${personality.behavior.security}</div>
-                        <div class="behavior-item">内心恐惧：${personality.behavior.fear}</div>
-                    </div>
-                    <div class="section match">
-                        <div class="section-title">🔮 命定之缘</div>
-                        <div class="match-name">${personality.matchName}</div>
-                        <div class="match-reason">${personality.matchReason}</div>
-                    </div>
-                    <div class="section advice">
-                        <div class="section-title">🎁 宿命锦囊</div>
-                        <div class="content">${personality.advice}</div>
-                    </div>
-                    <!-- 赞赏码区域 - start -->
-<div class="section reward" style="text-align: center;">
-    <div class="section-title">☕️ 请我喝杯咖啡</div>
-    <div class="content" style="text-align: center;">如果觉得测试有趣，欢迎支持一下~</div>
-    <img src="reward.png" alt="微信赞赏码" style="width: 180px; height: 180px; margin: 15px auto 0 auto; display: block; border-radius: 16px;">
+    <footer>
+        🌙 灵犀运势馆 · 东方智慧 + 心理洞察 | 所有指引皆为正向启发，愿你找到内核力量
+    </footer>
 </div>
-<!-- 赞赏码区域 - end -->
-                    <div class="actions">
-                        <button class="btn-share" id="shareBtn">📖 分享命书</button>
-                        <button class="btn-restart" id="restartBtn">🔄 重测天命</button>
+
+<script>
+    // ---------- 四大测试模块的“填转”数据模型 (每个测试包含问题和转换逻辑，拒绝焦虑) ----------
+    const testsConfig = {
+        daily: {
+            name: "日常灵占",
+            icon: "🌿",
+            questions: [
+                {
+                    text: "今日你的能量底色是？",
+                    field: "mood",
+                    options: ["🌊 宁静 · 如水", "🔥 激情 · 如火", "🌫️ 迷惘 · 待启", "✨ 期待 · 新生"]
+                },
+                {
+                    text: "当下最需要指引的领域？",
+                    field: "area",
+                    options: ["💖 情感关系", "💼 事业决策", "🧘 身心健康", "👥 人际圈层"]
+                }
+            ],
+            // 接受 answers { mood, area } 生成正向指引戳心文案
+            generateResult: (answers) => {
+                const moodMap = {
+                    "🌊 宁静 · 如水": "内核安稳，智慧沉淀",
+                    "🔥 激情 · 如火": "生命力旺盛，创造力爆棚",
+                    "🌫️ 迷惘 · 待启": "混沌即转机，新视角正在生成",
+                    "✨ 期待 · 新生": "宇宙在回应你的频率"
+                };
+                const areaAdvice = {
+                    "💖 情感关系": "今天适合表达柔软，无心之举可能种下温柔果实。",
+                    "💼 事业决策": "信任直觉，顺势而为，一个微小的行动会撬动资源。",
+                    "🧘 身心健康": "照顾内在小孩，深呼吸三次，奇迹藏在停顿里。",
+                    "👥 人际圈层": "边界感带来舒适，真诚吸引同频灵魂。"
+                };
+                let moodText = answers.mood ? moodMap[answers.mood] || "灵性自在流动" : "当下即完美";
+                let areaText = answers.area ? areaAdvice[answers.area] : "保持敞开，好运自然发生。";
+                return `✨ 灵占启示 ✨<br>「${moodText}」 · ${areaText}<br><span style="font-size:0.85rem; opacity:0.9;">⚡ 今日正向心法：不必强求，让能量流经你，答案会显化。</span>`;
+            }
+        },
+        heart: {
+            name: "心动密测",
+            icon: "💗",
+            questions: [
+                {
+                    text: "你目前对心动对象的心态？",
+                    field: "status",
+                    options: ["💓 暗涌·暧昧试探", "🌹 热烈·勇敢表白期", "🌀 纠结·忽远忽近", "✨ 观望·随缘吸引"]
+                },
+                {
+                    text: "你最渴望的关系模式？",
+                    field: "style",
+                    options: ["🔥 灵魂共鸣式", "🎢 刺激冒险型", "☕ 细水长流式", "🌟 共同成长型"]
+                }
+            ],
+            generateResult: (answers) => {
+                const statusTips = {
+                    "💓 暗涌·暧昧试探": "你拥有细腻的感知力，不妨释放一个微小的信号",
+                    "🌹 热烈·勇敢表白期": "勇气是你的魔法，真实表达会让缘分流动",
+                    "🌀 纠结·忽远忽近": "放下过度分析，专注于自己的光，自会吸引对的人",
+                    "✨ 观望·随缘吸引": "缘分不需要用力，保持有趣，宇宙会助推"
+                };
+                const styleAdvice = {
+                    "🔥 灵魂共鸣式": "先与自己灵魂深交，投射出去的爱会更纯粹。",
+                    "🎢 刺激冒险型": "体验本身就是珍贵礼物，敢玩才尽兴。",
+                    "☕ 细水长流式": "平淡是真，微小的仪式感会让爱鲜活。",
+                    "🌟 共同成长型": "好的爱情是并肩看世界，一起升级打怪。"
+                };
+                let first = answers.status ? statusTips[answers.status] : "信任心动的直觉";
+                let second = answers.style ? styleAdvice[answers.style] : "爱是行动的诗";
+                return `💞 心动解码 💞<br>${first}。${second}<br><span style="font-size:0.85rem;">🌙 正向指引：无论答案如何，你都值得被爱，先宠爱自己。</span>`;
+            }
+        },
+        career: {
+            name: "事业命格",
+            icon: "🏆",
+            questions: [
+                {
+                    text: "目前你的事业状态更像？",
+                    field: "state",
+                    options: ["🚀 上升突破期", "🌀 瓶颈迷茫期", "🌱 积累扎根期", "🔄 转型探索期"]
+                },
+                {
+                    text: "你隐藏的领导力类型？",
+                    field: "type",
+                    options: ["🧠 谋略军师型", "🎯 冲锋实干型", "🌈 整合协调型", "✨ 创意革新型"]
+                }
+            ],
+            generateResult: (answers) => {
+                const stateMsg = {
+                    "🚀 上升突破期": "你的冲劲已被看到，注意留存能量防过载",
+                    "🌀 瓶颈迷茫期": "停下来不是退步，重构认知才有新地图",
+                    "🌱 积累扎根期": "深耕细作，未来三个月会有厚积薄发",
+                    "🔄 转型探索期": "勇敢试错，跨界资源正在向你靠拢"
+                };
+                const typeMsg = {
+                    "🧠 谋略军师型": "用智慧布局，适合幕后或策略岗",
+                    "🎯 冲锋实干型": "目标导向，执行力是你最强王牌",
+                    "🌈 整合协调型": "凝聚团队的天赋，创造共赢场域",
+                    "✨ 创意革新型": "天马行空落地为商业机会，别自我怀疑"
+                };
+                let first = answers.state ? stateMsg[answers.state] : "顺势而为，臣服于节奏";
+                let second = answers.type ? typeMsg[answers.type] : "发挥你独特优势";
+                return `📈 事业命格指引 📈<br>${first}。${second}<br><span style="font-size:0.85rem;">🔑 正向箴言：事业并非唯一丈量价值的标准，但你每一步都算数。</span>`;
+            }
+        },
+        star: {
+            name: "人格星盘",
+            icon: "⭐",
+            questions: [
+                {
+                    text: "你更偏爱哪种能量场景？",
+                    field: "element",
+                    options: ["🌬️ 风象·思维流动", "🔥 火象·热烈行动", "💧 水象·情感深邃", "🌍 土象·稳定务实"]
+                },
+                {
+                    text: "你心中最浪漫的成长方式是？",
+                    field: "growth",
+                    options: ["📖 独处内省", "🎨 艺术创作", "🤝 深度对话", "🏃 身体力行"]
+                }
+            ],
+            generateResult: (answers) => {
+                const elementDesc = {
+                    "🌬️ 风象·思维流动": "你拥有灵动的思辨力，适合知识型创造",
+                    "🔥 火象·热烈行动": "行动点燃激情，勇敢赋予你星盘亮度",
+                    "💧 水象·情感深邃": "直觉敏锐，共情是你最强的超能力",
+                    "🌍 土象·稳定务实": "稳固踏实，显化梦想的建造师"
+                };
+                const growthTip = {
+                    "📖 独处内省": "向内探索，能看到灵魂星辰图",
+                    "🎨 艺术创作": "释放表达欲，创作让你链接高维",
+                    "🤝 深度对话": "交换真心话，星盘因此共振",
+                    "🏃 身体力行": "身体智慧带你触碰真实"
+                };
+                let ele = answers.element ? elementDesc[answers.element] : "星辰能量与你同在";
+                let gro = answers.growth ? growthTip[answers.growth] : "每一天都是一次重生";
+                return `🌟 人格星盘解析 🌟<br>${ele}。${gro}<br><span style="font-size:0.85rem;">🌌 核心洞见：你的星盘由你定义，接纳阴影与光芒，活出你的宇宙脚本。</span>`;
+            }
+        }
+    };
+
+    // 当前激活的测试类型
+    let currentTest = "daily";
+    // 存储当前测试的选择值 (用于结果生成)
+    let currentAnswers = {};
+
+    // 渲染动态测试表单 (填转界面)
+    function renderTest() {
+        const config = testsConfig[currentTest];
+        if (!config) return;
+        // 更新标题
+        document.getElementById("panelTitle").innerHTML = `${config.icon} ${config.name} ${config.icon}`;
+        const container = document.getElementById("dynamicTestContent");
+        if (!container) return;
+        
+        // 构建表单html
+        let questionsHtml = '';
+        config.questions.forEach((q, idx) => {
+            const fieldName = q.field;
+            const savedVal = currentAnswers[fieldName] || '';
+            const optionsHtml = q.options.map(opt => {
+                const checkedAttr = (savedVal === opt) ? 'checked' : '';
+                // 用自定义属性标记方便事件委托
+                return `<label class="option-item" data-field="${fieldName}" data-value="${opt}">
+                            <input type="radio" name="${fieldName}" value="${opt}" ${checkedAttr} style="display:none;"> 
+                            <span class="opt-text">${opt}</span>
+                        </label>`;
+            }).join('');
+            questionsHtml += `
+                <div class="question-group">
+                    <label><i class="fas fa-question-circle"></i> ${q.text}</label>
+                    <div class="options" data-field-group="${fieldName}">
+                        ${optionsHtml}
                     </div>
                 </div>
             `;
-            document.getElementById('shareBtn')?.addEventListener('click', () => {
-                if (navigator.share) {
-                    navigator.share({
-                        title: '逐玉·宿命书',
-                        text: `我测出了${personality.name}，你的天命角色是？`,
-                        url: window.location.href
-                    }).catch(() => {});
+        });
+        
+        const resultKey = `result_${currentTest}`;
+        const existingResultHtml = currentAnswers.resultText ? `<div class="result-box"><i class="fas fa-crystal-ball"></i> ${currentAnswers.resultText}</div>` : '';
+        
+        const fullHtml = `
+            <div class="question-area" id="testQuestionsArea">
+                ${questionsHtml}
+                <button class="action-btn" id="submitTestBtn"><i class="fas fa-chart-line"></i> 立即占测 · 获得正向指引</button>
+                ${existingResultHtml}
+            </div>
+        `;
+        container.innerHTML = fullHtml;
+        
+        // 重新绑定选项中点击高亮逻辑 + 存储值同步
+        attachOptionsListeners();
+        // 绑定提交按钮事件
+        const submitBtn = document.getElementById("submitTestBtn");
+        if (submitBtn) {
+            submitBtn.onclick = () => handleSubmit();
+        }
+    }
+    
+    // 处理每个组内点击选中（视觉+存储 currentAnswers）
+    function attachOptionsListeners() {
+        const allOptionItems = document.querySelectorAll('.option-item');
+        allOptionItems.forEach(item => {
+            // 移除原有监听避免重复，用新克隆方式？直接重设onclick
+            item.removeEventListener('click', optionClickHandler);
+            item.addEventListener('click', optionClickHandler);
+        });
+    }
+    
+    function optionClickHandler(e) {
+        // 防止事件冒泡混乱
+        e.stopPropagation();
+        const targetLabel = e.currentTarget;
+        const field = targetLabel.getAttribute('data-field');
+        const value = targetLabel.getAttribute('data-value');
+        if (!field || !value) return;
+        // 更新当前答案
+        currentAnswers[field] = value;
+        // 同组清除高亮样式，并给当前加高亮
+        const group = targetLabel.closest('.options');
+        if (group) {
+            const allLabels = group.querySelectorAll('.option-item');
+            allLabels.forEach(label => {
+                label.classList.remove('selected');
+                const radioInside = label.querySelector('input[type="radio"]');
+                if (radioInside) radioInside.checked = false;
+            });
+            targetLabel.classList.add('selected');
+            const hiddenRadio = targetLabel.querySelector('input');
+            if (hiddenRadio) hiddenRadio.checked = true;
+        }
+        // 储存进 currentAnswers[field]
+    }
+    
+    // 提交填转：根据当前答案调用生成器，更新结果区域并保持结果记忆
+    function handleSubmit() {
+        const config = testsConfig[currentTest];
+        if (!config) return;
+        // 检查是否所有问题都已选择（人性化提醒，但不强制野蛮）
+        const requiredFields = config.questions.map(q => q.field);
+        let missing = false;
+        requiredFields.forEach(f => {
+            if (!currentAnswers[f]) missing = true;
+        });
+        if (missing) {
+            // 优雅提醒但依然可以随机抽取一个正向指引，但出于体验给个温和提示
+            const resultDiv = document.querySelector('.result-box');
+            if (resultDiv) {
+                resultDiv.innerHTML = `<i class="fas fa-hand-sparkles"></i> 灵犀小提示：选完两个问题，能得到更精准的专属指引哦～ 不过宇宙早就爱你，试试完成选择吧。`;
+                resultDiv.style.borderLeftColor = "#ffbb77";
+            } else {
+                const container = document.getElementById("dynamicTestContent");
+                if (container && !document.querySelector('.result-box')) {
+                    const newResult = document.createElement('div');
+                    newResult.className = 'result-box';
+                    newResult.innerHTML = `✨ 稍微点选一下选项，灵犀能量会更聚焦✨`;
+                    container.appendChild(newResult);
                 } else {
-                    alert('复制链接分享给好友：' + window.location.href);
+                    const exist = document.querySelector('.result-box');
+                    if(exist) exist.innerHTML = `✨ 稍微点选一下选项，灵犀能量会更聚焦✨`;
+                }
+            }
+            return;
+        }
+        
+        // 生成正能量结果
+        const rawResult = config.generateResult(currentAnswers);
+        // 储存结果文本
+        currentAnswers.resultText = rawResult;
+        // 显示或刷新结果区域
+        let resultBox = document.querySelector('.result-box');
+        if (resultBox) {
+            resultBox.innerHTML = `<i class="fas fa-crystal-ball"></i> ${rawResult}`;
+        } else {
+            const questionArea = document.getElementById('testQuestionsArea');
+            if (questionArea) {
+                const newBox = document.createElement('div');
+                newBox.className = 'result-box';
+                newBox.innerHTML = `<i class="fas fa-crystal-ball"></i> ${rawResult}`;
+                questionArea.appendChild(newBox);
+            }
+        }
+        // 附加小动画感（平滑滚动到结果）
+        const newResultDiv = document.querySelector('.result-box');
+        if (newResultDiv) newResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    // 重置当前测试（不清除答案但清掉结果、重置选项选中等，保留用户友好重新测）
+    function resetCurrentTest() {
+        // 重置答案存储，清结果
+        currentAnswers = {};
+        // 重新渲染表单
+        renderTest();
+    }
+    
+    // 切换测试类型（通过入口卡片）
+    function switchTest(testId) {
+        currentTest = testId;
+        // 重置当前答案数据，保证每个测试独立初始
+        currentAnswers = {};
+        renderTest();
+    }
+    
+    // 绑定卡片入口事件
+    function bindCardEvents() {
+        const cards = document.querySelectorAll('.entry-card');
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                const testVal = card.getAttribute('data-test');
+                if (testVal && testsConfig[testVal]) {
+                    switchTest(testVal);
                 }
             });
-            document.getElementById('restartBtn')?.addEventListener('click', () => {
-                currentPage = 'index';
-                render();
+        });
+        const resetBtn = document.getElementById('resetToDefaultBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                resetCurrentTest();
             });
         }
-
-        render();
-    </script>
+    }
+    
+    // 灵犀测额外戳心模块 (纯粹正面短句)
+    const lingxiMessages = [
+        "🌙 别让焦虑偷走当下的灵感，你本自具足。",
+        "💫 你无须成为别人，你的独特就是最好的风水。",
+        "✨ 每一次选择都在塑造你，记得选择温柔待己。",
+        "🌊 运势像潮汐，低谷时沉淀，涨潮时绽放。",
+        "🔥 你内心那团火，比任何星盘都亮。",
+        "🌸 拒绝自我怀疑，今天请和自己和解。",
+        "🎯 事业的答案不在远方，在你每一次微行动里。",
+        "💞 心动不如行动，但也允许自己慢慢来。"
+    ];
+    
+    function showRandomLingxi() {
+        const randomIndex = Math.floor(Math.random() * lingxiMessages.length);
+        const tipDiv = document.getElementById('lingxiTip');
+        if (tipDiv) {
+            tipDiv.innerHTML = `<i class="fas fa-feather-alt"></i> ${lingxiMessages[randomIndex]} <i class="fas fa-heart"></i>`;
+            setTimeout(() => {
+                // 5秒后还原普通提示，但不影响体验
+                setTimeout(() => {
+                    if (tipDiv && !tipDiv.innerHTML.includes("一秒戳心")) {
+                        tipDiv.innerHTML = `⚡ 戳一下，接收属于你的灵魂共鸣短句`;
+                    }
+                }, 4000);
+            }, 0);
+        }
+    }
+    
+    // 初始化整个页面
+    function init() {
+        bindCardEvents();
+        // 默认加载日常灵占
+        switchTest('daily');
+        const lingxiBtn = document.getElementById('lingxiSurpriseBtn');
+        if (lingxiBtn) {
+            lingxiBtn.addEventListener('click', showRandomLingxi);
+        }
+    }
+    
+    init();
+</script>
 </body>
 </html>
