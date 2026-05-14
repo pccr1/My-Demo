@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>事业大魔镜 · 十维命格拆解 | 灵犀运势馆</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0718;
+            font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
+            color: #f0eefc;
+            line-height: 1.45;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 10%, rgba(110, 70, 200, 0.2), transparent 70%),
+                        repeating-linear-gradient(45deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-mini {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            background: rgba(12, 8, 28, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 1.8rem 1rem;
+            border: 1px solid rgba(255, 100, 220, 0.4);
+        }
+        .hero-mini h1 {
+            font-size: clamp(2rem, 6vw, 3rem);
+            background: linear-gradient(135deg, #FFFFFF, #E2B6FF, #FF8AD0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+        .hero-mini p { color: #cdbefc; margin-top: 0.5rem; }
+        .module-grid { display: flex; flex-direction: column; gap: 2rem; }
+        .test-card {
+            background: rgba(18, 16, 40, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(210, 140, 255, 0.3);
+            overflow: hidden;
+            box-shadow: 0 12px 25px -12px black;
+        }
+        .card-header {
+            padding: 1.2rem 1.8rem;
+            background: rgba(0,0,0,0.35);
+            border-bottom: 1px solid rgba(255, 120, 200, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .card-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #fff, #e4bcff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .badge-module {
+            background: #ff44aa30;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            border: 0.5px solid #ff86c6;
+        }
+        .questions-area { padding: 1.5rem 1.8rem; }
+        .q-item {
+            margin-bottom: 1.5rem;
+            background: rgba(25, 20, 50, 0.5);
+            border-radius: 1.2rem;
+            padding: 0.8rem 1rem;
+        }
+        .q-text { font-weight: 600; margin-bottom: 0.7rem; font-size: 0.95rem; }
+        .options-group { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+        .opt-label {
+            background: rgba(255,255,245,0.05);
+            padding: 0.45rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .opt-label.selected { background: #bf5eff40; border-color: #e27eff; color: white; }
+        input[type="radio"] { accent-color: #c96eff; width: 14px; height: 14px; margin-right: 4px; }
+        .action-btn {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 700;
+            color: #0a041a;
+            cursor: pointer;
+            margin: 0.5rem 0 1rem;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .action-btn:hover { transform: scale(0.98); box-shadow: 0 0 8px #ff88dd; }
+        .result-box {
+            background: rgba(0,0,0,0.5);
+            border-radius: 1.2rem;
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+            border-left: 4px solid #ff77c2;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6b62a0;
+            border-top: 0.5px solid rgba(255,255,255,0.1);
+            padding-top: 2rem;
+        }
+        @media (max-width: 680px) {
+            .container { padding: 1rem; }
+            .questions-area { padding: 1rem; }
+            .card-header h2 { font-size: 1.2rem; }
+        }
+        .result-box i { margin-right: 8px; color: #ffb3e6; }
+        .back-home { display: inline-block; margin-bottom: 1rem; background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; color: #ffbbf0; font-size: 0.8rem; }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="hero-mini">
+        <h1><i class="fas fa-chart-line"></i> 事业运势 · 十维命格拆解 <i class="fas fa-brain"></i></h1>
+        <p>毒舌真相实验室 | 科学瞎扯 + 心理学buff | 每一题都戳中你的事业底裤</p>
+    </div>
+    <div class="module-grid" id="modulesContainer"></div>
+    <footer>⚡ 灵犀事业研究所 · 纯属职场行为分析，仅供参考，别跟老板对质 | 毒舌即正义，清醒即自由</footer>
+</div>
+
+<script>
+    // ========== 完整十大模块配置 ==========
+    const modules = [
+        // 1. 长期饭票 vs 过渡跳板
+        {
+            id: 1,
+            title: "🍚 我现在的工作，是“长期饭票”还是“过渡跳板”？",
+            questions: [
+                { text: "Q1：你每天早上起床，想到上班的第一反应是？", opts: [{ label: "A. “又来了”", scores: { 饭票: 0, 跳板: 2 } }, { label: "B. “今天要做什么”", scores: { 饭票: 1, 跳板: 0 } }, { label: "C. “还行，不讨厌”", scores: { 饭票: 1, 跳板: 0 } }] },
+                { text: "Q2：你的工资在过去一年内是否上涨过（包括普调）？", opts: [{ label: "A. 没涨，且公司无明确涨薪机制", scores: { 饭票: 0, 跳板: 3 } }, { label: "B. 涨了，但幅度很小（<5%）", scores: { 饭票: 0, 跳板: 1 } }, { label: "C. 涨了，幅度正常或更多", scores: { 饭票: 2, 跳板: 0 } }] },
+                { text: "Q3：你在这份工作中，还能学到新东西或积累有用经验吗？", opts: [{ label: "A. 完全学不到，日常重复劳动", scores: { 饭票: 0, 跳板: 3 } }, { label: "B. 偶尔有，但不多了", scores: { 饭票: 0, 跳板: 1 } }, { label: "C. 还能学到，且对下次跳槽有帮助", scores: { 饭票: 2, 跳板: 0 } }] },
+                { text: "Q4：你的同事中，有超过2个人是你未来想成为的样子吗？", opts: [{ label: "A. 有", scores: { 饭票: 2, 跳板: 0 } }, { label: "B. 没有，甚至觉得他们停滞了", scores: { 饭票: 0, 跳板: 2 } }, { label: "C. 不太清楚，不关心", scores: { 饭票: 0, 跳板: 0 } }] },
+                { text: "Q5：如果明天你被裁员，你的第一反应是？", opts: [{ label: "A. “爽，可以休息一阵”", scores: { 饭票: 0, 跳板: 1 } }, { label: "B. “完了，房贷/生活费怎么办”", scores: { 饭票: 1, 跳板: 0 } }, { label: "C. “正好，拿钱走人找下家”", scores: { 饭票: 0, 跳板: 2 } }] },
+                { text: "Q6：你所在的行业/公司整体趋势是？", opts: [{ label: "A. 下行/萎缩/风险高", scores: { 饭票: 0, 跳板: 3 } }, { label: "B. 平稳，不温不火", scores: { 饭票: 1, 跳板: 1 } }, { label: "C. 上升期/稳定增长", scores: { 饭票: 3, 跳板: 0 } }] },
+                { text: "Q7：你觉得自己在这家公司的不可替代性如何？", opts: [{ label: "A. 谁都能做，换个应届生也行", scores: { 饭票: 0, 跳板: 2 } }, { label: "B. 有一定经验壁垒，但不算稀缺", scores: { 饭票: 0, 跳板: 1 } }, { label: "C. 比较核心，短期内很难被替代", scores: { 饭票: 3, 跳板: 0 } }] }
+            ],
+            compute: (answers) => {
+                let 饭票 = 0, 跳板 = 0;
+                answers.forEach(a => { 饭票 += a.饭票 || 0; 跳板 += a.跳板 || 0; });
+                if (饭票 >= 跳板 + 3) return { type: "长期饭票", text: "“恭喜你，你已经是一只温水里的青蛙了。水还没开，锅里还有肉，你可以再泡一阵子。这份工作稳定、有成长、钱也还行，不是非跳不可。但小心：长期饭票容易养出‘废人综合征’——技能停滞、竞争力下降。建议：每半年更新一次简历，不是为了跳，是为了知道自己在市场上的价格。如果连续两次更新发现价格没涨甚至跌了，那就是警报。另外，别把所有鸡蛋放一个篮子里，发展一个副业或考个证，万一锅突然热了，你还能跳出去。”" };
+                if (跳板 >= 饭票 + 3) return { type: "过渡跳板", text: "“你的工作就像过期的酸奶——喝了不会死，但每口都恶心。学不到东西、钱也不涨、行业还在下坡。你留在这里的唯一原因是‘还没找到下家’。建议：立刻更新简历，每周投5家，目标三个月内走人。但别裸辞，骑驴找马。走之前尽可能薅公司资源（培训、证书报销、项目经验）。把这段经历当成跳板上的助跑，别在上面盖房子。另外，别对同事吐槽公司，小心传到老板耳朵里，你连过渡期都保不住。”" };
+                return { type: "灰色地带", text: "“你现在的工作不好不坏，像方便面——饿不死，但吃多了会腻。它可以当短期饭票（1-2年），但别当终身事业。你可以继续待着，但要开始布局下一步：要么内部转岗寻求新挑战，要么每周花5小时探索副业或新技能。给自己设一个‘检验点’：半年后如果薪资/能力/行业没有明显变化，就强制跳槽。灰色地带最危险的不是差，而是让你舒服到忘记外面还有更好的。建议：每年面试一两家同行，看看别人在做什么、给多少钱。你会受到刺激的。”" };
+            }
+        },
+        // 2. 专家型 vs 管理型
+        {
+            id: 2,
+            title: "🎯 我更适合做“专家型”还是“管理型”人才？",
+            questions: [
+                { text: "Q1：你更享受以下哪种工作场景？", opts: [{ label: "A. 独自深度解决问题，不被打扰", scores: { 专家: 2, 管理: 0 } }, { label: "B. 协调团队、安排任务、推动他人", scores: { 专家: 0, 管理: 2 } }, { label: "C. 两者都还行", scores: { 专家: 1, 管理: 1 } }] },
+                { text: "Q2：当项目出问题时，你的第一反应是？", opts: [{ label: "A. 自己找原因、动手解决", scores: { 专家: 2, 管理: 0 } }, { label: "B. 召集相关人员开会，分配任务", scores: { 专家: 0, 管理: 2 } }, { label: "C. 先自己分析，再找人配合", scores: { 专家: 1, 管理: 1 } }] },
+                { text: "Q3：你更不喜欢哪种情况？", opts: [{ label: "A. 被别人的低效率拖累", scores: { 专家: 0, 管理: 2 } }, { label: "B. 不得不处理人际关系和情绪纠纷", scores: { 专家: 2, 管理: 0 } }, { label: "C. 都不喜欢，但能忍", scores: { 专家: 0, 管理: 0 } }] },
+                { text: "Q4：你带过新人或实习生吗？感受如何？", opts: [{ label: "A. 没带过，没兴趣", scores: { 专家: 1, 管理: 0 } }, { label: "B. 带过，觉得心累，不如自己做", scores: { 专家: 2, 管理: 0 } }, { label: "C. 带过，挺有成就感", scores: { 专家: 0, 管理: 2 } }] },
+                { text: "Q5：在未来5年的职业规划里，你更看重？", opts: [{ label: "A. 成为某个领域的顶尖专家、不可替代", scores: { 专家: 3, 管理: 0 } }, { label: "B. 带团队、做决策、影响力更大", scores: { 专家: 0, 管理: 3 } }, { label: "C. 钱多事少离家近，不在意头衔", scores: { 专家: 0, 管理: 0 } }] },
+                { text: "Q6：你朋友/同事最常形容你的词是？", opts: [{ label: "A. 专业、靠谱、技术流", scores: { 专家: 2, 管理: 0 } }, { label: "B. 有领导力、会来事、能服众", scores: { 专家: 0, 管理: 2 } }, { label: "C. 踏实、好说话", scores: { 专家: 1, 管理: 0 } }] }
+            ],
+            compute: (answers) => {
+                let 专家 = 0, 管理 = 0;
+                answers.forEach(a => { 专家 += a.专家 || 0; 管理 += a.管理 || 0; });
+                if (专家 >= 管理 + 2) return { type: "专家型", text: "“你是一个典型的技术宅/专业怪，享受一个人死磕的快感。让你管人等于让你吃翔——你嫌别人笨，别人嫌你凶。你的路是：把专业做到前20%，靠手艺吃饭。别羡慕那些天天开会的，他们可能还羡慕你到点走人。建议：别硬转管理，你的收入天花板可以靠‘专家+个人品牌’突破（比如出课程、写书、做顾问）。但注意，别变成孤岛，适当学点向上汇报，否则功劳容易被抢。你的护城河是深度，不是宽度。”" };
+                if (管理 >= 专家 + 2) return { type: "管理型", text: "“你天生是个‘包工头’——喜欢分活、催活、收活。让你埋头钻研你会疯，你喜欢的是调动资源、搞定人的成就感。但小心：管理不是官威，是服务+背锅。你可能要面对：下属不听话、上级拍脑袋、跨部门扯皮。建议：30岁前先做两年专家，懂业务的管理者才服众。如果直接空降管理，容易被下属联手做掉。另外，管理岗的出路不只是往上爬，也可以是成为优秀的项目经理或创业。你的优势是整合力，别浪费。”" };
+                return { type: "混合型", text: "“你是职场两栖动物——能干活也能带人，但别两头都半吊子。你最合适的路径是：技术团队Leader或项目负责人，既懂业务又能协调。注意别陷入‘谁弱就替谁做’的陷阱，要学会授权。建议：前五年偏专，后五年偏管，尽量待在有技术门槛的行业（互联网、医药、工程等），这样你的专家底子能一直保值。如果去了纯管理岗，你的技术武器容易生锈。你的目标是‘懂管理的专家’，而不是‘不懂业务的经理’。”" };
+            }
+        },
+        // 3. 副业方向
+        {
+            id: 3,
+            title: "💸 如果我今年想搞副业，哪个方向最容易成功？",
+            questions: [
+                { text: "Q1：你的业余时间最喜欢做什么？", opts: [{ label: "刷文字类内容或自己写东西", scores: { 写: 3 } }, { label: "刷图片/视频或自己拍/剪", scores: { 拍: 3 } }, { label: "整理房间、做计划、收纳", scores: { 整: 3 } }, { label: "和朋友聊天、混群、帮人解决问题", scores: { 聊: 3 } }] },
+                { text: "Q2：朋友最常因为什么夸你？", opts: [{ label: "你文笔好/会讲故事", scores: { 写: 2 } }, { label: "你审美不错/拍照好看", scores: { 拍: 2 } }, { label: "你好有条理/什么东西都能找到", scores: { 整: 2 } }, { label: "你好会聊天/情商高", scores: { 聊: 2 } }] },
+                { text: "Q3：你手上最拿得出手的“作品”是什么？", opts: [{ label: "文章、笔记、文案", scores: { 写: 2 } }, { label: "照片、视频、设计图", scores: { 拍: 2 } }, { label: "日程模板、收纳方案", scores: { 整: 2 } }, { label: "聊天截图、社群活跃记录", scores: { 聊: 2 } }, { label: "没有", scores: {} }] },
+                { text: "Q4：如果有人付费请你做一件事，你最有信心做哪件？", opts: [{ label: "写一篇产品文案/读后感", scores: { 写: 3 } }, { label: "拍一组照片/剪一个短视频", scores: { 拍: 3 } }, { label: "帮人整理电脑文件/房间/时间表", scores: { 整: 3 } }, { label: "当树洞倾听、做情感/职场咨询", scores: { 聊: 3 } }] },
+                { text: "Q5：你更愿意通过什么样的方式变现？", opts: [{ label: "接单（稿费、文案费）", scores: { 写: 1, 拍: 1 } }, { label: "做账号（广告、带货）", scores: { 写: 2, 拍: 2 } }, { label: "卖服务（咨询、规划、陪跑）", scores: { 整: 2, 聊: 2 } }, { label: "卖产品（模板、电子书）", scores: { 整: 2, 写: 1 } }] },
+                { text: "Q6：你现在的“执行力”水平是？", opts: [{ label: "能坚持更新，不怕初期没人看", scores: { 写: 2, 拍: 2, 整: 2, 聊: 2 } }, { label: "需要有人催或正反馈才能坚持", scores: {} }, { label: "三分钟热度，容易放弃", scores: { 写: -1, 拍: -1, 整: -1, 聊: -1 } }] }
+            ],
+            compute: (answers) => {
+                let score = { 写: 0, 拍: 0, 整: 0, 聊: 0 };
+                answers.forEach(a => { for (let k in a) if (score[k] !== undefined) score[k] += a[k]; });
+                let total = Object.values(score).reduce((s, v) => s + v, 0);
+                let hasNegative = answers.some(a => a['写'] === -1);
+                if (total < 3 || hasNegative) return { type: "先别搞副业", text: "“你现在不太适合搞副业，不是能力问题，是状态问题。你可能主业太累、或者自制力像纸糊的。强行搞副业只会让你更焦虑。建议：先存一笔‘副业启动金’（比如500块），然后报一个最便宜的体验课（9.9元那种），试一周。如果连这点都坚持不下去，就先专注主业和休息。副业是锦上添花，不是雪中送炭。你连6道题都懒得认真答？那副业也懒得找你。”" };
+                let maxKey = Object.keys(score).reduce((a, b) => score[a] >= score[b] ? a : b, '写');
+                const map = { 写: "写东西", 拍: "拍照/设计", 整: "整理/规划", 聊: "聊天/社交" };
+                const adv = {
+                    写东西: "“你的脑洞和打字速度可以换钱了。适合做：小红书文案、公众号投稿、知乎盐选、甚至淘宝详情页。你不是要成为作家，是成为‘文字打工人’。起步方法：找5个你喜欢的账号，模仿它们的风格写10篇，每篇500字左右。然后去‘稿稿’、‘中国写手之家’、或者直接私信博主问招不招兼职。别一开始就写小说，长尾太久你坚持不住。先接商业文案，有钱才有动力。警告：别在上班时间写，被老板抓住别说我教的。”",
+                    拍照设计: "“你的眼睛能赚钱。适合：手机摄影接单（证件照、产品图）、修图（醒图/美图秀秀模板）、小红书封面设计、甚至定制头像。不用买相机，先用手机拍出100张能看的图。发在小红书或闲鱼，写‘手机摄影，9.9元一张’。接几单后涨价。设计类去‘创客贴’、‘Canva’做模板，有人下载你就有被动收入。注意：别碰盗图，别用甲方没授权的字体。你的副业可能比主业先让你爽到，但别急着裸辞。”",
+                    整理规划: "“你是天生管家型选手。适合：收纳咨询、时间规划陪跑、Excel模板售卖、甚至帮人整理电脑文件/网盘。去闲鱼搜‘收纳整理’、‘日程规划’，看别人怎么报价。你的核心竞争力是‘让人省心’。起步：免费帮三个朋友整理一次，让他们写好评，然后截图发小红书。可以卖‘考研/考公每日计划表’这种低客单价产品，一次制作，无限复制。警告：别做太便宜，你的时间宝贵。另外，别把客户的隐私晒出来。”",
+                    聊天社交: "“你的嘴和情商就是资产。适合：树洞倾听（某宝搜‘陪聊’）、情感/职场轻咨询、社群运营、甚至做连麦主播。但你不需要露脸。起步：在知乎/小红书上回答‘分手了怎么办’、‘工作迷茫’类问题，末尾留‘可私信’，积累案例。然后开一个9.9元/15分钟的咨询。别小看这个，很多人需要的是‘被听到’。警告：别和客户发展私交，别收钱后消失。你卖的是时间，不是灵魂。”"
+                };
+                return { type: map[maxKey], text: adv[map[maxKey]] };
+            }
+        },
+        // 4. 跳槽时机分数
+        {
+            id: 4,
+            title: "⏱️ 最近3个月，跳槽的“时机分数”是多少？",
+            questions: [
+                { text: "Q1：你目前所在的行业发展前景如何？", opts: [{ label: "明显走下坡路/频繁裁员", scores: { base: 20 } }, { label: "平稳或微增长", scores: { base: 10 } }, { label: "上升期/风口行业", scores: { base: 0 } }] },
+                { text: "Q2：你最近一个月主动投递简历并收到面试邀请的比例？", opts: [{ label: "投10份以上，收到3个以上面试", scores: { base: 30 } }, { label: "投了5-10份，收到1-2个面试", scores: { base: 15 } }, { label: "投了很少或没回复", scores: { base: 5 } }, { label: "还没开始投", scores: { base: 0 } }] },
+                { text: "Q3：你现在的薪资与市场同岗位平均水平的差距？", opts: [{ label: "低于市场20%以上", scores: { base: 25 } }, { label: "略低于市场（5%-20%）", scores: { base: 15 } }, { label: "持平", scores: { base: 5 } }, { label: "高于市场", scores: { base: 0 } }] },
+                { text: "Q4：你当前工作的“消耗感”（心累程度）？", opts: [{ label: "每天上班如上坟，严重内耗", scores: { base: 20 } }, { label: "偶尔觉得累，但能忍", scores: { base: 10 } }, { label: "比较轻松，没有负面情绪", scores: { base: 0 } }] },
+                { text: "Q5：你手上是否有“拿得出手”的项目成果或新增技能？", opts: [{ label: "有，近半年有明显亮点", scores: { base: 15 } }, { label: "有，但不太硬或已经过时", scores: { base: 5 } }, { label: "没有明显成果，日常打杂", scores: { base: 0 } }] },
+                { text: "Q6：你的存款能支撑你裸辞后生活多久？", opts: [{ label: "3个月以下", scores: { base: 0 } }, { label: "3-6个月", scores: { base: 5 } }, { label: "6个月以上", scores: { base: 10 } }] }
+            ],
+            compute: (answers) => {
+                let total = answers.reduce((s, a) => s + (a.base || 0), 0);
+                if (total <= 30) return { type: "时机很差", text: "“你现在跳槽等于没带伞往雨里冲——大概率淋成落汤鸡。要么是行业不行、要么是简历没亮点、要么是存款撑不过三个月。别冲动，先花2-3个月补课：更新简历、学一个高频技能（如Excel高级功能、SQL基础）、存够3个月生活费。这期间可以看机会但不投，等分数上到60分再说。如果实在忍不了，那就内部转岗或请个短假休息。裸辞不是勇敢，是头铁。”" };
+                if (total <= 60) return { type: "时机一般", text: "“可以准备，但别急着跳。你有一定的跳槽基础，但还不够稳。建议：每周花3小时优化简历和作品集，定向投5家左右‘梦中情司’，不海投。同时刻意在当前工作中积累一个‘可讲出彩’的项目，哪怕是再小的事，把它整理成方法论。给自己3个月期限：如果3个月内没拿到满意的offer，就再留半年。你现在的位置是‘进可攻退可守’，别把牌打烂。”" };
+                if (total <= 90) return { type: "时机不错", text: "“你现在就像站在跳板上，姿势已经摆好，就等发令枪。市场对你有需求，你的简历有卖点，行业也不算差。建议：立刻把招聘软件更新到最新状态，开启‘骑驴找马’模式。目标是在2-3个月内拿到至少一个涨幅20%以上的offer。别告诉同事，别在上班时间面试（借‘看牙’、‘家里漏水’等理由）。拿到offer后可以跟现老板谈counter offer，但大概率不建议留——想走的人迟早会走。”" };
+                return { type: "时机绝佳", text: "“你还在等什么？等老板给你涨薪还是等公司上市？你的行业、能力、市场反馈都在告诉你：现在是你的卖方市场。建议：如果存款充裕，甚至可以裸辞休息半个月再全力找，因为你大概率不愁下家。投简历时大胆要价，比预期多20%。面试时记住：不只是公司在面你，你也在面公司。拿到3个以上offer后再做决定。提醒：别因为钱多就去一个烂坑，多问问‘为什么这个岗位空缺’。你值得更好的平台。”" };
+            }
+        },
+        // 5. 性格弱点
+        {
+            id: 5,
+            title: "😩 我在职场中最容易吃亏的性格弱点是什么？",
+            questions: [
+                { text: "Q1：当同事把不属于你的工作推给你时，你通常的反应是？", opts: [{ label: "心里不愿意但还是接了", scores: { 不敢: 3 } }, { label: "接之前会嘟囔一句“我很忙”但还是做", scores: { 不敢: 2 } }, { label: "直接说“这不是我的活”", scores: {} }, { label: "接了然后到处抱怨", scores: { 过: 1, 不敢: 1 } }] },
+                { text: "Q2：你加班的主要原因是什么？", opts: [{ label: "领导还没走，我不敢走", scores: { 不敢: 1 } }, { label: "自己的事+别人的事，总也做不完", scores: { 过: 3 } }, { label: "效率低或白天摸鱼了", scores: {} }, { label: "怕别人觉得我不努力", scores: { 不敢: 2 } }] },
+                { text: "Q3：犯错被领导批评时，你的第一反应是？", opts: [{ label: "解释原因、找借口", scores: { 爱解: 3 } }, { label: "沉默不说话", scores: { 藏: 1 } }, { label: "当场认错，回去再改", scores: {} }, { label: "表面认错，内心不服，脸黑了", scores: { 藏: 3 } }] },
+                { text: "Q4：你的情绪在脸上有多明显？", opts: [{ label: "完全藏不住，开心不开心写在脸上", scores: { 藏: 3 } }, { label: "能忍一阵，但最终会爆发", scores: { 藏: 2 } }, { label: "比较平静，别人看不太出来", scores: {} }, { label: "看情况，对讨厌的人会冷脸", scores: { 藏: 1 } }] },
+                { text: "Q5：你是否经常在事后后悔“当时为什么不那样说”？", opts: [{ label: "经常，觉得自己没说清楚", scores: { 爱解: 2 } }, { label: "经常，觉得自己太怂没拒绝", scores: { 不敢: 2 } }, { label: "偶尔，但总体还好", scores: {} }, { label: "很少后悔", scores: {} }] },
+                { text: "Q6：你觉得自己最容易被同事占便宜的地方是？", opts: [{ label: "总让我帮忙，我不好意思拒绝", scores: { 不敢: 3 } }, { label: "我做的最多，但功劳被抢", scores: { 过: 2 } }, { label: "我一着急就解释很多，显得心虚", scores: { 爱解: 2 } }, { label: "我一生气就翻脸，被说“情绪化”", scores: { 藏: 3 } }] }
+            ],
+            compute: (answers) => {
+                let sc = { 不敢: 0, 过: 0, 爱解: 0, 藏: 0 };
+                answers.forEach(a => { for (let k in a) if (sc[k] !== undefined) sc[k] += a[k]; });
+                let maxKey = Object.keys(sc).reduce((a, b) => sc[a] >= sc[b] ? a : b, '不敢');
+                const map = { 不敢: "不敢拒绝", 过: "过度负责", 爱解: "爱解释", 藏: "藏不住情绪" };
+                const adv = {
+                    不敢: "“你是职场的‘便利贴女孩/男孩’——谁都能撕一张，用完就扔。你不会拒绝，所以杂活累活都是你的；你不敢说不，所以加班加点的也是你。你的善良被当成了廉价劳动力。打破方法：从最小的事情开始练习拒绝。今天就对一件小事说‘我现在没空’，比如‘不好意思，我在赶自己的报告’。你会发现天不会塌，别人反而会开始尊重你的时间。记住：你的工资是公司付的，不是同事付的。帮是情分，不帮是本分。”",
+                    过度: "“你是团队里的‘老妈子’——别人的事你操心，别人的错你背锅。你总想照顾所有人的感受，结果累成狗还没人感激。更惨的是，有些人会故意把烂摊子丢给你，因为你一定会接。打破方法：每次想揽活之前，先问自己‘这真的是我的责任吗？’如果不是，就说‘这部分建议找XXX’。你的责任心要用对地方，不是用来给巨婴擦屁股的。另外，学会拖延：别人的紧急不是你的紧急。让他们等，等久了他们就会自己动手了。”",
+                    爱解: "“你是职场‘辩护律师’——每次被质疑，你的第一反应不是解决问题，而是解释自己为什么没错。但你越解释，别人越觉得你心虚、不靠谱、甚至推卸责任。真相是：职场不关心你的动机，只关心结果和你下一步怎么改。打破方法：下次被批评时，只说三句话：‘好的’，‘我明白了’，‘我马上改’。如果有委屈，等事情结束后单独找领导沟通，不要在公开场合解释。谁先认错谁显得大度，谁先解释谁显得脆弱。”",
+                    藏: "“你是职场‘电视机’——脸上一旦有信号，所有人都能收到。你开心时全世界知道，你生气时空气都凝固。这在职场是大忌，因为情绪会成为别人拿捏你的把柄。你可能因为一个厌烦的表情，被扣上‘不好合作’的帽子。打破方法：在开口或变脸之前，先在心里数三秒。然后问自己：‘这个情绪表达出来对我有利吗？’如果没有，就换成一个中性表情。不需要假笑，只需要不露声色。你可以在回家后骂老板，但在公司，你是可控的成年人。”"
+                };
+                return { type: map[maxKey], text: adv[maxKey] };
+            }
+        },
+        // ---------- 模块6：适合单干/自由职业还是团队协作 ----------
+        {
+            id: 6,
+            title: "🤝 我适合单干/自由职业，还是团队协作？",
+            questions: [
+                { text: "Q1：你一个人待着的时候（超过半天），会感到难受吗？", opts: [{ label: "会，无聊或孤独", scores: { 团队: 2 } }, { label: "偶尔会，但能享受独处", scores: { 单干: 1, 团队: 1 } }, { label: "完全不会，甚至更喜欢一个人", scores: { 单干: 3 } }] },
+                { text: "Q2：你是那种需要“外部压力”才能动起来的人吗？", opts: [{ label: "是，没人催我就拖延", scores: { 团队: 3 } }, { label: "分情况，有时需要有时能自律", scores: { 团队: 1 } }, { label: "不是，我自己就能给自己定KPI并执行", scores: { 单干: 3 } }] },
+                { text: "Q3：当你面对一个复杂的任务时，你更倾向于？", opts: [{ label: "自己琢磨搞定", scores: { 单干: 2 } }, { label: "找人讨论或分工合作", scores: { 团队: 2 } }, { label: "先自己试试，不行再找人", scores: { 单干: 1, 团队: 1 } }] },
+                { text: "Q4：你对风险（收入不稳定、没社保、没团队兜底）的承受能力如何？", opts: [{ label: "很低，稳定第一", scores: { 团队: 3 } }, { label: "中等，可以接受短期波动", scores: { 单干: 1 } }, { label: "很高，愿意为自由冒险", scores: { 单干: 3 } }] },
+                { text: "Q5：你更愿意和什么样的人共事？", opts: [{ label: "能力互补、各自负责一块", scores: { 单干: 1 } }, { label: "一起头脑风暴、互相打气", scores: { 团队: 2 } }, { label: "最好是各做各的，别来烦我", scores: { 单干: 2 } }, { label: "需要一个领导给我方向", scores: { 团队: 2 } }] },
+                { text: "Q6：你过去有没有一个人完成过一个完整项目（从0到1）？", opts: [{ label: "有，而且做得不错", scores: { 单干: 3 } }, { label: "有，但磕磕绊绊或没完成", scores: { 单干: 1 } }, { label: "没有，都是团队合作完成的", scores: { 团队: 1 } }, { label: "没有完整项目经验", scores: { 单干: 0, 团队: 0 } }] }
+            ],
+            compute: (answers) => {
+                let 单干 = 0, 团队 = 0;
+                answers.forEach(a => { 单干 += a.单干 || 0; 团队 += a.团队 || 0; });
+                if (单干 >= 团队 + 3) return { type: "适合单干/自由职业", text: "“你是一只独狼，不喜欢被管、也不喜欢管人。你能自己定计划、自己背锅、自己享受成果。自由职业或创业初期会很适合你，但别盲目裸辞。建议：先用副业试水——周末接单、做个人IP、卖数字产品。连续3个月副业收入超过主业的30%，再考虑全职单干。另外，单干最怕的不是能力不够，是‘孤独+拖延’。你需要自己给自己找外部约束，比如加一个同行社群、每周向朋友汇报进度。你不是没有团队，你是自己的老板+员工+财务+保洁。能吃苦，就能吃肉。”" };
+                if (团队 >= 单干 + 3) return { type: "适合团队协作", text: "“你是群居动物，一个人会死。你需要团队给你归属感、压力带、和甩锅对象（不是）。在大公司或成熟团队里，你才能发挥最大价值。你的优势是协作和沟通，劣势是独立闯关容易熄火。建议：别轻易尝试全职自由职业或创业，你会被孤独和不确定性逼疯。但如果实在想尝试，可以先加入一个远程团队或小工作室，别人给你框架，你安心执行。也别一直做螺丝钉，试着在团队里主动牵头小项目，慢慢培养独立能力。但记住，你不需要变成单干型，找到好的团队也是一种能力。”" };
+                return { type: "混合型（可单干也可团队）", text: "“你是职场两栖动物——能单干也能团战，切换自如。但你需要注意别卡在‘半吊子’状态：单干时嫌没人讨论，团队时嫌人太吵。最合适的模式是：小团队中的核心角色，比如创业公司早期员工、或大公司内的独立项目组。你有自由度，也不缺协作。建议：未来3年多积累‘可迁移资产’（作品集、客户名单、个人品牌），这样随时可以从团队里抽身单干。同时，练习‘向上管理’和‘向下授权’，为带团队做准备。你的可塑性是你的最大优势，别被任何一种模式定义死。”" };
+            }
+        },
+        // 模块7：隐藏天赋领域
+        {
+            id: 7,
+            title: "🎨 什么行业/岗位是我的“隐藏天赋领域”？",
+            questions: [
+                { text: "Q1：你小时候（6-12岁）最喜欢做什么？", opts: [{ label: "画画、做手工、搭配衣服", scores: { 审美: 2 } }, { label: "照顾小动物、安慰人、过家家", scores: { 共情: 2 } }, { label: "拆东西、拼乐高、做数学题", scores: { 逻辑: 2 } }, { label: "跑步、爬树、做模型", scores: { 动手: 2 } }] },
+                { text: "Q2：朋友最常因为什么找你帮忙？", opts: [{ label: "挑礼物、选穿搭、装修建议", scores: { 审美: 2 } }, { label: "情感问题、职场困惑、和对象吵架", scores: { 共情: 3 } }, { label: "分析利弊、做决策、算钱", scores: { 逻辑: 2 } }, { label: "修电脑、搬家、拼家具", scores: { 动手: 2 } }] },
+                { text: "Q3：你刷手机时，最容易停下来看的视频类型是？", opts: [{ label: "设计、绘画、穿搭、家居改造", scores: { 审美: 2 } }, { label: "心理分析、情感故事、访谈", scores: { 共情: 2 } }, { label: "科普、财经分析、逻辑谜题", scores: { 逻辑: 2 } }, { label: "手工制作、修理、烹饪、健身", scores: { 动手: 2 } }] },
+                { text: "Q4：你觉得自己最“不费力”就能做好的事是？", opts: [{ label: "发现美、创造好看的东西", scores: { 审美: 3 } }, { label: "理解别人的情绪、让人感到舒服", scores: { 共情: 3 } }, { label: "整理信息、找出规律、解决复杂问题", scores: { 逻辑: 3 } }, { label: "操作工具、动手实践、把想法落地", scores: { 动手: 3 } }] },
+                { text: "Q5：你更羡慕哪种职业状态？", opts: [{ label: "设计师、摄影师、策展人", scores: { 审美: 2 } }, { label: "心理咨询师、HR、用户研究员", scores: { 共情: 2 } }, { label: "数据分析师、律师、产品经理", scores: { 逻辑: 2 } }, { label: "手工艺人、厨师、工程师", scores: { 动手: 2 } }] },
+                { text: "Q6：如果必须学习一个新技能赚钱，你更想学？", opts: [{ label: "PS/AI/视频剪辑", scores: { 审美: 2 } }, { label: "沟通/谈判/教练技术", scores: { 共情: 2 } }, { label: "SQL/Python/财务分析", scores: { 逻辑: 2 } }, { label: "木工/电工/烘焙/编程（动手型）", scores: { 动手: 2 } }] }
+            ],
+            compute: (answers) => {
+                let sc = { 审美: 0, 共情: 0, 逻辑: 0, 动手: 0 };
+                answers.forEach(a => { for (let k in a) if (sc[k] !== undefined) sc[k] += a[k]; });
+                let maxKey = Object.keys(sc).reduce((a, b) => sc[a] >= sc[b] ? a : b, '审美');
+                const map = { 审美: "审美/创意", 共情: "共情/沟通", 逻辑: "逻辑/分析", 动手: "动手/执行" };
+                const adv = {
+                    审美: "“你的眼睛开了光，能看到别人忽略的美。你天生对颜色、形状、氛围敏感，随手一拍都比别人好看。隐藏天赋领域：设计、穿搭博主、家居软装、短视频剪辑、甚至做PPT。建议：每天拍一张满意的照片发小红书，三个月后你会收到品牌邀约。别浪费时间学程序员，你的脑回路和代码不兼容。但注意：审美容易饿死，需要搭配商业思维（比如学点简单的定价和营销）。把美感变成服务或产品，你就可以靠‘好看’吃饭了。”",
+                    共情: "“你是行走的情绪海绵，能吸能放。你天生知道别人在想什么、需要什么。隐藏天赋领域：用户运营、HR、心理咨询、销售（高阶那种）、教师、甚至当博主（知心姐姐型）。建议：去得到或知乎上回答100个情感/职场问题，你会积累一批忠实粉丝。你的短板是容易吸收负能量，记得建立情绪防火墙——下班后把客户的事关在门外。别去做纯分析的工作，你会抑郁。你的价值在于‘人与人之间’，不是‘数字与数字之间’。”",
+                    逻辑: "“你的大脑是一台冷静的机器，喜欢拆解问题、找规律、下判断。隐藏天赋领域：数据分析、审计、法律、产品经理（逻辑导向）、科研、甚至投资。建议：学一门硬技能（SQL/Python/CPA），你的天花板会很高。你的短板是容易忽略人的因素，做决策时记得问一句‘这个方案对方能接受吗？’。别去做纯创意或纯销售的工作，你会觉得别人都是傻子。你不是傻子，你只是理性得不太可爱。但没关系，理性也能赚钱。”",
+                    动手: "“你是实干家，想法必须在手里捏出来才舒服。你坐不住办公室，受不了漫长的PPT和开会。隐藏天赋领域：手工、烹饪、维修、健身教练、工程师、外科医生、甚至美甲师。建议：去B站或抖音做‘解压手工’或‘实用技巧’类视频，你的手艺会吸引很多观众。你的短板是容易陷入细节、忽略全局，做项目前先花10分钟列步骤再动手。别去做纯战略或纯管理岗位，你会被憋死。你不是没想法，你是更喜欢把想法变成实物。这个时代，动手能力强的人很难被AI取代。”"
+                };
+                return { type: map[maxKey], text: adv[maxKey] };
+            }
+        },
+        // 模块8：收入瓶颈主因
+        {
+            id: 8,
+            title: "💰 我的收入瓶颈，主要是能力问题还是选择问题？",
+            questions: [
+                { text: "Q1：你现在的薪资在同岗位同龄人中大概是什么水平？", opts: [{ label: "偏低（后20%）", scores: { 能力: 2 } }, { label: "中游（40%-60%）", scores: { 能力: 1 } }, { label: "偏高但仍有瓶颈", scores: { 选择: 2 } }] },
+                { text: "Q2：你是否具备一项“离开公司也能赚钱”的核心技能？", opts: [{ label: "有，很明确", scores: { 选择: 2 } }, { label: "有一点，但不精", scores: { 能力: 2 } }, { label: "没有，主要靠平台资源", scores: { 选择: 2 } }] },
+                { text: "Q3：你所在的行业/岗位，头部薪资是你目前薪资的几倍？", opts: [{ label: "1-2倍", scores: { 选择: 3 } }, { label: "3-5倍", scores: { 能力: 3 } }, { label: "5倍以上", scores: { 能力: 2, 选择: 2 } }] },
+                { text: "Q4：你最近一年有没有刻意学习新技能或考取证书？", opts: [{ label: "有，花了时间且用上了", scores: {} }, { label: "有，但没怎么应用", scores: { 能力: 1 } }, { label: "没有，工作太忙或不想学", scores: { 能力: 2 } }] },
+                { text: "Q5：你的收入来源是不是只有“死工资”？", opts: [{ label: "是，只有工资", scores: { 选择: 1 } }, { label: "有副业或被动收入，但不多", scores: {} }, { label: "有多种收入且占比可观", scores: {} }] },
+                { text: "Q6：你有没有主动向老板提过加薪或晋升？", opts: [{ label: "提过，成功了", scores: {} }, { label: "提过，被拒了", scores: { 选择: 2 } }, { label: "没提过，不好意思或觉得没用", scores: { 能力: 1 } }] },
+                { text: "Q7：如果你明天离职，需要多久能找到同等或更高薪资的工作？", opts: [{ label: "1个月内", scores: {} }, { label: "1-3个月", scores: { 能力: 1 } }, { label: "3个月以上或不确定", scores: { 能力: 2, 选择: 1 } }] }
+            ],
+            compute: (answers) => {
+                let 能力 = 0, 选择 = 0;
+                answers.forEach(a => { 能力 += a.能力 || 0; 选择 += a.选择 || 0; });
+                if (能力 >= 选择 + 2) return { type: "瓶颈主要在能力", text: "“你的收入上不去，核心是你现在的‘技能包’不够硬。市场愿意为更稀缺、更专业的人付高价，而你目前的可替代性还太强。这不是说你不努力，而是你努力的方向可能偏了：也许你一直在做低价值的重复劳动，或者你的技能没有及时更新。打破方法：找出你行业里高薪者必备的TOP3技能，然后花3-6个月死磕其中一个。去考证、做项目、甚至自费培训。别抱怨公司不给机会，能力是你唯一能带走的东西。半年后如果还没涨，再来看看是不是选择问题。”" };
+                if (选择 >= 能力 + 2) return { type: "瓶颈主要在选择", text: "“你的问题不是不会干，而是站错了地方。你可能在一个夕阳行业、抠门公司、或者不被重视的岗位上。同样的能力换个地方，薪资可能直接翻倍。建议：花两周时间调研——去招聘网站看同岗位其他公司的薪资范围、问同行、甚至面试几家试试水。如果发现外面普遍更高，那就勇敢跳。别再自我怀疑‘是不是我不够好’，有时候不是你不行，是这里不行。选择大于努力，但选择本身也是一种能力。别懒，去选。”" };
+                return { type: "能力和选择各半", text: "“你的收入瓶颈是能力和选择各打五十大板。你的技能不算差，但也没到不可替代；你的行业不算烂，但也不算好。这是大多数人的常态，也是最容易让人温水煮青蛙的状态。解决方法：双线作战。一边提升一个亮点技能（让你在简历上能写‘精通XXX’），一边开始看外部机会（哪怕不跳，也保持敏感）。给自己6个月，目标：要么内部涨薪20%，要么跳槽涨30%。如果两者都做不到，那就接受现状，但别抱怨。你现在的水平，市场只给这个价。”" };
+            }
+        },
+        // 模块9：不考虑钱最想做的事业类型
+        {
+            id: 9,
+            title: "🌈 如果我不考虑钱，最想做的事业类型是什么？",
+            questions: [
+                { text: "Q1：如果你财务自由了，你最想花时间做什么？", opts: [{ label: "写小说、画画、做音乐、设计一个作品", scores: { 创造: 3 } }, { label: "做公益、帮助人、养动物、教书", scores: { 服务: 3 } }, { label: "旅行、学新语言、研究冷门知识、开飞船", scores: { 探索: 3 } }, { label: "创业、投资、当领导、改变行业规则", scores: { 掌控: 3 } }] },
+                { text: "Q2：你最喜欢看的纪录片或真人秀类型是？", opts: [{ label: "匠人、设计、艺术创作过程", scores: { 创造: 2 } }, { label: "医疗、支教、动物救助", scores: { 服务: 2 } }, { label: "探险、宇宙、历史未解之谜", scores: { 探索: 2 } }, { label: "商业战争、富豪传记、政治博弈", scores: { 掌控: 2 } }] },
+                { text: "Q3：你童年时期最让你兴奋的事情是？", opts: [{ label: "搭积木、画画、编故事", scores: { 创造: 2 } }, { label: "照顾弟弟妹妹或宠物、当小老师", scores: { 服务: 2 } }, { label: "拆闹钟、抓昆虫、看星空", scores: { 探索: 2 } }, { label: "当孩子王、组织游戏、卖东西", scores: { 掌控: 2 } }] },
+                { text: "Q4：你更希望别人怎么形容你？", opts: [{ label: "有才华、有创意", scores: { 创造: 2 } }, { label: "善良、温暖、值得信赖", scores: { 服务: 2 } }, { label: "有趣、好奇、见多识广", scores: { 探索: 2 } }, { label: "有魄力、能成事、有领导力", scores: { 掌控: 2 } }] },
+                { text: "Q5：你做梦梦到自己在做什么（工作场景）时，醒来会觉得“这梦真爽”？", opts: [{ label: "在工作室里专注创作", scores: { 创造: 2 } }, { label: "在帮助一个具体的人解决问题后的笑容里", scores: { 服务: 2 } }, { label: "在野外或陌生城市发现新事物", scores: { 探索: 2 } }, { label: "在会议室拍板决定大事", scores: { 掌控: 2 } }] },
+                { text: "Q6：你羡慕以下哪种人的状态？", opts: [{ label: "自由插画师、独立游戏开发者", scores: { 创造: 2 } }, { label: "乡村教师、无国界医生", scores: { 服务: 2 } }, { label: "纪录片导演、探险家、宇航员", scores: { 探索: 2 } }, { label: "公司CEO、基金合伙人、市长", scores: { 掌控: 2 } }] }
+            ],
+            compute: (answers) => {
+                let sc = { 创造: 0, 服务: 0, 探索: 0, 掌控: 0 };
+                answers.forEach(a => { for (let k in a) if (sc[k] !== undefined) sc[k] += a[k]; });
+                let maxKey = Object.keys(sc).reduce((a, b) => sc[a] >= sc[b] ? a : b, '创造');
+                const map = { 创造: "创造型", 服务: "服务型", 探索: "探索型", 掌控: "掌控型" };
+                const adv = {
+                    创造: "“你骨子里是个艺术家，哪怕你现在在写周报。你喜欢从无到有地创造一些东西，然后看着它说‘这是我做的’。如果不用考虑钱，你可能是个小说家、画家、独立游戏开发者、或者做手工艺的。但现实是，创造需要时间吃饭。建议：别把创造和赚钱对立。你可以用一个‘无聊但有钱’的工作养着‘热爱但没钱’的创造，或者把你的创造力嫁接到商业上（比如做设计、写文案）。至少每周留出5小时纯粹为自己创造，否则你会枯萎。记住：你不需要成为梵高，但你得有个后院让你涂鸦。”",
+                    服务: "“你天生是个‘助人为乐’的体质，别人开心你就开心。如果不用考虑钱，你可能在支教、做心理咨询、开流浪动物收容所、或者当临终关怀志愿者。你的满足感来自‘被需要’和‘看到别人变好’。但小心：服务型人格容易燃烧自己照亮别人，最后只剩灰烬。建议：先建立自己的能量补给站——每天留一小时给自己，别所有时间都给别人。服务可以是一份职业（比如医生、老师、社工），但也可以是一份副业（比如周末做公益）。别去创业当老板，你会被竞争和内卷搞抑郁。你的战场是‘人心’，不是‘市场’。”",
+                    探索: "“你心里住着一个冒险家，对未知永远充满好奇。如果不用考虑钱，你可能在环游世界、学各种无用但有趣的技能、研究黑洞或蚂蚁的社交行为。你的恐惧不是‘没钱’，而是‘重复’和‘无聊’。但现实是，探索需要门票。建议：把探索和职业结合——做旅行博主、科普作者、产品经理（研究用户）、甚至侦探。或者先用稳定工作攒够‘探索基金’，然后给自己一年Gap Year。别强迫自己在同一个岗位待十年，你会发疯。你的人生不需要垂直爬升，你可以水平漫游。只要别打着‘探索’的名义逃避责任就行。”",
+                    掌控: "“你想坐主桌，想拍板，想看到自己的想法被几百人执行。如果不用考虑钱，你可能在创业、做投资人、当市长、或者开一家自己的公司。你喜欢的是‘影响力’和‘局面由我定’。但小心：掌控欲容易变成控制狂。建议：先从小型掌控开始——组织一个兴趣社团、领导一个小项目、或者当一次家庭年夜饭的总导演。积累经验后再玩大的。别一上来就辞职创业，你可能会被现实教做人。你适合在规则清晰、有上升通道的领域（如商业、政治、大型组织）里向上爬。别去做艺术家或自由职业者，你会因为没有‘可掌控的东西’而焦虑。”"
+                };
+                return { type: map[maxKey], text: adv[maxKey] };
+            }
+        },
+        // 模块10：未来一年事业关键词
+        {
+            id: 10,
+            title: "🔮 我未来一年的事业关键词是“突破”、“稳定”还是“转型”？",
+            questions: [
+                { text: "Q1：你目前对主业的心态是？", opts: [{ label: "想往更高位置冲一冲", scores: { 突破: 3 } }, { label: "保持现状，别出乱子就行", scores: { 稳定: 3 } }, { label: "觉得没意思，想换赛道/行业", scores: { 转型: 3 } }, { label: "不确定，迷茫中", scores: { 稳定: 1 } }] },
+                { text: "Q2：你的工作年限和所处阶段是？", opts: [{ label: "0-3年，还在探索期", scores: { 突破: 2, 转型: 1 } }, { label: "3-7年，有积累但平台期", scores: { 突破: 2, 转型: 2 } }, { label: "7年以上，资深但触顶", scores: { 转型: 3, 突破: 1 } }, { label: "刚稳定下来（如刚转正、刚升职）", scores: { 稳定: 2 } }] },
+                { text: "Q3：你最近三个月是否有明显的业绩/技能突破？", opts: [{ label: "有，被认可或自己有成就感", scores: { 稳定: 1 } }, { label: "没有，甚至退步或重复劳动", scores: { 突破: 2, 转型: 2 } }, { label: "不好不坏，像温水", scores: { 突破: 1 } }] },
+                { text: "Q4：你对行业/岗位的未来趋势判断是？", opts: [{ label: "还在上升期，值得深耕", scores: { 突破: 3 } }, { label: "平稳，但不会消失", scores: { 稳定: 2 } }, { label: "明显下行，AI或政策冲击", scores: { 转型: 3 } }, { label: "看不清，但有点慌", scores: { 转型: 1 } }] },
+                { text: "Q5：你最近半年有没有尝试过新的工作内容或副业？", opts: [{ label: "有，而且效果不错", scores: { 突破: 2, 转型: 1 } }, { label: "有，但还在试水阶段", scores: { 突破: 1, 转型: 1 } }, { label: "没有，忙到没时间或没兴趣", scores: { 稳定: 1 } }] },
+                { text: "Q6：如果未来一年只能选一个目标，你更倾向于？", opts: [{ label: "职位/薪资上一个台阶", scores: { 突破: 3 } }, { label: "不出错，保住饭碗，少加班", scores: { 稳定: 3 } }, { label: "换一个更喜欢/更有前途的领域重新开始", scores: { 转型: 3 } }] }
+            ],
+            compute: (answers) => {
+                let 突破 = 0, 稳定 = 0, 转型 = 0;
+                answers.forEach(a => { 突破 += a.突破 || 0; 稳定 += a.稳定 || 0; 转型 += a.转型 || 0; });
+                let total = 突破 + 稳定 + 转型;
+                if (total < 5) return { type: "重新评估", text: "“你未来一年的关键词还不是‘突破、稳定、转型’中的任何一个，因为你可能正处在‘迷茫期’或‘休整期’。建议：不要逼自己立刻选方向。先花一个月做三件事：1）记录每天工作情绪，找出哪些事让你开心、哪些让你痛苦；2）找三个人（不同行业、不同年龄）聊他们的工作状态；3）做一次职业性格测试（MBTI、霍兰德等）。一个月后再来测一次这道题。你不需要马上决定，但你需要开始收集信息。方向不清的时候就慢下来，总比在泥坑里狂奔要好。”" };
+                if (突破 >= 稳定 && 突破 >= 转型) return { type: "突破", text: "“明年你的关键词是：别怂，往上爬。你已经有了一定的积累，瓶颈不在能力，而在‘要不要再拼一把’。建议：主动争取一个难啃的项目、向老板提出晋升申请、或者挑战更高的KPI。你需要的是曝光度和勋章。别怕犯错，你现在犯错的成本还能承受。具体动作：Q1结束时拿出一个超出预期的成果，然后用这个成果去谈加薪或升职。如果公司不给你，就带着成果跳槽。你的赛道远没到头，别在还有力气冲刺的时候散步。”" };
+                if (稳定 >= 突破 && 稳定 >= 转型) return { type: "稳定", text: "“明年你的关键词是：守城。你已经到了一个相对舒适的位置或者正处于生活变动期（买房、结婚、育儿等），求稳比求快更明智。建议：不要轻易跳槽或转行，先把现有的工作做深做细，保证不出大错。同时可以优化效率，腾出时间给自己或家庭。但稳定不等于停滞，你可以用20%的精力学一个与现在工作相关的边缘技能（比如Excel高级功能、汇报技巧），既不折腾又能防身。记住：稳定不是躺平，是把现有阵地打造得更牢固。等外界的风浪过去了，你再考虑进攻。”" };
+                return { type: "转型", text: "“明年是你的换跑道之年。你现在的行业/岗位已经到了天花板或者让你痛苦很久了。别再骗自己‘再忍忍就习惯了’。建议：接下来三个月，花50%的业余时间调研新方向——访谈至少5个你想转行的人、上完一门入门课、做一个小项目试手。然后投10份简历测试水温。转型不一定一次到位，可以‘先内部转岗’或‘副业试水再全职’。别裸辞，除非你存款能撑一年。你现在的痛苦不是你的错，是错配。换个地方，你可能就活了。但换之前，想清楚：你是逃避困难，还是追求真正适合的？”" };
+            }
+        }
+    ];
+
+    // 渲染全部模块
+    function renderAllModules() {
+        const container = document.getElementById('modulesContainer');
+        container.innerHTML = '';
+        modules.forEach(mod => {
+            const card = document.createElement('div');
+            card.className = 'test-card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <h2>${mod.title}</h2>
+                    <div class="badge-module"><i class="fas fa-dice-d6"></i> 毒舌解盘</div>
+                </div>
+                <div class="questions-area" id="module-${mod.id}-area"></div>
+            `;
+            container.appendChild(card);
+            const area = card.querySelector(`.questions-area`);
+            let html = '';
+            mod.questions.forEach((q, qidx) => {
+                html += `<div class="q-item" data-qidx="${qidx}">
+                            <div class="q-text"><i class="fas fa-question-circle"></i> ${q.text}</div>
+                            <div class="options-group" data-qidx="${qidx}">`;
+                q.opts.forEach((opt, oidx) => {
+                    html += `<label class="opt-label" data-val='${JSON.stringify(opt.scores)}'>
+                                <input type="radio" name="q${mod.id}_${qidx}" value="${oidx}"> ${opt.label}
+                            </label>`;
+                });
+                html += `</div></div>`;
+            });
+            html += `<button class="action-btn" data-module="${mod.id}"><i class="fas fa-chart-simple"></i> 揭晓毒舌真相</button>
+                     <div class="result-box" style="display:none;"></div>`;
+            area.innerHTML = html;
+
+            // 选项高亮
+            area.querySelectorAll('.opt-label').forEach(lbl => {
+                lbl.addEventListener('click', () => {
+                    const radio = lbl.querySelector('input');
+                    if (radio) radio.checked = true;
+                    const parentGroup = lbl.closest('.options-group');
+                    parentGroup.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
+                    lbl.classList.add('selected');
+                });
+            });
+
+            const btn = area.querySelector('.action-btn');
+            const resultDiv = area.querySelector('.result-box');
+            btn.addEventListener('click', () => {
+                let answers = [];
+                let missing = false;
+                mod.questions.forEach((_, qidx) => {
+                    const selected = area.querySelector(`input[name="q${mod.id}_${qidx}"]:checked`);
+                    if (!selected) { missing = true; return; }
+                    const parentLabel = selected.closest('.opt-label');
+                    const scoresRaw = parentLabel.getAttribute('data-val');
+                    const scores = JSON.parse(scoresRaw);
+                    answers.push(scores);
+                });
+                if (missing) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.innerHTML = `<i class="fas fa-hand-peace"></i> 请先把所有问题选完，别偷懒～ 毒舌虽毒，但需要你的诚意。`;
+                    return;
+                }
+                const res = mod.compute(answers);
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `<i class="fas fa-crystal-ball"></i> <strong>${res.type}</strong><br>${res.text}`;
+            });
+        });
+    }
+
+    window.onload = renderAllModules;
+</script>
+</body>
+</html>

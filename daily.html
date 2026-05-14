@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>每日一占 · 遇事不决灵占馆</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0718;
+            font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
+            color: #f0eefc;
+            line-height: 1.4;
+            padding: 2rem 1rem;
+        }
+        /* 背景纹理 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(110, 70, 200, 0.15), transparent 60%),
+                        repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        /* 头部 */
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: rgba(15, 12, 32, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 100, 220, 0.3);
+        }
+        .hero h1 {
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            background: linear-gradient(135deg, #FFFFFF, #D9B4FF, #FF87C8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .hero .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .badge {
+            background: rgba(255, 120, 210, 0.18);
+            padding: 0.3rem 1rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            border: 0.5px solid rgba(255, 130, 200, 0.5);
+        }
+        .slogan {
+            font-size: 0.8rem;
+            color: #cbbaff;
+        }
+        /* 测试卡片 */
+        .daily-block {
+            background: rgba(18, 16, 40, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.8rem;
+            border-left: 5px solid #ff77c6;
+            transition: 0.2s;
+        }
+        .daily-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ffd6f0;
+        }
+        .question-item {
+            margin-bottom: 1.2rem;
+            background: rgba(0,0,0,0.25);
+            border-radius: 1rem;
+            padding: 0.8rem;
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.3rem;
+        }
+        .opt-label {
+            background: rgba(255,255,240,0.07);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .opt-label.selected {
+            background: #bf5eff40;
+            border-color: #e27eff;
+            color: white;
+        }
+        input[type="radio"], input[type="number"], select {
+            accent-color: #d96eff;
+        }
+        .zodiac-select, .number-input {
+            background: #1e183a;
+            border: 1px solid #b77eff;
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-size: 0.9rem;
+            width: auto;
+        }
+        button {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #0a041a;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        button:hover {
+            transform: scale(0.97);
+        }
+        .submit-report-btn {
+            width: 100%;
+            max-width: 300px;
+            margin: 1rem auto;
+            display: block;
+            font-size: 1.1rem;
+        }
+        .report-area {
+            background: rgba(0,0,0,0.55);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid #ff93d0;
+        }
+        .result-chunk {
+            margin-bottom: 1.2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #6b4c9e;
+        }
+        .result-chunk:last-child {
+            border-bottom: none;
+        }
+        .result-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffbcfa;
+            margin-bottom: 0.5rem;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6b62a0;
+            margin-top: 2rem;
+        }
+        @media (max-width: 700px) {
+            .container { padding: 0 0.5rem; }
+            .daily-block { padding: 1rem; }
+        }
+        .lingxi-mini {
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .lingxi-btn {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #bd8eff;
+            border-radius: 80px;
+            padding: 0.5rem 1.5rem;
+            display: inline-flex;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        .back-home { display: inline-block; margin-bottom: 1rem; background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; color: #ffbbf0; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="hero">
+        <h1>🌞 每日一占 · 毒舌改运 🌞</h1>
+        <div class="badge-group">
+            <span class="badge"><i class="fas fa-feng-shui"></i> 玄学风水专业度</span>
+            <span class="badge"><i class="fas fa-brain"></i> 正统心理学底层逻辑</span>
+            <span class="badge"><i class="fas fa-bolt"></i> 极致年轻化潮流玩法</span>
+        </div>
+        <div class="slogan"><i class="fas fa-crystal-ball"></i> 拒绝土味·拒绝废话·犀利戳心·灵魂共鸣·不贩卖焦虑·只给正向指引</div>
+    </div>
+
+    <!-- 所有10个模块动态生成，但为了方便维护直接写HTML+JS渲染 -->
+    <div id="dailyFormContainer"></div>
+    <div class="lingxi-mini">
+        <div class="lingxi-btn" id="lingxiSurpriseBtn"><i class="fas fa-gem"></i> 灵犀测 · 一秒戳心</div>
+        <div id="lingxiTip" style="font-size:0.8rem; margin-top:8px;">⚡ 戳一下，接收灵魂共鸣短句</div>
+    </div>
+    <button class="submit-report-btn" id="genFullReportBtn"><i class="fas fa-chart-simple"></i> 生成今日完整运势报告 ✨</button>
+    <div id="fullReportArea" class="report-area" style="display: none;"></div>
+    <div class="footer">🌙 遇事不决灵占馆 · 每日一占 | 毒舌但有用，看完别打我</div>
+</div>
+
+<script>
+    // ---------- 1. 幸运色逻辑 ----------
+    function getLuckyColor() {
+        // 收集6题选项值
+        let scores = { "红色":0, "黄色":0, "蓝色":0, "绿色":0, "紫色":0, "粉色":0, "白色":0, "黑色":0 };
+        for(let i=0;i<6;i++){
+            let selected = document.querySelector(`input[name="color_q${i}"]:checked`);
+            if(selected) scores[selected.value] += 1;
+        }
+        let priorityOrder = ["红色","黄色","蓝色","绿色","紫色","粉色","白色","黑色"];
+        let maxColor = priorityOrder.find(c => scores[c] === Math.max(...Object.values(scores)));
+        return maxColor || "黑色";
+    }
+    const colorTexts = {
+        "红色": "“你今天像一只愤怒的番茄，又红又燥。适合去吵架（不是），适合推进拖了三个月的事。把微信头像换成红色感叹号，效率+50%。注意：别对无辜的人喷火，否则晚上你会后悔得想把自己凉拌。”",
+        "黄色": "“你是今天的小太阳，但小心刺眼。适合发‘哈哈哈哈哈’的朋友圈，会吸引同样沙雕的贵人。禁忌：别在下午3点做重大决定，那时你的智商和蜜蜂差不多。如果非要决定，先吃块糖。”",
+        "蓝色": "“你今天是一台冷静的空调，但容易把自己冻着。适合回邮件、列清单、撕逼（如果必须）。禁忌：别安慰别人，你的‘理性分析’会让人更想哭。建议对镜子说一句‘关我屁事’，你会爽到。”",
+        "绿色": "“你今天像个行走的盆栽，佛系又养生。适合摸鱼（不是），适合去公园发呆。如果非要工作，就做那些‘不用动脑子’的杂活。晚上吃一盘青菜，你会觉得世界还能救。警告：别喝奶茶，会打破你的仙气。”",
+        "紫色": "“你今天神秘得像没信号的WiFi——看着有，连不上。适合一个人待着、写日记、删照片。如果有人问你‘怎么了’，你就说‘我在修仙’。晚上适合看烂片，别动脑子，动了你就输了。”",
+        "粉色": "“你今天是一颗棉花糖，软得谁都想捏一把。适合撒娇、收快递、点一杯全糖奶茶。但警告：你今天容易恋爱脑，别给前任发消息，否则明天你恨不得剁手。如果非要发，先发给我，我骂醒你。”",
+        "白色": "“你今天干净得像一张A4纸，但也无聊得像一张A4纸。适合早起、整理桌面、拒绝所有人的饭局。你需要的不是好运，是一个能让你笑出来的傻逼朋友。如果找不到，去看土味视频。”",
+        "黑色": "“你今天是一件黑色高领毛衣——很酷，但也很装。适合怼人、删好友、写一篇阴阳怪气的微博。能量提示：下午4点你会突然很丧，去吃一块黑巧克力，别喝酒。如果还是丧，就睡一觉，明天再做人。”"
+    };
+
+    // 2. 情绪陷阱
+    function getTrapType() {
+        let trapScores = { "焦虑":0, "讨好":0, "灾难化":0, "完美主义":0 };
+        // Q1 焦虑
+        if(document.querySelector('input[name="trap0"]:checked')?.value === "yes") trapScores["焦虑"] += 1;
+        // Q2 Q4 讨好
+        if(document.querySelector('input[name="trap1"]:checked')?.value === "yes") trapScores["讨好"] += 1;
+        if(document.querySelector('input[name="trap3"]:checked')?.value === "yes") trapScores["讨好"] += 1;
+        // Q3 灾难化
+        if(document.querySelector('input[name="trap2"]:checked')?.value === "yes") trapScores["灾难化"] += 1;
+        // Q5 完美主义
+        if(document.querySelector('input[name="trap4"]:checked')?.value === "yes") trapScores["完美主义"] += 1;
+        let total = Object.values(trapScores).reduce((a,b)=>a+b,0);
+        if(total === 0) return "神仙";
+        let order = ["焦虑","讨好","灾难化","完美主义"];
+        let maxType = order.find(t => trapScores[t] === Math.max(...Object.values(trapScores)));
+        return maxType;
+    }
+    const trapTexts = {
+        "焦虑": "“你活像一部没信号的手机——一直在搜索，永远连不上。今天放下手机去拉屎，拉完再想。如果还焦虑，就把‘烦死了’换成‘然后呢’，问自己三次，你就发现事情没那么大。建议设置一个‘焦虑闹钟’：每次焦虑只允许自己烦3分钟。”",
+        "讨好": "“你把自己活成了‘好的呢’复读机。今天试着说一次‘我不要’，你会发现天塌不下来，只会塌你的假人设。建议把手机壁纸换成‘关我屁事’。如果实在不敢拒绝，就先拖延。”",
+        "灾难化": "“你脑子里在拍灾难片，可惜你不是导演。事情有80%比你想的简单，剩下20%你控制不了。去洗把脸，然后对自己说‘最坏也不过是…’——说出口你就觉得好笑了。”",
+        "完美主义": "“你想把每件事做成米其林，但今天你只有泡面食材。允许自己交一份‘60分卷子’，你会发现没人扣你分。今天做任何事前先喊‘老子不完美，咋了？’然后直接开干。”",
+        "神仙": "“恭喜你，今天你的情绪稳得像一只老乌龟。你没有任何明显的情绪陷阱。继续保持。但小心：太稳了容易无聊，建议你今天主动挑一件小事搞砸它（比如故意把咖啡洒在桌上），体验一下失控的快乐。”"
+    };
+
+    // 3. 事情进展
+    function getProgressCard() {
+        let total = 0;
+        for(let i=0;i<6;i++){
+            let selected = document.querySelector(`input[name="prog${i}"]:checked`);
+            if(selected) total += parseInt(selected.value);
+        }
+        if(total <= 3) return "迷雾牌";
+        if(total <= 6) return "潮汐牌";
+        if(total <= 9) return "星尘牌";
+        return "旭日牌";
+    }
+    const progressTexts = {
+        "旭日牌": "“会！而且比你想象的快。下午2点前会有明确信号（消息、电话、或者突然的灵感）。但记住：别反复检查，越盯越慢。建议：把手机关静音放抽屉里，1小时后再看，惊喜会翻倍。”",
+        "星尘牌": "“进展会超出预期，但需要你主动推一次。比如：问一句‘还有没有别的可能？’或补一份资料。别等，等就没星星了。你今天的一个小动作，会在傍晚时发酵成好消息。动手吧，懒鬼。”",
+        "潮汐牌": "“表面没动静，暗流已经在推了。晚上8点后你会得到一个线索。建议你现在就去干别的事，比如刷鞋、给绿萝浇水。不要反复刷那个对话框，你今天刷不出结果，但明天可以。”",
+        "迷雾牌": "“今天不是答案日。但你会明白‘原来这件事没那么重要’。如果非要行动，只做最轻的一步（发个‘在吗’或查个基础资料）。别投入情绪。建议：把这件事写下来，明天早上再看。”"
+    };
+
+    // 4. 出击/等待
+    function getAttackWait() {
+        let attackScore = 0, waitScore = 0;
+        for(let i=0;i<6;i++){
+            let selected = document.querySelector(`input[name="aw${i}"]:checked`);
+            if(selected){
+                let [a,w] = selected.value.split(',').map(Number);
+                attackScore += a;
+                waitScore += w;
+            }
+        }
+        return attackScore > waitScore ? "出击" : "等待";
+    }
+    const awTexts = {
+        "出击": "“你今天像一把刚磨好的刀，别放在柜子里生锈。适合在上午10-11点做‘需要勇气’的事（发消息、约人、提方案）。禁忌：别在午饭前做重大决定，饿着肚子容易乱咬人。出击口诀：‘先做再想，错了就认，反正没人记得你昨天干了啥。’ 现在就去，别刷手机了。”",
+        "等待": "“你今天是一只警觉的猫头鹰，但别白天扑腾。任何冲动决定都会在傍晚让你后悔得想扇自己。建议你只做‘收集信息’的事（看资料、听八卦、列清单），晚饭后再判断。等待不是偷懒，是让子弹飞一会儿。”"
+    };
+
+    // 5. 星座贵人 (元素分组)
+    const zodiacMap = {
+        "白羊座":{ element:"火", same:"狮子座", complement:"天秤座" },
+        "狮子座":{ element:"火", same:"射手座", complement:"水瓶座" },
+        "射手座":{ element:"火", same:"白羊座", complement:"双子座" },
+        "金牛座":{ element:"土", same:"处女座", complement:"巨蟹座" },
+        "处女座":{ element:"土", same:"摩羯座", complement:"双鱼座" },
+        "摩羯座":{ element:"土", same:"金牛座", complement:"天蝎座" },
+        "双子座":{ element:"风", same:"天秤座", complement:"射手座" },
+        "天秤座":{ element:"风", same:"水瓶座", complement:"白羊座" },
+        "水瓶座":{ element:"风", same:"双子座", complement:"狮子座" },
+        "巨蟹座":{ element:"水", same:"天蝎座", complement:"摩羯座" },
+        "天蝎座":{ element:"水", same:"双鱼座", complement:"金牛座" },
+        "双鱼座":{ element:"水", same:"巨蟹座", complement:"处女座" }
+    };
+    function getZodiacAdvice(zodiac) {
+        let info = zodiacMap[zodiac];
+        if(!info) return "✨ 选择星座后查看贵人";
+        let same = info.same, comp = info.complement;
+        return `同元素贵人（${same}）：“和你${zodiac.includes('火')?'一样火':zodiac.includes('土')?'一样土':zodiac.includes('风')?'一样飘忽':'一样水'}的${same}，今天会点燃/稳住你的能量。主动聊一句，运气+30%。”<br><br>互补元素贵人（${comp}）：“和你截然相反的${comp}，能帮你刹车/助推。今天如果有个${comp}的人给你建议，别烦，听进去。犹豫不决时找他们聊聊。”`;
+    }
+
+    // 6. 超常发挥
+    function getTalentArea() {
+        let scores = { "工作":0, "社交":0, "创意":0, "学习":0, "运动":0 };
+        for(let i=0;i<5;i++){
+            let selected = document.querySelector(`input[name="talent${i}"]:checked`);
+            if(selected){
+                let val = selected.value;
+                let pairs = JSON.parse(val);
+                for(let j=0;j<pairs.length;j+=2){
+                    scores[pairs[j]] += pairs[j+1];
+                }
+            }
+        }
+        let order = ["创意","社交","工作","学习","运动"];
+        let maxArea = order.find(a => scores[a] === Math.max(...Object.values(scores)));
+        return maxArea;
+    }
+    const talentTexts = {
+        "工作": "“你今天是一只上了发条的工作驴，效率高得吓人。适合处理积压任务、做表格、回邮件。你会被至少一个人夸‘靠谱’。但警告：别顺手接别人的活，你今天太猛容易变傻。建议：每做完一件事就站起来扭两下。”",
+        "社交": "“你今天嘴开了光，说什么都招人喜欢。适合组局、约饭、发朋友圈。你的一句无心话会帮到某个需要的人。注意：别因为太嗨就答应不想去的局，你的‘好啊’说得太快。建议：今天多听少说，效果翻倍。”",
+        "创意": "“你今天脑洞开得像被门夹过——又痛又爽。灵感像喝了红牛的兔子。适合写东西、拍视频、画图。但警告：别在下午3点前做执行，先记下来，晚上再筛选。建议：把想到的疯狂主意发给一个沙雕朋友。”",
+        "学习": "“你今天脑子像新买的硬盘——又空又能装。适合看教程、听播客、刷题、背单词。平时看不懂的今天突然懂了。禁忌：别一口气学太多，你会把自己撑吐。建议：每学25分钟就刷5分钟土味视频。”",
+        "运动": "“你今天身体里住着一头野兽，不动就难受。适合跑步、打球、爬楼梯。你会发现自己体力比想象中好。注意：别一开始就冲太猛，否则后半场像条死狗。建议：运动前先热身3分钟。”"
+    };
+
+    // 7. 心情数字
+    const moodTexts = {
+        1: "“整理手机相册。删掉那些拍糊了的、重复的、还有前任的截图。删完你会觉得人生清爽了20%。建议：边删边骂‘这拍的什么玩意儿’，效果加倍。”",
+        2: "“给一个老朋友发‘突然想到你’。别发‘在吗’，别发小作文。就五个字。对方可能会回你一个表情包，然后你们聊三句就冷场——没关系，你心情已经好了。”",
+        3: "“做一顿最简单的饭，哪怕只是泡面加蛋。别点外卖。看着水烧开、面煮软、蛋慢慢凝固——这个过程比你刷一小时手机管用。”",
+        4: "“出门散步15分钟，不许看手机。往左走，别规划路线。看一棵树、看一只狗。回来你会觉得刚才烦的那件事变小了。”",
+        5: "“把购物车里放了很久的东西删掉三分之一。那些‘以后可能用’、‘打折但不需要’的东西，删。你会获得一种‘我不需要那么多也能活’的快感。”",
+        6: "“洗个澡，从头到脚。水温比平时高一点。唱一首跑调的歌。吹头发的时候对着镜子翻个白眼。出来你会觉得换了一个人。”",
+        7: "“写三件今天已经发生的小好事。比如‘没迟到’、‘咖啡没洒’。再烂的一天也能凑出三件。写下来，读一遍。你会发现自己其实没惨到需要发朋友圈求安慰。”",
+        8: "“扔掉一件你早就想扔但一直没扔的东西。过期的药、坏了的耳机、不再穿的衣服。扔的时候说一句‘拜拜了您嘞’。你会听到心里‘咔嗒’一声。”",
+        9: "“看一段5分钟的沙雕视频。别刷剧，就看那种猫摔跤、小孩说大人话。笑出声来，哪怕只是‘哼’一下。今天的快乐不需要深刻，蠢就够了。”",
+        10: "“直接躺平，闭上眼睛，深呼吸10次。每次呼气的时候在心里说‘烦死了，出去’。10次之后如果还烦，就再来10次。如果还是烦，那就睡一觉。今天你已经很棒了。”"
+    };
+
+    // 8. 签语 (随机)
+    const signs = [
+        "“你担心的事，八成不会发生。剩下两成发生了也没你想象得那么糟。建议：把你最怕的那个场景写下来，然后画个猪头在它旁边。你笑出来的时候，恐惧就跑了。”",
+        "“今天你的一句无心话，会帮到某个需要的人。可能是吐槽、可能是安慰、也可能是一句‘我也是’。别吝啬说话，但也别刻意。该来的那句话说出口就像放屁——自然发生。”",
+        "“允许自己今天有20%的时间‘低电量运行’。你不是机器人，不用每分钟都高效。下午3点如果想发呆就发呆，想刷手机就刷手机。但别超过20%，否则你会变成咸鱼。”",
+        "“有人正在心里感谢你，只是没说出口。可能是你上周帮过的人，也可能是你半年前的一个举动。别追问是谁，接受这份匿名功德。”",
+        "“你今天会遇到一个‘选择’。选左边还是右边？选现在还是以后？选说还是不说？记住：选那个让你心跳快一点的。不是因为刺激，是因为你的直觉比你脑子聪明。”",
+        "“你今天可能会搞砸一件小事。比如打翻水、说错话、忘记带东西。没关系，搞砸了之后你反而轻松了——因为最坏已经发生了，剩下的全是赚的。”",
+        "“你今天最大的敌人不是别人，是‘等一下’。等一下再回、等一下再做、等一下再改——等一下就是永远不做。现在就去把拖了最久的那件小事干了，哪怕只做1分钟。”",
+        "“今天不适合做重大决定，但非常适合做一件‘没用但开心’的事。比如画个丑图、唱首跑调的歌、给植物起名字。你的大脑需要垃圾时间，就像手机需要清缓存。”"
+    ];
+
+    // 9. 饮食运势
+    function getFoodType() {
+        let typeCount = { "焦虑型":0, "困倦型":0, "兴奋型":0, "平淡型":0 };
+        for(let i=0;i<4;i++){
+            let selected = document.querySelector(`input[name="food${i}"]:checked`);
+            if(selected) typeCount[selected.value] += 1;
+        }
+        let order = ["焦虑型","困倦型","兴奋型","平淡型"];
+        let maxType = order.find(t => typeCount[t] === Math.max(...Object.values(typeCount)));
+        return maxType;
+    }
+    const foodTexts = {
+        "焦虑型": "“你现在像一只被踩了尾巴的猫，浑身炸毛。适合吃：一根香蕉。没错，就是香蕉。它含有天然镇静成分，比你的深呼吸管用。别喝咖啡，别吃辣，你会更焦。建议：把香蕉切成片，摆成笑脸，边吃边骂‘烦死了’。”",
+        "困倦型": "“你现在的脑子和水泥一样稠。适合吃：一个苹果。别啃那种软趴趴的蛇果，要脆的、酸的、咬下去‘咔嚓’一声的。苹果的天然果糖和咀嚼声能把你从昏迷边缘拉回来。”",
+        "兴奋型": "“你像一只嗑了猫薄荷的猫，亢奋但马上要塌。适合吃：一小块黑巧克力（85%以上）。别吃糖，别喝奶茶，否则你会像过山车一样冲上去然后砸下来。黑巧克力能稳住你的兴奋。”",
+        "平淡型": "“你今天像一碗白粥，不咸不淡，活着但没意思。适合吃：一小把原味坚果或者一杯温水。别追求刺激，你今天经不起折腾。平淡的日子就吃平淡的东西，但加一点点变化（比如换个杯子喝水）。”"
+    };
+
+    // 10. 出门细节
+    function getDetailType() {
+        let speech=0, item=0, route=0;
+        for(let i=0;i<5;i++){
+            let selected = document.querySelector(`input[name="detail${i}"]:checked`);
+            if(selected){
+                speech += parseInt(selected.dataset.speech) || 0;
+                item += parseInt(selected.dataset.item) || 0;
+                route += parseInt(selected.dataset.route) || 0;
+            }
+        }
+        let maxVal = Math.max(speech, item, route);
+        if(maxVal === speech) return "言行";
+        if(maxVal === item) return "物品";
+        return "路线";
+    }
+    const detailTexts = {
+        "言行": "“今天你的嘴可能比脑子快。注意：别抢话、别阴阳怪气、别在气头上回消息。你的一句话可能让人记三天。建议：发任何文字前，默数三秒再点发送。今天适合多说‘嗯’、‘对’，少说‘但是’。”",
+        "物品": "“你今天出门可能会像没头苍蝇一样找东西。出门前做三件事：摸口袋（钥匙）、看桌子（手机）、拉包链（卡包）。如果已经出门了发现自己忘带，别回去拿，你今天缺了那个东西反而会更顺（玄学）。但充电宝不能忘。”",
+        "路线": "“今天别走捷径。尽量走你平时走的路，别为了省五分钟去穿小路、小巷子。你可能会遇到修路、封路、或者一只挡路的猫。建议：今天比平时早出门5分钟，慢慢走。”"
+    };
+
+    // ---------- 构建表单 ----------
+    function buildForm() {
+        let html = '';
+        // 1. 幸运色6题
+        let colorQs = [
+            {text:"今天起床后第一个念头是什么？", opts:["又要搬砖","今天可能有好事","啥也没想，像具尸体"], vals:["红色","黄色","黑色"]},
+            {text:"你今天最不想面对的事情是？", opts:["开会/回消息","社交/假笑","做决定"], vals:["蓝色","绿色","紫色"]},
+            {text:"选一个emoji代表你现在的心情？", opts:["😤（生气）","😌（放松）","😑（无感）"], vals:["红色","绿色","黑色"]},
+            {text:"你现在的咖啡/奶茶进度？", opts:["刚喝完","还没买","今天不喝"], vals:["黄色","蓝色","白色"]},
+            {text:"如果今天必须做一件无聊的事，你选？", opts:["整理表格","排队","听人吹牛"], vals:["蓝色","黑色","红色"]},
+            {text:"你今天的袜子颜色？", opts:["深色","亮色","没穿"], vals:["黑色","黄色","粉色"]}
+        ];
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-palette"></i> 1. 今日幸运能量色</div>`;
+        colorQs.forEach((q,idx)=>{
+            html += `<div class="question-item"><div class="question-text">Q${idx+1}：${q.text}</div><div class="options-group">`;
+            q.opts.forEach((opt,i2)=> {
+                html += `<label class="opt-label"><input type="radio" name="color_q${idx}" value="${q.vals[i2]}" class="radio-hidden"><span>${opt}</span></label>`;
+            });
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+
+        // 2. 情绪陷阱
+        let trapQs = ["你今天是否已经对一件事说了三次“烦死了”？","你是否在等别人回复消息，并且每隔2分钟看一次手机？","你是否因为一件小事（比如外卖慢）就感觉“今天完了”？","你是否为了不得罪人，答应了一件自己不想做的事？","你是否在心里预演了一场“和老板/对象/朋友的吵架”，并且你赢了？"];
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-brain"></i> 2. 情绪陷阱诊断</div>`;
+        trapQs.forEach((txt,i)=>{
+            html += `<div class="question-item"><div class="question-text">${txt}</div><div class="options-group">
+                        <label class="opt-label"><input type="radio" name="trap${i}" value="yes"> 是</label>
+                        <label class="opt-label"><input type="radio" name="trap${i}" value="no"> 否</label>
+                    </div></div>`;
+        });
+        html += `</div>`;
+
+        // 3. 事情进展
+        let progQs = [
+            {text:"关于你心里想的这件事，你今天到目前为止做了什么？", opts:["什么都没做，只是在想","查了相关资料或问了一个人","已经发出了一个动作"], scores:[0,1,2]},
+            {text:"这件事的结果是否依赖另一个人？", opts:["完全依赖别人","一半靠自己一半靠别人","主要靠我自己"], scores:[0,1,2]},
+            {text:"你现在对这件事的感受是？", opts:["很焦虑，觉得会坏事","还行，好坏都能接受","挺有把握，甚至有点期待"], scores:[0,1,2]},
+            {text:"到今天中午12点前，有没有任何新信息出现？", opts:["完全没有","有一点，但不明确","有，而且方向更清晰"], scores:[0,1,2]},
+            {text:"如果今天不做任何额外的事，这件事的自然走向是？", opts:["很可能停滞或变差","保持不变","会缓慢向前推进"], scores:[0,1,2]},
+            {text:"你心里想的这件事，你给它打几分的重要性？", opts:["1-2分（没那么重要）","3分（中等）","4-5分（非常重要）"], scores:[0,1,2]}
+        ];
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-chart-line"></i> 3. 事情进展占卜</div>`;
+        progQs.forEach((q,idx)=>{
+            html += `<div class="question-item"><div class="question-text">Q${idx+1}：${q.text}</div><div class="options-group">`;
+            q.opts.forEach((opt,i2)=> {
+                html += `<label class="opt-label"><input type="radio" name="prog${idx}" value="${q.scores[i2]}"> ${opt}</label>`;
+            });
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+
+        // 4. 出击/等待
+        let awQs = [
+            {text:"对于你目前最在意的那件事，你手头的信息量够做决定吗？", opts:["够了，就差行动了","还差一点关键信息","完全蒙圈"], scores:[[2,0],[0,1],[0,2]]},
+            {text:"你现在的心情状态是？", opts:["急躁，想马上解决","平静，能等","佛系，无所谓"], scores:[[1,0],[0,1],[0,2]]},
+            {text:"如果今天主动出击，最坏的结果你能承受吗？", opts:["能，大不了丢脸","不太能，会后悔","不知道"], scores:[[2,0],[0,2],[0,1]]},
+            {text:"这件事的deadline是？", opts:["就在今天或明天","本周内","还早（一周以上）"], scores:[[3,0],[1,0],[0,2]]},
+            {text:"过去类似的事情，你“主动”的结果通常如何？", opts:["挺好的，主动了就有好消息","一般，有时好有时坏","经常搞砸，不如等"], scores:[[2,0],[1,1],[0,2]]},
+            {text:"如果今天完全什么都不做，你会更焦虑还是更轻松？", opts:["更焦虑，闲不住","更轻松，省心了","没区别"], scores:[[2,0],[0,2],[0,0]]}
+        ];
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-crosshairs"></i> 4. 出击 or 等待</div>`;
+        awQs.forEach((q,idx)=>{
+            html += `<div class="question-item"><div class="question-text">Q${idx+1}：${q.text}</div><div class="options-group">`;
+            q.opts.forEach((opt,i2)=> {
+                let [a,w]=q.scores[i2];
+                html += `<label class="opt-label"><input type="radio" name="aw${idx}" value="${a},${w}"> ${opt}</label>`;
+            });
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+
+        // 5. 星座
+        const zodiacs = ["白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座"];
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-star"></i> 5. 星座贵人</div><select id="zodiacSelect" class="zodiac-select">${zodiacs.map(z=>`<option value="${z}">${z}</option>`).join('')}</select><div id="zodiacPreview" style="margin-top:10px; font-size:0.85rem; color:#cbb1ff;"></div></div>`;
+        
+        // 6. 超常发挥 (动态构建data-scores)
+        let talentQs = [
+            {text:"今天早上你无意中看到的第一条信息是关于？", opts:["工作/赚钱","八卦/朋友","艺术/新点子","知识/科普","运动/健身"], scores:[["工作",2],["社交",2],["创意",2],["学习",2],["运动",2]]},
+            {text:"你现在身体里的能量状态像什么？", opts:["打了鸡血，想干活","想找人聊天","脑子里冒泡想创作","想学新东西","只想躺着"], scores:[["工作",1,"运动",1],["社交",2],["创意",2],["学习",2],[]]},
+            {text:"你最近一次被夸奖，是因为什么？", opts:["做事靠谱","会说话","有想法","学东西快","身材好"], scores:[["工作",2],["社交",2],["创意",2],["学习",2],["运动",2]]},
+            {text:"如果你今天有两个小时完全自由，你最想做什么？", opts:["清工作","约朋友","搞创作","学习","运动"], scores:[["工作",2],["社交",2],["创意",2],["学习",2],["运动",2]]},
+            {text:"你的手机相册里最近一张照片是？", opts:["工作截图","合照","风景","笔记","运动记录"], scores:[["工作",1],["社交",1],["创意",1],["学习",1],["运动",1]]}
+        ];
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-rocket"></i> 6. 超常发挥领域</div>`;
+        talentQs.forEach((q,idx)=>{
+            html += `<div class="question-item"><div class="question-text">Q${idx+1}：${q.text}</div><div class="options-group">`;
+            q.opts.forEach((opt,i2)=>{
+                let val = JSON.stringify(q.scores[i2]);
+                html += `<label class="opt-label"><input type="radio" name="talent${idx}" value='${val}'> ${opt}</label>`;
+            });
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+
+        // 7. 数字心情
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-hand-peace"></i> 7. 心情行动数字</div><div class="question-item">凭直觉输入数字1-10：<input type="number" id="moodNumber" min="1" max="10" step="1" value="5" style="background:#2a2348; border:1px solid #c08eff; border-radius:30px; padding:6px 12px; color:white; width:100px;"></div></div>`;
+
+        // 8. 抽签
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-scroll"></i> 8. 能量签语</div><button type="button" id="drawSignBtn" style="background:#6d4dbb; border:none; padding:8px 18px; border-radius:40px;"><i class="fas fa-hand-peace"></i> 摇一摇 / 抽签</button><div id="signResult" style="margin-top:10px; font-size:0.85rem;">点击抽签获取今日能量签语</div></div>`;
+
+        // 9. 饮食
+        let foodQTexts = ["你现在身体最直接的感觉是什么？","你上一顿吃了什么？","你现在最渴望的味道是？","如果现在必须吃一口东西，你会选？"];
+        let foodOpts = [["心慌、手抖","眼皮打架","浑身是劲","麻木无聊"],["没吃/只喝咖啡","碳水炸弹","甜食/奶茶","正常饭菜"],["酸的或苦的","没胃口","辣的或甜的","咸的或淡的"],["香蕉","苹果","黑巧克力","苏打饼干"]];
+        let foodTypes = [["焦虑型","困倦型","兴奋型","平淡型"],["焦虑型","困倦型","兴奋型","平淡型"],["焦虑型","困倦型","兴奋型","平淡型"],["焦虑型","困倦型","兴奋型","平淡型"]];
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-utensils"></i> 9. 饮食运势</div>`;
+        for(let i=0;i<4;i++){
+            html += `<div class="question-item"><div class="question-text">Q${i+1}：${foodQTexts[i]}</div><div class="options-group">`;
+            for(let j=0;j<foodOpts[i].length;j++){
+                html += `<label class="opt-label"><input type="radio" name="food${i}" value="${foodTypes[i][j]}"> ${foodOpts[i][j]}</label>`;
+            }
+            html += `</div></div>`;
+        }
+        html += `</div>`;
+
+        // 10. 出门细节
+        let detailQs = [
+            {text:"你今天出门前说的最后一句话是什么？", opts:["对家人/室友说的","自言自语骂了一句","没说话"], scores:[[2,0,0],[1,0,0],[0,1,1]]},
+            {text:"你最近一周丢过东西吗？", opts:["丢过，不止一次","丢过一次","没丢过"], scores:[[0,3,0],[0,2,0],[0,0,0]]},
+            {text:"你今天要去的第一个地点，熟悉还是新路？", opts:["新路/不常走","老路但有变化","闭着眼都能走"], scores:[[0,0,2],[0,0,1],[0,0,0]]},
+            {text:"你今天的情绪状态会影响你说话的语气吗？", opts:["会，很冲","会，敏感多想","不会，稳定"], scores:[[2,0,0],[1,0,0],[0,0,0]]},
+            {text:"你出门前有没有习惯性摸口袋/查包包？", opts:["从来不查","偶尔查","每次都查"], scores:[[0,2,0],[0,1,0],[0,0,0]]}
+        ];
+        html += `<div class="daily-block"><div class="daily-title"><i class="fas fa-walking"></i> 10. 出门小细节</div>`;
+        for(let i=0;i<5;i++){
+            html += `<div class="question-item"><div class="question-text">Q${i+1}：${detailQs[i].text}</div><div class="options-group">`;
+            detailQs[i].opts.forEach((opt,j)=>{
+                let [spe,it,ro] = detailQs[i].scores[j];
+                html += `<label class="opt-label"><input type="radio" name="detail${i}" data-speech="${spe}" data-item="${it}" data-route="${ro}"> ${opt}</label>`;
+            });
+            html += `</div></div>`;
+        }
+        html += `</div>`;
+        return html;
+    }
+
+    // 渲染
+    document.getElementById("dailyFormContainer").innerHTML = buildForm();
+    // 选项高亮
+    document.querySelectorAll('.opt-label').forEach(el => {
+        el.addEventListener('click', function(e) {
+            let group = this.closest('.options-group');
+            if(group){
+                group.querySelectorAll('.opt-label').forEach(l=>l.classList.remove('selected'));
+                this.classList.add('selected');
+                let radio = this.querySelector('input');
+                if(radio) radio.checked = true;
+            }
+        });
+    });
+    // 星座预览
+    const zodiacSelect = document.getElementById("zodiacSelect");
+    const zodiacPreview = document.getElementById("zodiacPreview");
+    function updateZodiacPreview() { zodiacPreview.innerHTML = getZodiacAdvice(zodiacSelect.value); }
+    zodiacSelect.addEventListener("change", updateZodiacPreview);
+    updateZodiacPreview();
+
+    // 抽签
+    document.getElementById("drawSignBtn").addEventListener("click",()=>{
+        let rand = Math.floor(Math.random() * signs.length);
+        document.getElementById("signResult").innerHTML = signs[rand];
+    });
+
+    // 生成完整报告
+    document.getElementById("genFullReportBtn").addEventListener("click",()=>{
+        // 检查是否所有必选都选了 (简单提醒)
+        let allRadios = document.querySelectorAll('input[type="radio"]');
+        let unanswered = Array.from(allRadios).some(r => !r.checked && r.name && !r.name.includes('detail')? false : true); // 简化不强制全选，但最好提醒
+        if(!confirm("确认所有题目都选好了吗？如果漏选了部分结果可能不完整，建议返回检查。确定生成？")) return;
+        let luckyColor = getLuckyColor();
+        let trap = getTrapType();
+        let progress = getProgressCard();
+        let aw = getAttackWait();
+        let zodiac = zodiacSelect.value;
+        let talent = getTalentArea();
+        let moodNum = parseInt(document.getElementById("moodNumber").value);
+        let sign = document.getElementById("signResult").innerText.includes("点击抽签") ? "未抽签，快去摇一签吧" : document.getElementById("signResult").innerText;
+        let foodType = getFoodType();
+        let detailType = getDetailType();
+
+        let reportHtml = `
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-palette"></i> 幸运能量色 · ${luckyColor}</div><div>${colorTexts[luckyColor]}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-brain"></i> 情绪陷阱 · ${trap}</div><div>${trapTexts[trap]}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-chart-line"></i> 事情进展 · ${progress}</div><div>${progressTexts[progress]}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-crosshairs"></i> 今日策略 · ${aw}</div><div>${awTexts[aw]}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-star"></i> 星座贵人 · ${zodiac}</div><div>${getZodiacAdvice(zodiac)}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-rocket"></i> 超常发挥 · ${talent}</div><div>${talentTexts[talent]}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-hand-peace"></i> 心情行动数字 · ${moodNum}</div><div>${moodTexts[moodNum] || moodTexts[5]}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-scroll"></i> 能量签语</div><div>${sign}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-utensils"></i> 饮食运势 · ${foodType}</div><div>${foodTexts[foodType]}</div></div>
+            <div class="result-chunk"><div class="result-title"><i class="fas fa-walking"></i> 出门细节 · ${detailType}</div><div>${detailTexts[detailType]}</div></div>
+        `;
+        let reportDiv = document.getElementById("fullReportArea");
+        reportDiv.innerHTML = reportHtml;
+        reportDiv.style.display = "block";
+        reportDiv.scrollIntoView({ behavior: "smooth" });
+    });
+
+    // 灵犀测彩蛋
+    const lingxiMsgs = ["🌙 别让焦虑偷走当下的灵感，你本自具足。","💫 你无须成为别人，你的独特就是最好的风水。","✨ 每一次选择都在塑造你，记得选择温柔待己。","🌊 运势像潮汐，低谷时沉淀，涨潮时绽放。","🔥 你内心那团火，比任何星盘都亮。"];
+    document.getElementById("lingxiSurpriseBtn").addEventListener("click",()=>{
+        let r = lingxiMsgs[Math.floor(Math.random()*lingxiMsgs.length)];
+        document.getElementById("lingxiTip").innerHTML = `✨ ${r} ✨`;
+        setTimeout(()=>{ document.getElementById("lingxiTip").innerHTML = "⚡ 戳一下，接收灵魂共鸣短句"; }, 3500);
+    });
+</script>
+</body>
+</html>

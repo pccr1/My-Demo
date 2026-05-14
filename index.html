@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>灵犀运势馆 · 先懂自己 再顺运势</title>
-    <!-- 引入 Font Awesome 6 (免费图标库，年轻潮流风格) -->
+    <!-- 引入 Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- 引入 Google Fonts：潮流现代无衬线字体 + 锐利中英文 -->
+    <!-- 引入 Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -23,7 +23,7 @@
             overflow-x: hidden;
         }
 
-        /* 潮流噪点背景 + 动态光晕 */
+        /* 背景噪点 + 光晕 */
         body::before {
             content: "";
             position: fixed;
@@ -45,44 +45,7 @@
             z-index: 2;
         }
 
-        /* Banner 主视觉区 (模拟图片样式+炫彩) */
-        .hero-visual {
-            margin-bottom: 2.5rem;
-            background: rgba(15, 12, 32, 0.55);
-            backdrop-filter: blur(8px);
-            border-radius: 48px;
-            border: 1px solid rgba(255, 100, 220, 0.35);
-            overflow: hidden;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-            transition: all 0.2s;
-        }
-
-        /* 图片容器 (替换红框区域的核心) */
-        .replace-img-area {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(125deg, #110c21, #1a1435);
-            position: relative;
-        }
-
-        .hero-pic {
-            max-width: 100%;
-            width: auto;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            border-radius: 32px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 160, 240, 0.3);
-            transition: transform 0.25s ease;
-        }
-
-        .hero-pic:hover {
-            transform: scale(1.01);
-        }
-
-        /* 初版头图 */
+        /* 主视觉区域 */
         .hero {
             text-align: center;
             margin-bottom: 3rem;
@@ -169,10 +132,10 @@
             backdrop-filter: blur(12px);
             border-radius: 2rem;
             text-align: center;
-            cursor: pointer;
             transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.2s;
-            border: 1px solid rgba(210, 140, 255, 0.3);
+            /* border: 1px solid rgba(210, 140, 255, 0.3); */
             box-shadow: 0 12px 25px -12px rgba(0,0,0,0.4);
+            /* padding: 1rem; */
         }
 
         .entry-card:hover {
@@ -182,160 +145,16 @@
             background: rgba(28, 22, 58, 0.85);
         }
 
-        .card-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(145deg, #f0a6ff, #b77eff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .entry-card h3 {
-            font-size: 1.7rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.3px;
-        }
-
-        .entry-card p {
-            font-size: 0.8rem;
-            color: #b6adf0;
-            font-weight: 400;
-        }
-
-        /* 互动测试主面板 (填转子页面) */
-        .test-panel {
-            margin-top: 2rem;
-            background: rgba(8, 6, 22, 0.7);
-            backdrop-filter: blur(20px);
-            border-radius: 2.5rem;
-            padding: 1.8rem 2rem 2.2rem;
-            border: 1px solid rgba(255, 135, 200, 0.4);
-            transition: all 0.2s;
-            box-shadow: 0 20px 35px -10px black;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px dashed rgba(255, 150, 220, 0.4);
-            padding-bottom: 0.75rem;
-        }
-
-        .panel-header h2 {
-            font-size: 1.9rem;
-            font-weight: 700;
-            background: linear-gradient(120deg, #fff, #e9bcff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .reset-btn {
-            background: none;
-            border: 1px solid #ff86c6;
-            color: #ffb3e2;
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: 500;
-        }
-
-        .reset-btn:hover {
-            background: #ff44aa30;
-            color: white;
-            border-color: #ff69b4;
-        }
-
-        .question-area {
-            margin: 1.5rem 0;
-        }
-
-        .question-group {
-            background: rgba(25, 20, 50, 0.6);
-            border-radius: 1.5rem;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .question-group label {
-            font-weight: 600;
+        .hero-pic {
+            max-width: 100%;
+            width: auto;
+            height: auto;
             display: block;
-            margin-bottom: 0.7rem;
-            font-size: 1rem;
-            letter-spacing: -0.2px;
+            margin: 0 auto;
+            border-radius: 16px;
         }
 
-        .options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-        }
-
-        .option-item {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: rgba(255,255,240,0.05);
-            padding: 0.5rem 1rem;
-            border-radius: 60px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.1s;
-            border: 1px solid transparent;
-        }
-        .option-item.selected {
-            background: #bf5eff30;
-            border-color: #e27eff;
-            color: white;
-        }
-        input[type="radio"] {
-            accent-color: #d96eff;
-            width: 16px;
-            height: 16px;
-            margin-right: 4px;
-        }
-
-        .action-btn {
-            background: linear-gradient(95deg, #b45eff, #ff6bc0);
-            border: none;
-            padding: 0.9rem 2rem;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 60px;
-            color: #0a041a;
-            cursor: pointer;
-            margin: 0.8rem 0 1rem;
-            transition: all 0.2s ease;
-            width: 100%;
-            max-width: 260px;
-            font-family: inherit;
-            box-shadow: 0 5px 12px #ff5aaa40;
-        }
-
-        .action-btn:hover {
-            transform: scale(0.97);
-            box-shadow: 0 8px 18px #ff51ae70;
-            background: linear-gradient(95deg, #c87cff, #ff80cb);
-        }
-
-        .result-box {
-            background: rgba(0,0,0,0.45);
-            border-radius: 1.5rem;
-            padding: 1.2rem 1.2rem;
-            margin-top: 1rem;
-            border-left: 4px solid #ff7bc2;
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #f2e9ff;
-        }
-
+        /* 灵犀测彩蛋 */
         .extra-lingxi {
             margin-top: 2rem;
             text-align: center;
@@ -380,62 +199,53 @@
             .container {
                 padding: 1rem 1rem 2rem;
             }
-            .test-panel {
-                padding: 1rem;
-            }
-            .panel-header h2 {
-                font-size: 1.5rem;
-            }
-            .options {
-                gap: 0.5rem;
+            .cards-grid {
+                gap: 1rem;
             }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- 主视觉区 banner 风格 -->
+    <!-- 主视觉区 banner -->
     <div class="hero">
         <h1>先懂自己，再顺运势</h1>
         <div class="sub">每一次选择都有答案</div>
         <div class="badge-group">
-            <span class="badge" style="font-weight: bold;"><i class="fas fa-moon"></i> 玄学风水专业度</span>
-            <span class="badge" style="font-weight: bold;"><i class="fas fa-brain"></i> 正统心理学底层逻辑</span>
-            <span class="badge" style="font-weight: bold;"><i class="fas fa-bolt"></i> 极致年轻化潮流玩法</span>
+            <span class="badge"><i class="fas fa-moon"></i> 玄学风水专业度</span>
+            <span class="badge"><i class="fas fa-brain"></i> 正统心理学底层逻辑</span>
+            <span class="badge"><i class="fas fa-bolt"></i> 极致年轻化潮流玩法</span>
         </div>
         <div class="slogan">
             <i class="fas fa-crystal-ball"></i> 拒绝土味 · 拒绝废话 · 犀利戳心 · 灵魂共鸣 · 不贩卖焦虑 · 只给正向指引
         </div>
     </div>
 
-    <!-- 四大入口 (填转子页面入口) -->
+    <!-- 四大跳转卡片（已改为独立子页面链接） -->
     <div class="cards-grid">
-        <div class="entry-card" data-test="daily">
-            <img class="hero-pic" src="./picture/tu/1.png" onerror="this.onerror=null;">
-        </div>
-        <div class="entry-card" data-test="heart">
-            <img class="hero-pic" src="./picture/tu/2.png" onerror="this.onerror=null;">
-        </div>
-        <div class="entry-card" data-test="career">
-            <img class="hero-pic" src="./picture/tu/3.png" onerror="this.onerror=null;">
-        </div>
-        <div class="entry-card" data-test="star">
-            <img class="hero-pic" src="./picture/tu/4.png" onerror="this.onerror=null;">
-        </div>
+        <a href="daily.html" style="text-decoration: none; display: block;">
+            <div class="entry-card">
+                <img class="hero-pic" src="./picture/tu/1.png" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=日常灵占';">
+            </div>
+        </a>
+        <a href="relationship.html" style="text-decoration: none; display: block;">
+            <div class="entry-card">
+                <img class="hero-pic" src="./picture/tu/2.png" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=心动密测';">
+            </div>
+        </a>
+        <a href="career.html" style="text-decoration: none; display: block;">
+            <div class="entry-card">
+                <img class="hero-pic" src="./picture/tu/3.png" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=事业命格';">
+            </div>
+        </a>
+        <a href="star.html" style="text-decoration: none; display: block;">
+            <div class="entry-card">
+                <img class="hero-pic" src="./picture/tu/4.png" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=人格星盘';">
+            </div>
+        </a>
     </div>
 
-    <!-- 动态填转子页面区域 (点击入口展示对应测试表单) -->
-    <div class="test-panel" id="testPanel">
-        <div class="panel-header">
-            <h2 id="panelTitle">✨ 日常灵占 ✨</h2>
-            <button class="reset-btn" id="resetToDefaultBtn"><i class="fas fa-undo-alt"></i> 重置/换测</button>
-        </div>
-        <div id="dynamicTestContent">
-            <!-- 动态内容：初始默认“日常灵占”的填转模块 -->
-        </div>
-    </div>
-
-    <!-- 灵犀测彩蛋区 (额外正能量戳心) -->
+    <!-- 灵犀测彩蛋区 -->
     <div class="extra-lingxi">
         <div class="lingxi-btn" id="lingxiSurpriseBtn">
             <i class="fas fa-gem"></i> 灵犀测 · 一秒戳心
@@ -451,325 +261,7 @@
 </div>
 
 <script>
-    // ---------- 四大测试模块的“填转”数据模型 (每个测试包含问题和转换逻辑，拒绝焦虑) ----------
-    const testsConfig = {
-        daily: {
-            name: "日常灵占",
-            icon: "🌿",
-            questions: [
-                {
-                    text: "今日你的能量底色是？",
-                    field: "mood",
-                    options: ["🌊 宁静 · 如水", "🔥 激情 · 如火", "🌫️ 迷惘 · 待启", "✨ 期待 · 新生"]
-                },
-                {
-                    text: "当下最需要指引的领域？",
-                    field: "area",
-                    options: ["💖 情感关系", "💼 事业决策", "🧘 身心健康", "👥 人际圈层"]
-                }
-            ],
-            // 接受 answers { mood, area } 生成正向指引戳心文案
-            generateResult: (answers) => {
-                const moodMap = {
-                    "🌊 宁静 · 如水": "内核安稳，智慧沉淀",
-                    "🔥 激情 · 如火": "生命力旺盛，创造力爆棚",
-                    "🌫️ 迷惘 · 待启": "混沌即转机，新视角正在生成",
-                    "✨ 期待 · 新生": "宇宙在回应你的频率"
-                };
-                const areaAdvice = {
-                    "💖 情感关系": "今天适合表达柔软，无心之举可能种下温柔果实。",
-                    "💼 事业决策": "信任直觉，顺势而为，一个微小的行动会撬动资源。",
-                    "🧘 身心健康": "照顾内在小孩，深呼吸三次，奇迹藏在停顿里。",
-                    "👥 人际圈层": "边界感带来舒适，真诚吸引同频灵魂。"
-                };
-                let moodText = answers.mood ? moodMap[answers.mood] || "灵性自在流动" : "当下即完美";
-                let areaText = answers.area ? areaAdvice[answers.area] : "保持敞开，好运自然发生。";
-                return `✨ 灵占启示 ✨<br>「${moodText}」 · ${areaText}<br><span style="font-size:0.85rem; opacity:0.9;">⚡ 今日正向心法：不必强求，让能量流经你，答案会显化。</span>`;
-            }
-        },
-        heart: {
-            name: "心动密测",
-            icon: "💗",
-            questions: [
-                {
-                    text: "你目前对心动对象的心态？",
-                    field: "status",
-                    options: ["💓 暗涌·暧昧试探", "🌹 热烈·勇敢表白期", "🌀 纠结·忽远忽近", "✨ 观望·随缘吸引"]
-                },
-                {
-                    text: "你最渴望的关系模式？",
-                    field: "style",
-                    options: ["🔥 灵魂共鸣式", "🎢 刺激冒险型", "☕ 细水长流式", "🌟 共同成长型"]
-                }
-            ],
-            generateResult: (answers) => {
-                const statusTips = {
-                    "💓 暗涌·暧昧试探": "你拥有细腻的感知力，不妨释放一个微小的信号",
-                    "🌹 热烈·勇敢表白期": "勇气是你的魔法，真实表达会让缘分流动",
-                    "🌀 纠结·忽远忽近": "放下过度分析，专注于自己的光，自会吸引对的人",
-                    "✨ 观望·随缘吸引": "缘分不需要用力，保持有趣，宇宙会助推"
-                };
-                const styleAdvice = {
-                    "🔥 灵魂共鸣式": "先与自己灵魂深交，投射出去的爱会更纯粹。",
-                    "🎢 刺激冒险型": "体验本身就是珍贵礼物，敢玩才尽兴。",
-                    "☕ 细水长流式": "平淡是真，微小的仪式感会让爱鲜活。",
-                    "🌟 共同成长型": "好的爱情是并肩看世界，一起升级打怪。"
-                };
-                let first = answers.status ? statusTips[answers.status] : "信任心动的直觉";
-                let second = answers.style ? styleAdvice[answers.style] : "爱是行动的诗";
-                return `💞 心动解码 💞<br>${first}。${second}<br><span style="font-size:0.85rem;">🌙 正向指引：无论答案如何，你都值得被爱，先宠爱自己。</span>`;
-            }
-        },
-        career: {
-            name: "事业命格",
-            icon: "🏆",
-            questions: [
-                {
-                    text: "目前你的事业状态更像？",
-                    field: "state",
-                    options: ["🚀 上升突破期", "🌀 瓶颈迷茫期", "🌱 积累扎根期", "🔄 转型探索期"]
-                },
-                {
-                    text: "你隐藏的领导力类型？",
-                    field: "type",
-                    options: ["🧠 谋略军师型", "🎯 冲锋实干型", "🌈 整合协调型", "✨ 创意革新型"]
-                }
-            ],
-            generateResult: (answers) => {
-                const stateMsg = {
-                    "🚀 上升突破期": "你的冲劲已被看到，注意留存能量防过载",
-                    "🌀 瓶颈迷茫期": "停下来不是退步，重构认知才有新地图",
-                    "🌱 积累扎根期": "深耕细作，未来三个月会有厚积薄发",
-                    "🔄 转型探索期": "勇敢试错，跨界资源正在向你靠拢"
-                };
-                const typeMsg = {
-                    "🧠 谋略军师型": "用智慧布局，适合幕后或策略岗",
-                    "🎯 冲锋实干型": "目标导向，执行力是你最强王牌",
-                    "🌈 整合协调型": "凝聚团队的天赋，创造共赢场域",
-                    "✨ 创意革新型": "天马行空落地为商业机会，别自我怀疑"
-                };
-                let first = answers.state ? stateMsg[answers.state] : "顺势而为，臣服于节奏";
-                let second = answers.type ? typeMsg[answers.type] : "发挥你独特优势";
-                return `📈 事业命格指引 📈<br>${first}。${second}<br><span style="font-size:0.85rem;">🔑 正向箴言：事业并非唯一丈量价值的标准，但你每一步都算数。</span>`;
-            }
-        },
-        star: {
-            name: "人格星盘",
-            icon: "⭐",
-            questions: [
-                {
-                    text: "你更偏爱哪种能量场景？",
-                    field: "element",
-                    options: ["🌬️ 风象·思维流动", "🔥 火象·热烈行动", "💧 水象·情感深邃", "🌍 土象·稳定务实"]
-                },
-                {
-                    text: "你心中最浪漫的成长方式是？",
-                    field: "growth",
-                    options: ["📖 独处内省", "🎨 艺术创作", "🤝 深度对话", "🏃 身体力行"]
-                }
-            ],
-            generateResult: (answers) => {
-                const elementDesc = {
-                    "🌬️ 风象·思维流动": "你拥有灵动的思辨力，适合知识型创造",
-                    "🔥 火象·热烈行动": "行动点燃激情，勇敢赋予你星盘亮度",
-                    "💧 水象·情感深邃": "直觉敏锐，共情是你最强的超能力",
-                    "🌍 土象·稳定务实": "稳固踏实，显化梦想的建造师"
-                };
-                const growthTip = {
-                    "📖 独处内省": "向内探索，能看到灵魂星辰图",
-                    "🎨 艺术创作": "释放表达欲，创作让你链接高维",
-                    "🤝 深度对话": "交换真心话，星盘因此共振",
-                    "🏃 身体力行": "身体智慧带你触碰真实"
-                };
-                let ele = answers.element ? elementDesc[answers.element] : "星辰能量与你同在";
-                let gro = answers.growth ? growthTip[answers.growth] : "每一天都是一次重生";
-                return `🌟 人格星盘解析 🌟<br>${ele}。${gro}<br><span style="font-size:0.85rem;">🌌 核心洞见：你的星盘由你定义，接纳阴影与光芒，活出你的宇宙脚本。</span>`;
-            }
-        }
-    };
-
-    // 当前激活的测试类型
-    let currentTest = "daily";
-    // 存储当前测试的选择值 (用于结果生成)
-    let currentAnswers = {};
-
-    // 渲染动态测试表单 (填转界面)
-    function renderTest() {
-        const config = testsConfig[currentTest];
-        if (!config) return;
-        // 更新标题
-        document.getElementById("panelTitle").innerHTML = `${config.icon} ${config.name} ${config.icon}`;
-        const container = document.getElementById("dynamicTestContent");
-        if (!container) return;
-        
-        // 构建表单html
-        let questionsHtml = '';
-        config.questions.forEach((q, idx) => {
-            const fieldName = q.field;
-            const savedVal = currentAnswers[fieldName] || '';
-            const optionsHtml = q.options.map(opt => {
-                const checkedAttr = (savedVal === opt) ? 'checked' : '';
-                // 用自定义属性标记方便事件委托
-                return `<label class="option-item" data-field="${fieldName}" data-value="${opt}">
-                            <input type="radio" name="${fieldName}" value="${opt}" ${checkedAttr} style="display:none;"> 
-                            <span class="opt-text">${opt}</span>
-                        </label>`;
-            }).join('');
-            questionsHtml += `
-                <div class="question-group">
-                    <label><i class="fas fa-question-circle"></i> ${q.text}</label>
-                    <div class="options" data-field-group="${fieldName}">
-                        ${optionsHtml}
-                    </div>
-                </div>
-            `;
-        });
-        
-        const resultKey = `result_${currentTest}`;
-        const existingResultHtml = currentAnswers.resultText ? `<div class="result-box"><i class="fas fa-crystal-ball"></i> ${currentAnswers.resultText}</div>` : '';
-        
-        const fullHtml = `
-            <div class="question-area" id="testQuestionsArea">
-                ${questionsHtml}
-                <button class="action-btn" id="submitTestBtn"><i class="fas fa-chart-line"></i> 立即占测 · 获得正向指引</button>
-                ${existingResultHtml}
-            </div>
-        `;
-        container.innerHTML = fullHtml;
-        
-        // 重新绑定选项中点击高亮逻辑 + 存储值同步
-        attachOptionsListeners();
-        // 绑定提交按钮事件
-        const submitBtn = document.getElementById("submitTestBtn");
-        if (submitBtn) {
-            submitBtn.onclick = () => handleSubmit();
-        }
-    }
-    
-    // 处理每个组内点击选中（视觉+存储 currentAnswers）
-    function attachOptionsListeners() {
-        const allOptionItems = document.querySelectorAll('.option-item');
-        allOptionItems.forEach(item => {
-            // 移除原有监听避免重复，用新克隆方式？直接重设onclick
-            item.removeEventListener('click', optionClickHandler);
-            item.addEventListener('click', optionClickHandler);
-        });
-    }
-    
-    function optionClickHandler(e) {
-        // 防止事件冒泡混乱
-        e.stopPropagation();
-        const targetLabel = e.currentTarget;
-        const field = targetLabel.getAttribute('data-field');
-        const value = targetLabel.getAttribute('data-value');
-        if (!field || !value) return;
-        // 更新当前答案
-        currentAnswers[field] = value;
-        // 同组清除高亮样式，并给当前加高亮
-        const group = targetLabel.closest('.options');
-        if (group) {
-            const allLabels = group.querySelectorAll('.option-item');
-            allLabels.forEach(label => {
-                label.classList.remove('selected');
-                const radioInside = label.querySelector('input[type="radio"]');
-                if (radioInside) radioInside.checked = false;
-            });
-            targetLabel.classList.add('selected');
-            const hiddenRadio = targetLabel.querySelector('input');
-            if (hiddenRadio) hiddenRadio.checked = true;
-        }
-        // 储存进 currentAnswers[field]
-    }
-    
-    // 提交填转：根据当前答案调用生成器，更新结果区域并保持结果记忆
-    function handleSubmit() {
-        const config = testsConfig[currentTest];
-        if (!config) return;
-        // 检查是否所有问题都已选择（人性化提醒，但不强制野蛮）
-        const requiredFields = config.questions.map(q => q.field);
-        let missing = false;
-        requiredFields.forEach(f => {
-            if (!currentAnswers[f]) missing = true;
-        });
-        if (missing) {
-            // 优雅提醒但依然可以随机抽取一个正向指引，但出于体验给个温和提示
-            const resultDiv = document.querySelector('.result-box');
-            if (resultDiv) {
-                resultDiv.innerHTML = `<i class="fas fa-hand-sparkles"></i> 灵犀小提示：选完两个问题，能得到更精准的专属指引哦～ 不过宇宙早就爱你，试试完成选择吧。`;
-                resultDiv.style.borderLeftColor = "#ffbb77";
-            } else {
-                const container = document.getElementById("dynamicTestContent");
-                if (container && !document.querySelector('.result-box')) {
-                    const newResult = document.createElement('div');
-                    newResult.className = 'result-box';
-                    newResult.innerHTML = `✨ 稍微点选一下选项，灵犀能量会更聚焦✨`;
-                    container.appendChild(newResult);
-                } else {
-                    const exist = document.querySelector('.result-box');
-                    if(exist) exist.innerHTML = `✨ 稍微点选一下选项，灵犀能量会更聚焦✨`;
-                }
-            }
-            return;
-        }
-        
-        // 生成正能量结果
-        const rawResult = config.generateResult(currentAnswers);
-        // 储存结果文本
-        currentAnswers.resultText = rawResult;
-        // 显示或刷新结果区域
-        let resultBox = document.querySelector('.result-box');
-        if (resultBox) {
-            resultBox.innerHTML = `<i class="fas fa-crystal-ball"></i> ${rawResult}`;
-        } else {
-            const questionArea = document.getElementById('testQuestionsArea');
-            if (questionArea) {
-                const newBox = document.createElement('div');
-                newBox.className = 'result-box';
-                newBox.innerHTML = `<i class="fas fa-crystal-ball"></i> ${rawResult}`;
-                questionArea.appendChild(newBox);
-            }
-        }
-        // 附加小动画感（平滑滚动到结果）
-        const newResultDiv = document.querySelector('.result-box');
-        if (newResultDiv) newResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-    
-    // 重置当前测试（不清除答案但清掉结果、重置选项选中等，保留用户友好重新测）
-    function resetCurrentTest() {
-        // 重置答案存储，清结果
-        currentAnswers = {};
-        // 重新渲染表单
-        renderTest();
-    }
-    
-    // 切换测试类型（通过入口卡片）
-    function switchTest(testId) {
-        currentTest = testId;
-        // 重置当前答案数据，保证每个测试独立初始
-        currentAnswers = {};
-        renderTest();
-    }
-    
-    // 绑定卡片入口事件
-    function bindCardEvents() {
-        const cards = document.querySelectorAll('.entry-card');
-        cards.forEach(card => {
-            card.addEventListener('click', (e) => {
-                const testVal = card.getAttribute('data-test');
-                if (testVal && testsConfig[testVal]) {
-                    switchTest(testVal);
-                }
-            });
-        });
-        const resetBtn = document.getElementById('resetToDefaultBtn');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', () => {
-                resetCurrentTest();
-            });
-        }
-    }
-    
-    // 灵犀测额外戳心模块 (纯粹正面短句)
+    // 灵犀测彩蛋脚本（独立运行，不依赖任何测试模块）
     const lingxiMessages = [
         "🌙 别让焦虑偷走当下的灵感，你本自具足。",
         "💫 你无须成为别人，你的独特就是最好的风水。",
@@ -787,28 +279,17 @@
         if (tipDiv) {
             tipDiv.innerHTML = `<i class="fas fa-feather-alt"></i> ${lingxiMessages[randomIndex]} <i class="fas fa-heart"></i>`;
             setTimeout(() => {
-                // 5秒后还原普通提示，但不影响体验
-                setTimeout(() => {
-                    if (tipDiv && !tipDiv.innerHTML.includes("一秒戳心")) {
-                        tipDiv.innerHTML = `⚡ 戳一下，接收属于你的灵魂共鸣短句`;
-                    }
-                }, 4000);
-            }, 0);
+                if (tipDiv && !tipDiv.innerHTML.includes("一秒戳心")) {
+                    tipDiv.innerHTML = `⚡ 戳一下，接收属于你的灵魂共鸣短句`;
+                }
+            }, 4000);
         }
     }
     
-    // 初始化整个页面
-    function init() {
-        bindCardEvents();
-        // 默认加载日常灵占
-        switchTest('daily');
-        const lingxiBtn = document.getElementById('lingxiSurpriseBtn');
-        if (lingxiBtn) {
-            lingxiBtn.addEventListener('click', showRandomLingxi);
-        }
+    const lingxiBtn = document.getElementById('lingxiSurpriseBtn');
+    if (lingxiBtn) {
+        lingxiBtn.addEventListener('click', showRandomLingxi);
     }
-    
-    init();
 </script>
 </body>
 </html>
