@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>日常占卜 · 超常发挥领域</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0718;
+            font-family: 'Inter', sans-serif;
+            color: #f0eefc;
+            padding: 2rem 1rem;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .back-home {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #ffbbf0;
+            font-size: 0.8rem;
+        }
+        .card {
+            background: rgba(18, 16, 40, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border-left: 5px solid #ff77c6;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ffd6f0;
+        }
+        .question-item {
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.25);
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .opt-label {
+            background: rgba(255,255,240,0.07);
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .opt-label.selected {
+            background: #bf5eff40;
+            border-color: #e27eff;
+            color: white;
+        }
+        input[type="radio"] { display: none; }
+        button {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #0a041a;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .result {
+            margin-top: 1.5rem;
+            background: rgba(0,0,0,0.45);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            border-left: 4px solid #ff7bc2;
+            display: none;
+        }
+        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="card">
+        <h1>🚀 今天你最容易在哪方面“超常发挥”？</h1>
+        <div id="questionsContainer"></div>
+        <button id="submitBtn">✨ 查看超常发挥领域 ✨</button>
+        <div id="resultArea" class="result"></div>
+    </div>
+    <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
+</div>
+
+<script>
+    const questions = [
+        { text: "今天早上你无意中听到/看到的第一条信息（包括手机推送）是关于什么的？", opts: ["工作/赚钱/效率", "八卦/朋友/情感", "艺术/新点子/搞笑视频", "知识/科普/学习方法", "运动/健身/户外"], scores: [["工作",2], ["社交",2], ["创意",2], ["学习",2], ["运动",2]] },
+        { text: "你现在身体里的能量状态像什么？", opts: ["打了鸡血，想干活", "想找人聊天或吐槽", "脑子里冒泡，想写/画/拍点什么", "想学点什么新东西", "只想躺着，不想动"], scores: [["工作",1,"运动",1], ["社交",2], ["创意",2], ["学习",2], []] },
+        { text: "你最近一次被夸奖，是因为什么？", opts: ["做事靠谱、效率高", "会说话、情商高", "有想法、脑洞大", "学东西快、知识广", "身材好、爱运动"], scores: [["工作",2], ["社交",2], ["创意",2], ["学习",2], ["运动",2]] },
+        { text: "如果你今天有两个小时完全自由，你最想做什么？", opts: ["把堆积的工作清掉", "约朋友吃饭或打电话", "搞点创作（画画/写东西/拍视频）", "看教程/听播客/学技能", "去出汗/跑步/打球"], scores: [["工作",2], ["社交",2], ["创意",2], ["学习",2], ["运动",2]] },
+        { text: "你的手机相册里最近一张照片是？", opts: ["工作截图/文档", "和朋友/家人的合照", "风景/随手拍的灵感", "书/课程/笔记", "运动记录/健身房"], scores: [["工作",1], ["社交",1], ["创意",1], ["学习",1], ["运动",1]] }
+    ];
+
+    let answers = new Array(questions.length).fill(null);
+
+    function render() {
+        let html = '';
+        questions.forEach((q, idx) => {
+            html += `<div class="question-item">
+                        <div class="question-text">${q.text}</div>
+                        <div class="options-group" data-qidx="${idx}">`;
+            q.opts.forEach((opt, oidx) => {
+                let selectedClass = (answers[idx] === oidx) ? 'selected' : '';
+                html += `<label class="opt-label ${selectedClass}" data-oidx="${oidx}">${opt}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
+            });
+            html += `</div></div>`;
+        });
+        document.getElementById("questionsContainer").innerHTML = html;
+        attachEvents();
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.opt-label').forEach(label => {
+            label.addEventListener('click', function(e) {
+                let group = this.closest('.options-group');
+                let qidx = group.dataset.qidx;
+                let oidx = this.dataset.oidx;
+                answers[qidx] = parseInt(oidx);
+                group.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
+                this.classList.add('selected');
+                let radio = this.querySelector('input');
+                if (radio) radio.checked = true;
+            });
+        });
+    }
+
+    function getResult() {
+        let scores = { "工作":0, "社交":0, "创意":0, "学习":0, "运动":0 };
+        for (let i = 0; i < questions.length; i++) {
+            let idx = answers[i];
+            if (idx === null) return null;
+            let scoreList = questions[i].scores[idx];
+            for (let j = 0; j < scoreList.length; j += 2) {
+                let category = scoreList[j];
+                let points = scoreList[j+1];
+                scores[category] += points;
+            }
+        }
+        let priority = ["创意","社交","工作","学习","运动"];
+        let maxScore = -1, best = "工作";
+        for (let c of priority) {
+            if (scores[c] > maxScore) {
+                maxScore = scores[c];
+                best = c;
+            }
+        }
+        return best;
+    }
+
+    const resultTexts = {
+        "工作": "“你今天是一只上了发条的工作驴，效率高得吓人。适合处理积压任务、做表格、回邮件、甚至撕逼（用逻辑撕）。你会被至少一个人夸‘靠谱’。但警告：别顺手接别人的活，你今天太猛容易变傻。建议：每做完一件事就站起来扭两下，否则下班时你会发现自己脖子硬得像铁棍。”",
+        "社交": "“你今天嘴开了光，说什么都招人喜欢。适合组局、约饭、发朋友圈、甚至和前任聊天（但别）。你的一句无心话会帮到某个需要的人。注意：别因为太嗨就答应不想去的局，你的‘好啊’说得太快。建议：今天多听少说，效果翻倍。”",
+        "创意": "“你今天脑洞开得像被门夹过——又痛又爽。灵感像喝了红牛的兔子，蹦得到处都是。适合写东西、拍视频、画图、甚至想创业点子。但警告：别在下午3点前做执行，先记下来，晚上再筛选。建议：把想到的疯狂主意发给一个沙雕朋友，你们会笑出腹肌。”",
+        "学习": "“你今天脑子像新买的硬盘——又空又能装。适合看教程、听播客、刷题、背单词。平时看不懂的今天突然懂了。禁忌：别一口气学太多，你会把自己撑吐。建议：每学25分钟就刷5分钟土味视频，效率+100%。”",
+        "运动": "“你今天身体里住着一头野兽，不动就难受。适合跑步、打球、爬楼梯、甚至打架（不是）。你会发现自己体力比想象中好。注意：别一开始就冲太猛，否则后半场像条死狗。建议：运动前先热身3分钟，否则明天你会发出杀猪般的叫声。”"
+    };
+
+    document.getElementById("submitBtn").onclick = () => {
+        let res = getResult();
+        if (res === null) {
+            alert("请先完成所有题目");
+            return;
+        }
+        let resultDiv = document.getElementById("resultArea");
+        resultDiv.innerHTML = `<strong>✨ 今日超常发挥领域：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.style.display = "block";
+    };
+
+    render();
+</script>
+</body>
+</html>

@@ -23,7 +23,6 @@
             overflow-x: hidden;
         }
 
-        /* 背景噪点 + 光晕 */
         body::before {
             content: "";
             position: fixed;
@@ -127,15 +126,19 @@
             margin: 3rem 0 2.8rem;
         }
 
+        /* 卡片容器（同时也是下拉菜单的触发器） */
+        .card-wrapper {
+            position: relative;
+        }
+
         .entry-card {
             background: rgba(18, 16, 40, 0.75);
             backdrop-filter: blur(12px);
             border-radius: 2rem;
             text-align: center;
             transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.2s;
-            /* border: 1px solid rgba(210, 140, 255, 0.3); */
             box-shadow: 0 12px 25px -12px rgba(0,0,0,0.4);
-            /* padding: 1rem; */
+            cursor: pointer;
         }
 
         .entry-card:hover {
@@ -152,6 +155,93 @@
             display: block;
             margin: 0 auto;
             border-radius: 16px;
+            pointer-events: none;  /* 让图片不干扰点击事件 */
+        }
+
+        /* 下拉菜单样式 - 丝滑动画 */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 0;
+            right: 0;
+            background: rgba(12, 10, 28, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            padding: 0.8rem 0;
+            border: 1px solid rgba(255, 135, 200, 0.4);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.25s ease, visibility 0.25s, transform 0.25s ease;
+            z-index: 100;
+            list-style: none;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        /* 显示菜单 */
+        .card-wrapper.show-menu .dropdown-menu,
+        .card-wrapper:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* 移动端：点击时保持显示（通过JS添加类） */
+        .dropdown-menu li {
+            padding: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .dropdown-menu li:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1.2rem;
+            color: #f0eefc;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background 0.2s, padding-left 0.2s;
+            white-space: nowrap;
+            overflow-x: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-menu a:hover {
+            background: rgba(191, 94, 255, 0.3);
+            padding-left: 1.5rem;
+            color: #ffd6f0;
+        }
+
+        /* 滚动条美化 */
+        .dropdown-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .dropdown-menu::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+        .dropdown-menu::-webkit-scrollbar-thumb {
+            background: #ff77c6;
+            border-radius: 4px;
+        }
+
+        /* 移动端适配：菜单宽度跟随卡片 */
+        @media (max-width: 680px) {
+            .dropdown-menu {
+                top: calc(100% + 8px);
+                max-height: 280px;
+            }
+            .dropdown-menu a {
+                padding: 0.7rem 1rem;
+                font-size: 0.8rem;
+                white-space: normal;
+                word-break: break-word;
+            }
         }
 
         /* 灵犀测彩蛋 */
@@ -221,29 +311,8 @@
         </div>
     </div>
 
-    <!-- 四大跳转卡片（已改为独立子页面链接） -->
-    <div class="cards-grid">
-        <a href="daily.html" style="text-decoration: none; display: block;">
-            <div class="entry-card">
-                <img class="hero-pic" src="./picture/tu/1.png" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=日常灵占';">
-            </div>
-        </a>
-        <a href="relationship.html" style="text-decoration: none; display: block;">
-            <div class="entry-card">
-                <img class="hero-pic" src="./picture/tu/2.png" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=心动密测';">
-            </div>
-        </a>
-        <a href="career.html" style="text-decoration: none; display: block;">
-            <div class="entry-card">
-                <img class="hero-pic" src="./picture/tu/3.png" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=事业命格';">
-            </div>
-        </a>
-        <a href="star.html" style="text-decoration: none; display: block;">
-            <div class="entry-card">
-                <img class="hero-pic" src="./picture/tu/4.png" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=人格星盘';">
-            </div>
-        </a>
-    </div>
+    <!-- 四大入口卡片（带下拉菜单） -->
+    <div class="cards-grid" id="cardsGrid"></div>
 
     <!-- 灵犀测彩蛋区 -->
     <div class="extra-lingxi">
@@ -261,7 +330,157 @@
 </div>
 
 <script>
-    // 灵犀测彩蛋脚本（独立运行，不依赖任何测试模块）
+    // ================= 配置区域（请根据实际文件夹和文件路径修改） =================
+    // 每个模块包含：名称、图片路径、菜单项列表（每个项包含显示文字和链接）
+    // 链接请填写相对于 index.html 的正确路径
+    const modules = [
+        {
+            name: "日常灵占",
+            imgSrc: "./picture/tu/1.png",
+            // 菜单项：10个子页面，顺序与问题编号对应
+            menuItems: [
+                { text: "1. 今日幸运能量色", link: "/daily/daily_a1.html" },
+                { text: "2. 情绪陷阱诊断", link: "/daily/daily_a2.html" },
+                { text: "3. 事情进展占卜", link: "/daily/daily_a3.html" },
+                { text: "4. 出击 or 等待", link: "/daily/daily_a4.html" },
+                { text: "5. 星座贵人", link: "/daily/daily_a5.html" },
+                { text: "6. 超常发挥领域", link: "/daily/daily_a6.html" },
+                { text: "7. 心情行动数字", link: "/daily/daily_a7.html" },
+                { text: "8. 能量签语", link: "/daily/daily_a8.html" },
+                { text: "9. 饮食运势", link: "/daily/daily_a9.html" },
+                { text: "10. 出门小细节", link: "/daily/daily_a10.html" }
+            ]
+        },
+        {
+            name: "心动密测",
+            imgSrc: "./picture/tu/2.png",
+            menuItems: [
+                { text: "问题1：正缘还是过客", link: "/relationship/relationship_a1.html" },
+                { text: "问题2：TA的态度", link: "/relationship/relationship_a2.html" },
+                { text: "问题3：需要打破的循环", link: "/relationship/relationship_a3.html" },
+                { text: "问题4：复合必要", link: "/relationship/relationship_a4.html" },
+                { text: "问题5：恋爱阻障", link: "/relationship/relationship_a5.html" },
+                { text: "问题6：下次心动场景", link: "/relationship/relationship_a6.html" },
+                { text: "问题7：吸引但伤害的类型", link: "/relationship/relationship_a7.html" },
+                { text: "问题8：主动示好成功率", link: "/relationship/relationship_a8.html" },
+                { text: "问题9：暧昧明朗化", link: "/relationship/relationship_a9.html" },
+                { text: "问题10：渴望的爱情模式", link: "/relationship/relationship_a10.html" }
+            ]
+        },
+        {
+            name: "事业命格",
+            imgSrc: "./picture/tu/3.png",
+            menuItems: [
+                { text: "1. 事业能量底色", link: "/career/career_a1.html" },
+                { text: "2. 职场阻障", link: "/career/career_a2.html" },
+                { text: "3. 升迁时机", link: "/career/career_a3.html" },
+                { text: "4. 适合的副业方向", link: "/career/career_a4.html" },
+                { text: "5. 与领导/同事关系", link: "/career/career_a5.html" },
+                { text: "6. 跳槽运势", link: "/career/career_a6.html" },
+                { text: "7. 贵人星座", link: "/career/career_a7.html" },
+                { text: "8. 工作效率提升法", link: "/career/career_a8.html" },
+                { text: "9. 创业机遇", link: "/career/career_a9.html" },
+                { text: "10. 年度事业关键点", link: "/career/career_a10.html" }
+            ]
+        },
+        {
+            name: "人格星盘",
+            imgSrc: "./picture/tu/4.png",
+            menuItems: [
+                { text: "1. 你的核心人格", link: "/star/star_a1.html" },
+                { text: "2. 隐藏的性格阴影", link: "/star/star_a2.html" },
+                { text: "3. 情绪调节模式", link: "/star/star_a3.html" },
+                { text: "4. 社交能量来源", link: "/star/star_a4.html" },
+                { text: "5. 压力应对方式", link: "/star/star_a5.html" },
+                { text: "6. 天赋潜能", link: "/star/star_a6.html" },
+                { text: "7. 亲密关系中的表现", link: "/star/star_a7.html" },
+                { text: "8. 自我成长方向", link: "/star/star_a8.html" },
+                { text: "9. 内在小孩类型", link: "/star/star_a9.html" },
+                { text: "10. 人生使命线索", link: "/star/star_a10.html" }
+            ]
+        }
+    ];
+
+    // ================= 渲染卡片及下拉菜单 =================
+    const container = document.getElementById("cardsGrid");
+    function buildCards() {
+        let html = '';
+        modules.forEach((mod, idx) => {
+            // 生成菜单项HTML
+            let menuHtml = '<ul class="dropdown-menu">';
+            mod.menuItems.forEach(item => {
+                menuHtml += `<li><a href="${item.link}">${item.text}</a></li>`;
+            });
+            menuHtml += '</ul>';
+
+            html += `
+                <div class="card-wrapper" data-module="${idx}">
+                    <div class="entry-card">
+                        <img class="hero-pic" src="${mod.imgSrc}" onerror="this.onerror=null; this.src='https://placehold.co/400x200/2a1e45/ffb3e6?text=${encodeURIComponent(mod.name)}';">
+                    </div>
+                    ${menuHtml}
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+    buildCards();
+
+    // ================= 交互逻辑：PC悬停 + 移动端点击 =================
+    // 判断是否为触摸设备（移动端）
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // 存储当前打开的菜单（移动端用于关闭）
+    let activeWrapper = null;
+
+    // 全局点击关闭菜单（移动端）
+    function closeAllMenus(exceptWrapper = null) {
+        document.querySelectorAll('.card-wrapper').forEach(wrapper => {
+            if (exceptWrapper !== wrapper) {
+                wrapper.classList.remove('show-menu');
+            }
+        });
+        if (exceptWrapper === null) activeWrapper = null;
+    }
+
+    // 移动端：点击卡片切换菜单
+    if (isTouchDevice) {
+        document.querySelectorAll('.card-wrapper').forEach(wrapper => {
+            const card = wrapper.querySelector('.entry-card');
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // 如果当前菜单已打开，则关闭；否则关闭所有并打开当前
+                if (wrapper.classList.contains('show-menu')) {
+                    wrapper.classList.remove('show-menu');
+                    activeWrapper = null;
+                } else {
+                    closeAllMenus(wrapper);
+                    wrapper.classList.add('show-menu');
+                    activeWrapper = wrapper;
+                }
+            });
+        });
+        // 点击页面其他地方关闭所有菜单
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.card-wrapper')) {
+                closeAllMenus();
+            }
+        });
+        // 防止菜单内部链接点击时冒泡关闭
+        document.querySelectorAll('.dropdown-menu a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+    } else {
+        // PC端：完全依赖 CSS hover，不需要额外 JS，但为了防止hover时菜单抖动，保留原生样式即可
+        // 我们不需要添加任何额外脚本，因为 .card-wrapper:hover .dropdown-menu 已经生效
+        // 但为了优雅，可以为卡片添加一点延迟关闭的效果（CSS已处理）
+        // 同时，为了防止移动端样式干扰，不做额外处理
+    }
+
+    // 可选：为图片加载失败时提供更好的占位（上面已内置）
+    // 灵犀测彩蛋脚本
     const lingxiMessages = [
         "🌙 别让焦虑偷走当下的灵感，你本自具足。",
         "💫 你无须成为别人，你的独特就是最好的风水。",
@@ -290,6 +509,19 @@
     if (lingxiBtn) {
         lingxiBtn.addEventListener('click', showRandomLingxi);
     }
+
+    // 移动端额外优化：重新绑定动态生成的菜单链接（确保无冲突）
+    // 因为菜单是动态生成的，需要重新绑定阻止冒泡（移动端已有全局监听，但链接本身的点击不应关闭菜单，已处理）
+    function rebindMobileLinks() {
+        if (!isTouchDevice) return;
+        document.querySelectorAll('.dropdown-menu a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+    }
+    rebindMobileLinks();
+    // 监听可能的重新渲染（无需，因为只渲染一次）
 </script>
 </body>
 </html>

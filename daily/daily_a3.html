@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>日常占卜 · 事情进展</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0718;
+            font-family: 'Inter', sans-serif;
+            color: #f0eefc;
+            padding: 2rem 1rem;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .back-home {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #ffbbf0;
+            font-size: 0.8rem;
+        }
+        .card {
+            background: rgba(18, 16, 40, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border-left: 5px solid #ff77c6;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ffd6f0;
+        }
+        .question-item {
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.25);
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .opt-label {
+            background: rgba(255,255,240,0.07);
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .opt-label.selected {
+            background: #bf5eff40;
+            border-color: #e27eff;
+            color: white;
+        }
+        input[type="radio"] { display: none; }
+        button {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #0a041a;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .result {
+            margin-top: 1.5rem;
+            background: rgba(0,0,0,0.45);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            border-left: 4px solid #ff7bc2;
+            display: none;
+        }
+        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="card">
+        <h1>🔮 此刻你心里想的那件事，今天会有一个好进展吗？</h1>
+        <div id="questionsContainer"></div>
+        <button id="submitBtn">✨ 占卜进展 ✨</button>
+        <div id="resultArea" class="result"></div>
+    </div>
+    <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
+</div>
+
+<script>
+    const questions = [
+        { text: "关于你心里想的这件事，你今天到目前为止做了什么？", opts: ["什么都没做，只是在想", "查了相关资料或问了一个人", "已经发出了一个动作（消息/电话/行动）"], scores: [0,1,2] },
+        { text: "这件事的结果是否依赖另一个人（或外部条件）？", opts: ["完全依赖别人，我控制不了", "一半靠自己，一半靠别人", "主要靠我自己，别人只是配合"], scores: [0,1,2] },
+        { text: "你现在对这件事的感受是？", opts: ["很焦虑，觉得会坏事", "还行，好坏都能接受", "挺有把握，甚至有点期待"], scores: [0,1,2] },
+        { text: "到今天中午12点前，有没有任何新信息出现（哪怕很小）？", opts: ["完全没有", "有一点，但不明确", "有，而且让你觉得方向更清晰了"], scores: [0,1,2] },
+        { text: "如果今天不做任何额外的事，这件事的自然走向是？", opts: ["很可能停滞或变差", "保持不变，不会有变化", "会缓慢向前推进"], scores: [0,1,2] },
+        { text: "你心里想的这件事，你给它打几分的重要性（1-5分）？", opts: ["1-2分（没那么重要）", "3分（中等）", "4-5分（非常重要）"], scores: [0,1,2] }
+    ];
+
+    let answers = new Array(questions.length).fill(null);
+
+    function render() {
+        let html = '';
+        questions.forEach((q, idx) => {
+            html += `<div class="question-item">
+                        <div class="question-text">${q.text}</div>
+                        <div class="options-group" data-qidx="${idx}">`;
+            q.opts.forEach((opt, oidx) => {
+                let selectedClass = (answers[idx] === oidx) ? 'selected' : '';
+                html += `<label class="opt-label ${selectedClass}" data-oidx="${oidx}">${opt}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
+            });
+            html += `</div></div>`;
+        });
+        document.getElementById("questionsContainer").innerHTML = html;
+        attachEvents();
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.opt-label').forEach(label => {
+            label.addEventListener('click', function(e) {
+                let group = this.closest('.options-group');
+                let qidx = group.dataset.qidx;
+                let oidx = this.dataset.oidx;
+                answers[qidx] = parseInt(oidx);
+                group.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
+                this.classList.add('selected');
+                let radio = this.querySelector('input');
+                if (radio) radio.checked = true;
+            });
+        });
+    }
+
+    function getResult() {
+        let total = 0;
+        for (let i = 0; i < questions.length; i++) {
+            let idx = answers[i];
+            if (idx === null) return null;
+            total += questions[i].scores[idx];
+        }
+        if (total <= 3) return "迷雾牌";
+        if (total <= 6) return "潮汐牌";
+        if (total <= 9) return "星尘牌";
+        return "旭日牌";
+    }
+
+    const resultTexts = {
+        "旭日牌": "“会！而且比你想象的快。下午2点前会有明确信号（消息、电话、或者突然的灵感）。但记住：别反复检查，越盯越慢。你现在就像盯着水壶等烧开的人——去干点别的，等你回来，它已经滚了。建议：把手机关静音放抽屉里，1小时后再看，惊喜会翻倍。”",
+        "星尘牌": "“进展会超出预期，但需要你主动推一次。比如：问一句‘还有没有别的可能？’或补一份资料、再发一条跟进消息。别等，等就没星星了。你今天的一个小动作，会在傍晚时发酵成好消息。动手吧，懒鬼。”",
+        "潮汐牌": "“表面没动静，暗流已经在推了。晚上8点后你会得到一个线索。建议你现在就去干别的事，比如刷鞋、给绿萝浇水、把购物车清空一半（不是下单）。不要反复刷那个对话框，你今天刷不出结果，但明天可以。”",
+        "迷雾牌": "“今天不是答案日。但你会明白‘原来这件事没那么重要’。如果非要行动，只做最轻的一步（发个‘在吗’或查个基础资料）。别投入情绪，你今天的感觉像在雾里开车——减速比加速安全。建议：把这件事写下来，明天早上再看，你会笑自己今天为啥着急。”"
+    };
+
+    document.getElementById("submitBtn").onclick = () => {
+        let res = getResult();
+        if (res === null) {
+            alert("请先完成所有题目");
+            return;
+        }
+        let resultDiv = document.getElementById("resultArea");
+        resultDiv.innerHTML = `<strong>✨ 今日进展牌：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.style.display = "block";
+    };
+
+    render();
+</script>
+</body>
+</html>

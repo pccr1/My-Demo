@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>感情占卜 · 主动示好成功率</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0718; font-family: 'Inter', sans-serif; color: #f0eefc; padding: 2rem 1rem; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%); pointer-events: none; z-index: 0; }
+        .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
+        .back-home { display: inline-block; margin-bottom: 1.5rem; background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; color: #ffbbf0; font-size: 0.8rem; }
+        .card { background: rgba(18, 16, 40, 0.7); backdrop-filter: blur(12px); border-radius: 2rem; padding: 1.5rem; border-left: 5px solid #ff77c6; }
+        h1 { font-size: 1.8rem; margin-bottom: 1rem; color: #ffd6f0; }
+        .question-item { margin-bottom: 1.5rem; background: rgba(0,0,0,0.25); border-radius: 1rem; padding: 1rem; }
+        .question-text { font-weight: 600; margin-bottom: 0.8rem; }
+        .options-group { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .opt-label { background: rgba(255,255,240,0.07); padding: 0.5rem 1rem; border-radius: 40px; font-size: 0.85rem; cursor: pointer; transition: 0.1s; border: 1px solid transparent; }
+        .opt-label.selected { background: #bf5eff40; border-color: #e27eff; color: white; }
+        input[type="radio"] { display: none; }
+        button { background: linear-gradient(95deg, #b45eff, #ff6bc0); border: none; padding: 0.8rem 1.8rem; font-weight: 700; border-radius: 60px; color: #0a041a; cursor: pointer; font-size: 1rem; margin-top: 1rem; width: 100%; }
+        .result { margin-top: 1.5rem; background: rgba(0,0,0,0.45); border-radius: 1.5rem; padding: 1rem; border-left: 4px solid #ff7bc2; display: none; }
+        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="card">
+        <h1>📈 如果我现在主动示好，成功率有多高？</h1>
+        <div id="questionsContainer"></div>
+        <button id="submitBtn">✨ 查看结果 ✨</button>
+        <div id="resultArea" class="result"></div>
+    </div>
+    <div class="footer">🌙 遇事不决灵占馆 · 感情占卜</div>
+</div>
+
+<script>
+    const questions = [
+        { text: "你们目前的聊天频率和状态是？", opts: ["每天聊，TA主动和被动差不多","每天聊，但总是你主动开头","两三天聊一次，聊得还不错","一周以上才聊一次，而且很干","很久没聊了，突然想联系"], scores: [25,10,20,5,15] },
+        { text: "TA对你的“特殊关注”程度如何？", opts: ["有明显特殊关注，不止对普通朋友","偶尔有，但不确定是不是对谁都这样","基本没有，像普通同事/同学","我不确定，没观察过"], scores: [25,15,5,10] },
+        { text: "你们最近一次单独见面（或语音/视频）的氛围是？", opts: ["很好，有说有笑，甚至有点暧昧","还不错，正常朋友聊天","有点尴尬或冷场","没单独过"], scores: [25,10,5,0] },
+        { text: "你打算用什么方式“示好”？", opts: ["直接约出来吃饭/看电影","发一个有趣的话题或分享一首歌","写一段小作文表白","通过朋友传话或点赞朋友圈暗示","先制造一次偶然见面机会"], scores: [15,20,0,5,20] },
+        { text: "TA目前的感情状态是？", opts: ["确定单身，而且看起来想谈恋爱","单身，但看起来很享受独处","不确定，可能有人暧昧","已知有对象或刚分手"], scores: [20,10,5,0] },
+        { text: "你现在的心理状态是？", opts: ["比较放松，示好不成也能做朋友","有点紧张，但能控制","非常焦虑，怕被拒绝","“不成功便成仁”的状态"], scores: [15,10,5,0] },
+        { text: "如果示好失败，最坏的结果你能承受吗？", opts: ["能，大不了尴尬几天","能，但会难过一阵子","不能，会严重影响我的自信和社交","没想过，不敢想"], scores: [10,5,0,0] }
+    ];
+
+    let answers = new Array(questions.length).fill(null);
+
+    function render() {
+        let html = '';
+        questions.forEach((q, idx) => {
+            html += `<div class="question-item">
+                        <div class="question-text">${q.text}</div>
+                        <div class="options-group" data-qidx="${idx}">`;
+            q.opts.forEach((opt, oidx) => {
+                let selectedClass = (answers[idx] === oidx) ? 'selected' : '';
+                html += `<label class="opt-label ${selectedClass}" data-oidx="${oidx}">${opt}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
+            });
+            html += `</div></div>`;
+        });
+        document.getElementById("questionsContainer").innerHTML = html;
+        attachEvents();
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.opt-label').forEach(label => {
+            label.addEventListener('click', function(e) {
+                let group = this.closest('.options-group');
+                let qidx = group.dataset.qidx;
+                let oidx = this.dataset.oidx;
+                answers[qidx] = parseInt(oidx);
+                group.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
+                this.classList.add('selected');
+                let radio = this.querySelector('input');
+                if (radio) radio.checked = true;
+            });
+        });
+    }
+
+    function getResult() {
+        let total = 0;
+        for (let i = 0; i < questions.length; i++) {
+            let idx = answers[i];
+            if (idx === null) return null;
+            total += questions[i].scores[idx];
+        }
+        if (total <= 30) return "≤20%";
+        if (total <= 60) return "21%-40%";
+        if (total <= 90) return "41%-60%";
+        if (total <= 120) return "61%-80%";
+        return "81%-100%";
+    }
+
+    const resultTexts = {
+        "≤20%": "“醒醒吧，你现在示好等于往墙上泼水——除了湿自己一身，没别的结果。你们的关系还停留在‘认识’阶段，TA甚至可能没把你当潜在对象。建议：别急着冲，先退三步。接下来一个月，你多出现在TA面前（自然的场合），但不主动示好。让TA先习惯你的存在，然后再观察。如果你等不了，那就做好被发好人卡的准备。好人卡收集多了也能召唤神龙？不能。”",
+        "21%-40%": "“五五开都不到，但也不是完全没戏。目前你们的互动像‘温水’——不冷也不热，但离沸腾还远。问题出在：你可能太着急了，或者你们缺少共同的深度话题。建议：别直接表白，用‘轻量级示好’——比如‘最近有部电影好像不错，你有兴趣吗？’或者‘你上次说的那家店我去了，确实好吃’。看TA的反应。如果TA接茬并且主动延展话题，成功率会在两周内上升；如果TA敷衍或岔开话题，你就知道该收手了。”",
+        "41%-60%": "“五五开，像抛硬币。你们之间已经有了一些火花，但还没形成火苗。TA对你有些好感，但不确定是不是想更进一步。这时候示好成功与否，取决于你的方式和时机。建议：不要选在TA很忙很累的时候（比如周一上午或加班后）。最佳示好方式：用‘分享’代替‘表白’——‘我刚看到这个，第一个想到你’。观察TA回复的速度和语气。如果TA秒回并且带表情包，成功率会跳到70%；如果TA隔很久回个‘哈哈’，那再等等。”",
+        "61%-80%": "“不错啊，你已经赢了一半以上的人。你们之间有明显的暧昧信号，TA大概率也在等你开口。但别得意太早，你也可能因为‘示好方式太蠢’而翻车（比如小作文或公开表白）。建议：用最自然的方式——约一个具体的、低压力的活动（‘周末有个展，要不要一起？’）。不要问‘你什么时候有空’，太像面试。约会时保持朋友以上的肢体语言（多看一眼、轻轻碰一下手臂），但别越界。如果TA答应了并且全程开心，你就在终点线前了。”",
+        "81%-100%": "“你还在等什么？等TA发你录取通知书吗？你们俩就差一层窗户纸没捅破了。TA对你的好感已经写在脸上（或者聊天记录里），只是两个人都怂。建议：直接说‘我好像有点喜欢你’。别加‘万一你不喜欢我’之类的废话。如果实在说不出口，就发一个暧昧表情包加‘我想你了’。TA大概率会顺着你的话说。如果TA装傻，那你就装更傻——‘我开玩笑的，你不会当真了吧？’然后第二天再正式一次。但说真的，你现在就去发消息，别等明天了。”"
+    };
+
+    document.getElementById("submitBtn").onclick = () => {
+        let res = getResult();
+        if (res === null) {
+            alert("请先完成所有题目");
+            return;
+        }
+        let resultDiv = document.getElementById("resultArea");
+        let percent = res;
+        let msg = resultTexts[res];
+        resultDiv.innerHTML = `<strong>✨ 主动示好成功率：${percent} ✨</strong><br><br>${msg}`;
+        resultDiv.style.display = "block";
+    };
+
+    render();
+</script>
+</body>
+</html>

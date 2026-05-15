@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>日常占卜 · 情绪陷阱</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0718;
+            font-family: 'Inter', sans-serif;
+            color: #f0eefc;
+            padding: 2rem 1rem;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .back-home {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #ffbbf0;
+            font-size: 0.8rem;
+        }
+        .card {
+            background: rgba(18, 16, 40, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border-left: 5px solid #ff77c6;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ffd6f0;
+        }
+        .question-item {
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.25);
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .opt-label {
+            background: rgba(255,255,240,0.07);
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .opt-label.selected {
+            background: #bf5eff40;
+            border-color: #e27eff;
+            color: white;
+        }
+        input[type="radio"] { display: none; }
+        button {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #0a041a;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .result {
+            margin-top: 1.5rem;
+            background: rgba(0,0,0,0.45);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            border-left: 4px solid #ff7bc2;
+            display: none;
+        }
+        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="card">
+        <h1>🧠 今天你需要避开哪种“情绪陷阱”？</h1>
+        <div id="questionsContainer"></div>
+        <button id="submitBtn">✨ 诊断情绪陷阱 ✨</button>
+        <div id="resultArea" class="result"></div>
+    </div>
+    <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
+</div>
+
+<script>
+    const questions = [
+        { text: "你今天是否已经对一件事说了三次“烦死了”？", opts: ["是", "否"], scores: { "是": { anxiety:1 }, "否": {} } },
+        { text: "你是否在等别人回复消息，并且每隔2分钟看一次手机？", opts: ["是", "否"], scores: { "是": {讨好:1}, "否":{} } },
+        { text: "你是否因为一件小事（比如外卖慢、地铁等久了）就感觉“今天完了”？", opts: ["是", "否"], scores: { "是": {灾难化:1}, "否":{} } },
+        { text: "你是否为了不得罪人，答应了一件自己不想做的事？", opts: ["是", "否"], scores: { "是": {讨好:1}, "否":{} } },
+        { text: "你是否在心里预演了一场“和老板/对象/朋友的吵架”，并且你赢了？", opts: ["是", "否"], scores: { "是": {完美主义:1}, "否":{} } }
+    ];
+
+    let answers = new Array(questions.length).fill(null);
+
+    function render() {
+        let html = '';
+        questions.forEach((q, idx) => {
+            html += `<div class="question-item">
+                        <div class="question-text">${q.text}</div>
+                        <div class="options-group" data-qidx="${idx}">`;
+            q.opts.forEach((opt, oidx) => {
+                let selectedClass = (answers[idx] === oidx) ? 'selected' : '';
+                html += `<label class="opt-label ${selectedClass}" data-oidx="${oidx}">${opt}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
+            });
+            html += `</div></div>`;
+        });
+        document.getElementById("questionsContainer").innerHTML = html;
+        attachEvents();
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.opt-label').forEach(label => {
+            label.addEventListener('click', function(e) {
+                let group = this.closest('.options-group');
+                let qidx = group.dataset.qidx;
+                let oidx = this.dataset.oidx;
+                answers[qidx] = parseInt(oidx);
+                group.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
+                this.classList.add('selected');
+                let radio = this.querySelector('input');
+                if (radio) radio.checked = true;
+            });
+        });
+    }
+
+    function getResult() {
+        let traps = { anxiety:0,讨好:0,灾难化:0,完美主义:0 };
+        for (let i = 0; i < questions.length; i++) {
+            let idx = answers[i];
+            if (idx === null) return null;
+            let optText = questions[i].opts[idx];
+            let scores = questions[i].scores[optText];
+            for (let t in scores) traps[t] += scores[t];
+        }
+        let total = traps.anxiety + traps.讨好 + traps.灾难化 + traps.完美主义;
+        if (total === 0) return "神仙";
+        let order = ["anxiety","讨好","灾难化","完美主义"];
+        let maxVal = Math.max(traps.anxiety, traps.讨好, traps.灾难化, traps.完美主义);
+        let winner = order.find(t => traps[t] === maxVal);
+        if (winner === "anxiety") return "焦虑陷阱";
+        if (winner === "讨好") return "讨好陷阱";
+        if (winner === "灾难化") return "灾难化陷阱";
+        if (winner === "完美主义") return "完美主义陷阱";
+        return "神仙";
+    }
+
+    const resultTexts = {
+        "焦虑陷阱": "“你活像一部没信号的手机——一直在搜索，永远连不上。今天放下手机去拉屎，拉完再想。如果还焦虑，就把‘烦死了’换成‘然后呢’，问自己三次，你就发现事情没那么大。建议设置一个‘焦虑闹钟’：每次焦虑只允许自己烦3分钟，时间一到立刻去做一件具体的小事（比如擦桌子）。",
+        "讨好陷阱": "“你把自己活成了‘好的呢’复读机。今天试着说一次‘我不要’，你会发现天塌不下来，只会塌你的假人设。建议把手机壁纸换成‘关我屁事’。如果实在不敢拒绝，就先拖延——对方催你再说‘我忙’，不催就默认不用做。”",
+        "灾难化陷阱": "“你脑子里在拍灾难片，可惜你不是导演。事情有80%比你想的简单，剩下20%你控制不了。去洗把脸，然后对自己说‘最坏也不过是…’——说出口你就觉得好笑了。然后问自己：这件事1年后还重要吗？不重要的话，现在就给它打3分（满分10分）。",
+        "完美主义陷阱": "“你想把每件事做成米其林，但今天你只有泡面食材。允许自己交一份‘60分卷子’，你会发现没人扣你分。今天做任何事前先喊‘老子不完美，咋了？’然后直接开干，不许修改第一版。记住：完成比完美值钱，你又不是人民币。”",
+        "神仙": "“恭喜你，今天你的情绪稳得像一只老乌龟。你没有任何明显的情绪陷阱。继续保持。但小心：太稳了容易无聊，建议你今天主动挑一件小事搞砸它（比如故意把咖啡洒在桌上），体验一下失控的快乐。”"
+    };
+
+    document.getElementById("submitBtn").onclick = () => {
+        let res = getResult();
+        if (res === null) {
+            alert("请先完成所有题目");
+            return;
+        }
+        let resultDiv = document.getElementById("resultArea");
+        resultDiv.innerHTML = `<strong>✨ 今日情绪陷阱：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.style.display = "block";
+    };
+
+    render();
+</script>
+</body>
+</html>

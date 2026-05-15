@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>日常占卜 · 出击还是等待</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0718;
+            font-family: 'Inter', sans-serif;
+            color: #f0eefc;
+            padding: 2rem 1rem;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .back-home {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #ffbbf0;
+            font-size: 0.8rem;
+        }
+        .card {
+            background: rgba(18, 16, 40, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border-left: 5px solid #ff77c6;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ffd6f0;
+        }
+        .question-item {
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.25);
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .opt-label {
+            background: rgba(255,255,240,0.07);
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .opt-label.selected {
+            background: #bf5eff40;
+            border-color: #e27eff;
+            color: white;
+        }
+        input[type="radio"] { display: none; }
+        button {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #0a041a;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .result {
+            margin-top: 1.5rem;
+            background: rgba(0,0,0,0.45);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            border-left: 4px solid #ff7bc2;
+            display: none;
+        }
+        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="card">
+        <h1>⚡ 今天适合主动出击，还是先观察等待？</h1>
+        <div id="questionsContainer"></div>
+        <button id="submitBtn">✨ 获取今日策略 ✨</button>
+        <div id="resultArea" class="result"></div>
+    </div>
+    <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
+</div>
+
+<script>
+    const questions = [
+        { text: "对于你目前最在意的那件事，你手头掌握的信息量够做决定吗？", opts: ["够了，就差行动了", "还差一点关键信息", "完全蒙圈，信息太少"], scores: [[2,0], [0,1], [0,2]] },
+        { text: "你现在的心情状态是？", opts: ["急躁，想马上解决", "平静，能等", "佛系，无所谓"], scores: [[1,0], [0,1], [0,2]] },
+        { text: "如果今天主动出击，最坏的结果你能承受吗？", opts: ["能，大不了丢脸/被拒", "不太能，会后悔", "不知道，没想过"], scores: [[2,0], [0,2], [0,1]] },
+        { text: "这件事的deadline（截止时间）是？", opts: ["就在今天或明天", "本周内", "还早（一周以上）"], scores: [[3,0], [1,0], [0,2]] },
+        { text: "过去类似的事情，你“主动”的结果通常如何？", opts: ["挺好的，主动了就有好消息", "一般，有时好有时坏", "经常搞砸，不如等"], scores: [[2,0], [1,1], [0,2]] },
+        { text: "如果今天完全什么都不做，你会更焦虑还是更轻松？", opts: ["更焦虑，闲不住", "更轻松，省心了", "没区别"], scores: [[2,0], [0,2], [0,0]] }
+    ];
+
+    let answers = new Array(questions.length).fill(null);
+
+    function render() {
+        let html = '';
+        questions.forEach((q, idx) => {
+            html += `<div class="question-item">
+                        <div class="question-text">${q.text}</div>
+                        <div class="options-group" data-qidx="${idx}">`;
+            q.opts.forEach((opt, oidx) => {
+                let selectedClass = (answers[idx] === oidx) ? 'selected' : '';
+                html += `<label class="opt-label ${selectedClass}" data-oidx="${oidx}">${opt}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
+            });
+            html += `</div></div>`;
+        });
+        document.getElementById("questionsContainer").innerHTML = html;
+        attachEvents();
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.opt-label').forEach(label => {
+            label.addEventListener('click', function(e) {
+                let group = this.closest('.options-group');
+                let qidx = group.dataset.qidx;
+                let oidx = this.dataset.oidx;
+                answers[qidx] = parseInt(oidx);
+                group.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
+                this.classList.add('selected');
+                let radio = this.querySelector('input');
+                if (radio) radio.checked = true;
+            });
+        });
+    }
+
+    function getResult() {
+        let attack = 0, wait = 0;
+        for (let i = 0; i < questions.length; i++) {
+            let idx = answers[i];
+            if (idx === null) return null;
+            let [a, w] = questions[i].scores[idx];
+            attack += a;
+            wait += w;
+        }
+        return attack > wait ? "出击" : "等待";
+    }
+
+    const resultTexts = {
+        "出击": "“你今天像一把刚磨好的刀，别放在柜子里生锈。适合在上午10-11点做‘需要勇气’的事（发消息、约人、提方案、撕逼）。禁忌：别在午饭前做重大决定，饿着肚子容易乱咬人。出击口诀：‘先做再想，错了就认，反正没人记得你昨天干了啥。’ 现在就去，别刷手机了。”",
+        "等待": "“你今天是一只警觉的猫头鹰，但别白天扑腾。任何冲动决定都会在傍晚让你后悔得想扇自己。建议你只做‘收集信息’的事（看资料、听八卦、列清单、观察对方反应），晚饭后再判断。等待不是偷懒，是让子弹飞一会儿。如果实在手痒，就去整理桌面，但别碰那件事。”"
+    };
+
+    document.getElementById("submitBtn").onclick = () => {
+        let res = getResult();
+        if (res === null) {
+            alert("请先完成所有题目");
+            return;
+        }
+        let resultDiv = document.getElementById("resultArea");
+        resultDiv.innerHTML = `<strong>✨ 今日策略：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.style.display = "block";
+    };
+
+    render();
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>日常占卜 · 能量签语</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0718;
+            font-family: 'Inter', sans-serif;
+            color: #f0eefc;
+            padding: 2rem 1rem;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .back-home {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #ffbbf0;
+            font-size: 0.8rem;
+        }
+        .card {
+            background: rgba(18, 16, 40, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border-left: 5px solid #ff77c6;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ffd6f0;
+        }
+        button {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #0a041a;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .result {
+            margin-top: 1.5rem;
+            background: rgba(0,0,0,0.45);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            border-left: 4px solid #ff7bc2;
+            display: none;
+            text-align: left;
+        }
+        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
+        .shake-area {
+            margin: 2rem 0;
+            cursor: pointer;
+        }
+        .shake-icon {
+            font-size: 4rem;
+            color: #ffb86b;
+            transition: transform 0.1s;
+        }
+        .shake-icon:active {
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="card">
+        <h1>📜 今天你的一句“能量签语”是什么？</h1>
+        <div class="shake-area" id="shakeArea">
+            <i class="fas fa-hand-peace shake-icon"></i>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">点击抽签 / 摇一摇手机</p>
+        </div>
+        <button id="drawBtn">✨ 抽取能量签语 ✨</button>
+        <div id="resultArea" class="result"></div>
+    </div>
+    <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
+</div>
+
+<script>
+    const signs = [
+        "“你担心的事，八成不会发生。剩下两成发生了也没你想象得那么糟。建议：把你最怕的那个场景写下来，然后画个猪头在它旁边。你笑出来的时候，恐惧就跑了。”",
+        "“今天你的一句无心话，会帮到某个需要的人。可能是吐槽、可能是安慰、也可能是一句‘我也是’。别吝啬说话，但也别刻意。该来的那句话说出口就像放屁——自然发生。”",
+        "“允许自己今天有20%的时间‘低电量运行’。你不是机器人，不用每分钟都高效。下午3点如果想发呆就发呆，想刷手机就刷手机。但别超过20%，否则你会变成咸鱼。”",
+        "“有人正在心里感谢你，只是没说出口。可能是你上周帮过的人，也可能是你半年前的一个举动。别追问是谁，接受这份匿名功德。今天你对陌生人笑一下，功德加倍。”",
+        "“你今天会遇到一个‘选择’。选左边还是右边？选现在还是以后？选说还是不说？记住：选那个让你心跳快一点的。不是因为刺激，是因为你的直觉比你脑子聪明。”",
+        "“你今天可能会搞砸一件小事。比如打翻水、说错话、忘记带东西。没关系，搞砸了之后你反而轻松了——因为最坏已经发生了，剩下的全是赚的。建议：故意搞砸一件更小的事预热。”",
+        "“你今天最大的敌人不是别人，是‘等一下’。等一下再回、等一下再做、等一下再改——等一下就是永远不做。现在就去把拖了最久的那件小事干了，哪怕只做1分钟。”",
+        "“今天不适合做重大决定，但非常适合做一件‘没用但开心’的事。比如画个丑图、唱首跑调的歌、给植物起名字。你的大脑需要垃圾时间，就像手机需要清缓存。”"
+    ];
+
+    function drawSign() {
+        const randomIndex = Math.floor(Math.random() * signs.length);
+        return signs[randomIndex];
+    }
+
+    function showResult() {
+        let resultDiv = document.getElementById("resultArea");
+        resultDiv.innerHTML = `<strong>✨ 今日能量签语 ✨</strong><br><br>${drawSign()}`;
+        resultDiv.style.display = "block";
+    }
+
+    document.getElementById("drawBtn").onclick = showResult;
+    const shakeArea = document.getElementById("shakeArea");
+    shakeArea.onclick = showResult;
+
+    // 检测摇一摇（手机）
+    if (window.DeviceMotionEvent) {
+        let lastShake = 0;
+        window.addEventListener('devicemotion', function(e) {
+            let acceleration = e.accelerationIncludingGravity;
+            let x = acceleration.x;
+            let y = acceleration.y;
+            let z = acceleration.z;
+            let speed = Math.abs(x) + Math.abs(y) + Math.abs(z);
+            let now = Date.now();
+            if (speed > 25 && now - lastShake > 1000) {
+                lastShake = now;
+                showResult();
+            }
+        });
+    }
+</script>
+</body>
+</html>

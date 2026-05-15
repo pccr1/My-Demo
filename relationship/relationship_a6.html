@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>感情占卜 · 下一次心动场景</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0718; font-family: 'Inter', sans-serif; color: #f0eefc; padding: 2rem 1rem; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%); pointer-events: none; z-index: 0; }
+        .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
+        .back-home { display: inline-block; margin-bottom: 1.5rem; background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; color: #ffbbf0; font-size: 0.8rem; }
+        .card { background: rgba(18, 16, 40, 0.7); backdrop-filter: blur(12px); border-radius: 2rem; padding: 1.5rem; border-left: 5px solid #ff77c6; }
+        h1 { font-size: 1.8rem; margin-bottom: 1rem; color: #ffd6f0; }
+        .question-item { margin-bottom: 1.5rem; background: rgba(0,0,0,0.25); border-radius: 1rem; padding: 1rem; }
+        .question-text { font-weight: 600; margin-bottom: 0.8rem; }
+        .options-group { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .opt-label { background: rgba(255,255,240,0.07); padding: 0.5rem 1rem; border-radius: 40px; font-size: 0.85rem; cursor: pointer; transition: 0.1s; border: 1px solid transparent; }
+        .opt-label.selected { background: #bf5eff40; border-color: #e27eff; color: white; }
+        input[type="radio"] { display: none; }
+        button { background: linear-gradient(95deg, #b45eff, #ff6bc0); border: none; padding: 0.8rem 1.8rem; font-weight: 700; border-radius: 60px; color: #0a041a; cursor: pointer; font-size: 1rem; margin-top: 1rem; width: 100%; }
+        .result { margin-top: 1.5rem; background: rgba(0,0,0,0.45); border-radius: 1.5rem; padding: 1rem; border-left: 4px solid #ff7bc2; display: none; }
+        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="card">
+        <h1>📍 下一次心动，会出现在什么场景？</h1>
+        <div id="questionsContainer"></div>
+        <button id="submitBtn">✨ 查看结果 ✨</button>
+        <div id="resultArea" class="result"></div>
+    </div>
+    <div class="footer">🌙 遇事不决灵占馆 · 感情占卜</div>
+</div>
+
+<script>
+    const questions = [
+        { text: "你平时周末最常去的场所是？", opts: ["公司/图书馆/自习室","朋友家/餐厅/KTV/剧本杀店","在家刷手机/打游戏/逛社群","户外/公园/健身房/旅行"], scores: [[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2]] },
+        { text: "你最近被夸最多的是哪方面？", opts: ["工作能力强/学习好","有亲和力/会聊天/幽默","拍照好看/身材好/爱运动","没被夸过，或被夸“性格好”"], scores: [[1,0,0,0],[0,1,1,0],[0,0,0,1],[0,1,0,0]] },
+        { text: "如果你有一种超能力，你希望是？", opts: ["读心术","瞬间移动","隐身","飞行"], scores: [[1,0,0,0],[0,1,0,0],[0,0,2,0],[0,0,0,2]] },
+        { text: "你更容易对什么样的人产生好感？", opts: ["认真专注、专业能力强的人","幽默风趣、能带动气氛的人","有共同小众爱好、接梗快的人","阳光运动、爱冒险的人"], scores: [[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2]] },
+        { text: "你最近一个月，最常进行的社交方式是？", opts: ["工作对接、小组讨论、学习交流","朋友约饭、聚会、剧本杀","微信聊天、社群互动、游戏连麦","出门散步、逛展、短途旅行"], scores: [[1,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,1]] },
+        { text: "你现在的感情状态是？", opts: ["完全空白，很久没心动","有暗恋对象但不敢说","刚结束一段，想换换方式","在主动认识新人"], scores: [[1,0,1,0],[0,1,0,0],[0,0,0,2],[0,0,2,0]] }
+    ];
+
+    let answers = new Array(questions.length).fill(null);
+
+    function render() {
+        let html = '';
+        questions.forEach((q, idx) => {
+            html += `<div class="question-item">
+                        <div class="question-text">${q.text}</div>
+                        <div class="options-group" data-qidx="${idx}">`;
+            q.opts.forEach((opt, oidx) => {
+                let selectedClass = (answers[idx] === oidx) ? 'selected' : '';
+                html += `<label class="opt-label ${selectedClass}" data-oidx="${oidx}">${opt}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
+            });
+            html += `</div></div>`;
+        });
+        document.getElementById("questionsContainer").innerHTML = html;
+        attachEvents();
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.opt-label').forEach(label => {
+            label.addEventListener('click', function(e) {
+                let group = this.closest('.options-group');
+                let qidx = group.dataset.qidx;
+                let oidx = this.dataset.oidx;
+                answers[qidx] = parseInt(oidx);
+                group.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
+                this.classList.add('selected');
+                let radio = this.querySelector('input');
+                if (radio) radio.checked = true;
+            });
+        });
+    }
+
+    function getResult() {
+        let work = 0, friend = 0, online = 0, travel = 0;
+        for (let i = 0; i < questions.length; i++) {
+            let idx = answers[i];
+            if (idx === null) return null;
+            let [w, f, o, t] = questions[i].scores[idx];
+            work += w; friend += f; online += o; travel += t;
+        }
+        let max = Math.max(work, friend, online, travel);
+        if (work === max) return "工作/学习场合";
+        if (friend === max) return "朋友聚会局";
+        if (online === max) return "线上社交";
+        return "旅行/户外";
+    }
+
+    const resultTexts = {
+        "工作/学习场合": "“你下一次心动会发生在：会议室、图书馆、培训课、或者你盯着屏幕突然被一条工作消息震到的瞬间。对方可能是个看起来比你专注的人，或者在你卡壳时递给你一支笔的人。特点：不是第一眼帅哥美女，但做事的样子让人想多看两眼。建议：别只顾着埋头干活，偶尔抬头看看周围。下次开会时多带一支笔，‘借你’是个很好的搭讪词。”",
+        "朋友聚会局": "“你会在一群人中突然和某个人对上一眼，然后笑出来。可能是朋友组的饭局、生日趴、或者你本来不想去但被拉去的剧本杀。对方可能是朋友的朋友，也可能是那个一直存在但你没注意过的人。特征：能接住你的烂梗，或者酒量和你一样差。建议：下次聚会别光和自己熟人聊，主动换到陌生人旁边坐。带一副扑克牌，输的人加微信，很老套但很管用。”",
+        "线上社交": "“你在一个意想不到的社群里、游戏里、或者评论区里，和一个人聊到某个冷门爱好，然后心跳漏了一拍。对方的头像可能很普通，网名也不起眼，但说话方式让你觉得‘这人懂我’。注意：别聊太久才见面，线上心动容易见光死。建议：聊到有三个共同点时，主动约个语音或线下咖啡。如果对方推脱超过两次，立刻下一个，别在网线里浪费青春。”",
+        "旅行/户外": "“你会在一个你不太熟悉的地方，遇到一个让你觉得‘原来还有这种人’的瞬间。可能是爬山时对方拉了你一把，可能是看展时你们同时停在一幅画前，也可能是在车站问路结果聊了起来。特征：你们都不在平时的社交状态里，所以更容易真实。建议：报名一个你一直感兴趣但没去过的户外活动（徒步、露营、甚至排队买网红面包）。别戴口罩，别戴耳机，打开你的雷达。”"
+    };
+
+    document.getElementById("submitBtn").onclick = () => {
+        let res = getResult();
+        if (res === null) {
+            alert("请先完成所有题目");
+            return;
+        }
+        let resultDiv = document.getElementById("resultArea");
+        resultDiv.innerHTML = `<strong>✨ 下一次心动场景：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.style.display = "block";
+    };
+
+    render();
+</script>
+</body>
+</html>
