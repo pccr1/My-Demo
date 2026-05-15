@@ -5,25 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>感情占卜 · 吸引但伤害的类型</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0a0718; font-family: 'Inter', sans-serif; color: #f0eefc; padding: 2rem 1rem; }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%); pointer-events: none; z-index: 0; }
-        .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
-        .back-home { display: inline-block; margin-bottom: 1.5rem; background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; color: #ffbbf0; font-size: 0.8rem; }
-        .card { background: rgba(18, 16, 40, 0.7); backdrop-filter: blur(12px); border-radius: 2rem; padding: 1.5rem; border-left: 5px solid #ff77c6; }
-        h1 { font-size: 1.8rem; margin-bottom: 1rem; color: #ffd6f0; }
-        .question-item { margin-bottom: 1.5rem; background: rgba(0,0,0,0.25); border-radius: 1rem; padding: 1rem; }
-        .question-text { font-weight: 600; margin-bottom: 0.8rem; }
-        .options-group { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-        .opt-label { background: rgba(255,255,240,0.07); padding: 0.5rem 1rem; border-radius: 40px; font-size: 0.85rem; cursor: pointer; transition: 0.1s; border: 1px solid transparent; }
-        .opt-label.selected { background: #bf5eff40; border-color: #e27eff; color: white; }
-        input[type="radio"] { display: none; }
-        button { background: linear-gradient(95deg, #b45eff, #ff6bc0); border: none; padding: 0.8rem 1.8rem; font-weight: 700; border-radius: 60px; color: #0a041a; cursor: pointer; font-size: 1rem; margin-top: 1rem; width: 100%; }
-        .result { margin-top: 1.5rem; background: rgba(0,0,0,0.45); border-radius: 1.5rem; padding: 1rem; border-left: 4px solid #ff7bc2; display: none; }
-        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -33,21 +18,41 @@
         <div id="questionsContainer"></div>
         <button id="submitBtn">✨ 查看结果 ✨</button>
         <div id="resultArea" class="result"></div>
+        <div id="shareSection" class="share-section">
+            <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
+            <div class="share-tip">✨ 点击生成精美图片，长按保存分享 ✨</div>
+        </div>
+        <div id="rewardSection" class="reward-section">
+            <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
+            <div class="reward-codes">
+                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=微信'"><br>微信赞赏</div>
+                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=支付宝'"><br>支付宝赞赏</div>
+            </div>
+        </div>
     </div>
     <div class="footer">🌙 遇事不决灵占馆 · 感情占卜</div>
+</div>
+
+<div id="shareImageContainer" class="share-image-container"></div>
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="分享图片">
+        <div class="close-tip">✨ 长按图片保存，点击空白处关闭 ✨</div>
+    </div>
 </div>
 
 <script>
     const questions = [
         { text: "你最容易对哪种描述的人产生好感？", opts: ["话不多、捉摸不透、有故事","充满热情、行动力强、会带你疯","有某项才艺或特长、聪明、独特","温柔体贴、情绪稳定、让人安心"], scores: [[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2]] },
-        { text: "回顾你的前任或喜欢过的人，他们的共同点是？", opts: ["总让你猜他们在想什么","在一起时轰轰烈烈，分开时猝不及防","你是因为欣赏他们的才华或能力才上头的","对你很好，但最后你觉得无聊或不够爱"], scores: [[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,1]] },
+        { text: "回顾你的前任或喜欢过的人，他们的共同点是？", opts: ["总让你猜他们在想什么","在一起时轰轰烈烈，分开时猝不及防","你是因为欣赏他们的才华或能力才上头的","对你很好，但最后你觉得无聊或不够爱","没有上一任"], scores: [[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2],[0,0,0,0]] },
         { text: "你更容易在哪种情况下觉得自己“完了，沦陷了”？", opts: ["对方若即若离，你追着跑","对方做了件特别浪漫/冲动的事","对方展示了某个你做不到的才华","对方在你脆弱时给了你温暖"], scores: [[3,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2]] },
         { text: "你的朋友最常劝你的一句话是？", opts: ["“你越追他越跑”","“你冷静一点，别那么上头”","“你是不是喜欢他的光环，不是他本人？”","“他人挺好的，但你不觉得太平淡了吗？”"], scores: [[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2]] },
         { text: "你和上一任分手的核心原因最接近？", opts: ["忽冷忽热，你受不了了","情绪大起大落，太累了","太自我中心，只关心自己的事","没有激情，像室友","没有上一任"], scores: [[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2],[0,0,0,0]] },
         { text: "你内心深处最害怕的是？", opts: ["被欺骗、被隐瞒","被抛弃、对方突然不爱了","被忽视、对方只爱自己","被困住、没有成长和新鲜感"], scores: [[1,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2]] }
     ];
-
     let answers = new Array(questions.length).fill(null);
+    let currentResultKey = "";
+    let currentResultText = "";
 
     function render() {
         let html = '';
@@ -81,18 +86,22 @@
     }
 
     function getResult() {
-        let shenmi = 0, relie = 0, caihua = 0, wending = 0;
+        let scores = [0,0,0,0]; // 神秘,热烈,才华,稳定
         for (let i = 0; i < questions.length; i++) {
             let idx = answers[i];
             if (idx === null) return null;
-            let [sm, rl, ch, wd] = questions[i].scores[idx];
-            shenmi += sm; relie += rl; caihua += ch; wending += wd;
+            let s = questions[i].scores[idx];
+            for (let j=0; j<4; j++) scores[j] += s[j];
         }
-        let max = Math.max(shenmi, relie, caihua, wending);
-        if (shenmi === max) return "神秘型";
-        if (relie === max) return "热烈型";
-        if (caihua === max) return "才华型";
-        return "稳定型";
+        let priority = ["神秘型","热烈型","才华型","稳定型"];
+        let maxScore = -1, bestIdx = 0;
+        for (let i=0; i<4; i++) {
+            if (scores[i] > maxScore) {
+                maxScore = scores[i];
+                bestIdx = i;
+            }
+        }
+        return priority[bestIdx];
     }
 
     const resultTexts = {
@@ -102,15 +111,86 @@
         "稳定型": "“你容易被那些‘对你很好、情绪稳定、像温水’的人吸引。最初你觉得安全，后来你觉得无聊。伤害模式：你既舍不得离开，又觉得没激情。最后你可能因为‘没感觉了’而伤害对方，或者因为‘习惯了’而慢性死亡。破解方法：别把‘稳定’和‘无趣’划等号。主动创造小新鲜感——换个约会地点、学个新技能一起玩、设定共同目标。如果你发现自己真的没法爱一个稳定的人，那就别耽误人家，去找个让你心跳的。但别回头又喊‘好男人都去哪了’。”"
     };
 
+    function startIntenseConfetti() {
+        const colors = ['#ff77c6', '#ffb347', '#6eff70', '#47a3ff', '#c56eff', '#ff4d4d'];
+        for (let i = 0; i < 180; i++) {
+            let conf = document.createElement("div");
+            conf.className = "confetti";
+            const size = Math.random() * 12 + 6;
+            conf.style.width = size + "px";
+            conf.style.height = size + "px";
+            conf.style.left = Math.random() * window.innerWidth + "px";
+            conf.style.top = "-30px";
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 1200);
+        }
+    }
+
+    async function generateShareImage(moduleTitle, resultKey, resultDetail) {
+        startIntenseConfetti();
+        const container = document.getElementById("shareImageContainer");
+        const today = new Date().toLocaleDateString('zh-CN');
+        const homeUrl = window.location.origin + '/index.html';
+        container.innerHTML = `
+            <div class="module-title">${moduleTitle}</div>
+            <div class="result-text"><strong>✨ 结果：${resultKey} ✨</strong><br><br>${resultDetail}</div>
+            <div class="date">📅 占卜日期：${today}</div>
+            <div class="footer-invite">🎉 快邀请你的好友一起来测试吧！ 🎉</div>
+            <div class="qrcode-wrapper" id="qrcodeWrapper"></div>
+        `;
+        const qrWrapper = document.getElementById("qrcodeWrapper");
+        const qrDiv = document.createElement("div");
+        qrWrapper.appendChild(qrDiv);
+        new QRCode(qrDiv, {
+            text: homeUrl,
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        await new Promise(r => setTimeout(r, 300));
+        const canvas = await html2canvas(container, {
+            scale: 2.5,
+            backgroundColor: null,
+            logging: false,
+            useCORS: true,
+            allowTaint: false
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const modal = document.getElementById("modalOverlay");
+        const modalImg = document.getElementById("modalImage");
+        modalImg.src = imgData;
+        modal.classList.add("active");
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.classList.remove("active");
+        };
+    }
+
     document.getElementById("submitBtn").onclick = () => {
-        let res = getResult();
-        if (res === null) {
+        let key = getResult();
+        if (key === null) {
             alert("请先完成所有题目");
             return;
         }
+        let text = resultTexts[key];
+        currentResultKey = key;
+        currentResultText = text;
         let resultDiv = document.getElementById("resultArea");
-        resultDiv.innerHTML = `<strong>✨ 最易吸引但伤害你的类型：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.innerHTML = `<strong>✨ 你最容易被吸引但伤害的类型：${key} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
+        document.getElementById("shareSection").style.display = "block";
+        document.getElementById("rewardSection").style.display = "block";
+    };
+
+    document.getElementById("shareBtn").onclick = async () => {
+        if (!currentResultKey) {
+            alert("请先完成测试并查看结果");
+            return;
+        }
+        await generateShareImage("吸引但伤害的类型", currentResultKey, currentResultText);
     };
 
     render();

@@ -3,27 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>感情占卜 · 恋爱阻障来源</title>
+    <title>感情占卜 · 恋爱阻障</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0a0718; font-family: 'Inter', sans-serif; color: #f0eefc; padding: 2rem 1rem; }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%); pointer-events: none; z-index: 0; }
-        .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
-        .back-home { display: inline-block; margin-bottom: 1.5rem; background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; color: #ffbbf0; font-size: 0.8rem; }
-        .card { background: rgba(18, 16, 40, 0.7); backdrop-filter: blur(12px); border-radius: 2rem; padding: 1.5rem; border-left: 5px solid #ff77c6; }
-        h1 { font-size: 1.8rem; margin-bottom: 1rem; color: #ffd6f0; }
-        .question-item { margin-bottom: 1.5rem; background: rgba(0,0,0,0.25); border-radius: 1rem; padding: 1rem; }
-        .question-text { font-weight: 600; margin-bottom: 0.8rem; }
-        .options-group { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-        .opt-label { background: rgba(255,255,240,0.07); padding: 0.5rem 1rem; border-radius: 40px; font-size: 0.85rem; cursor: pointer; transition: 0.1s; border: 1px solid transparent; }
-        .opt-label.selected { background: #bf5eff40; border-color: #e27eff; color: white; }
-        input[type="radio"] { display: none; }
-        button { background: linear-gradient(95deg, #b45eff, #ff6bc0); border: none; padding: 0.8rem 1.8rem; font-weight: 700; border-radius: 60px; color: #0a041a; cursor: pointer; font-size: 1rem; margin-top: 1rem; width: 100%; }
-        .result { margin-top: 1.5rem; background: rgba(0,0,0,0.45); border-radius: 1.5rem; padding: 1rem; border-left: 4px solid #ff7bc2; display: none; }
-        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -33,8 +18,27 @@
         <div id="questionsContainer"></div>
         <button id="submitBtn">✨ 查看结果 ✨</button>
         <div id="resultArea" class="result"></div>
+        <div id="shareSection" class="share-section">
+            <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
+            <div class="share-tip">✨ 点击生成精美图片，长按保存分享 ✨</div>
+        </div>
+        <div id="rewardSection" class="reward-section">
+            <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
+            <div class="reward-codes">
+                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=微信'"><br>微信赞赏</div>
+                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=支付宝'"><br>支付宝赞赏</div>
+            </div>
+        </div>
     </div>
     <div class="footer">🌙 遇事不决灵占馆 · 感情占卜</div>
+</div>
+
+<div id="shareImageContainer" class="share-image-container"></div>
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="分享图片">
+        <div class="close-tip">✨ 长按图片保存，点击空白处关闭 ✨</div>
+    </div>
 </div>
 
 <script>
@@ -42,12 +46,13 @@
         { text: "你身边单身、且可能发展的异性/同性朋友（不含同事）有多少？", opts: ["0-1个","2-3个","4个以上"], scores: [[0,3],[0,1],[1,0]] },
         { text: "过去三个月，你主动加过微信/主动聊天/主动约见的有多少次？", opts: ["0次","1-2次","3次以上"], scores: [[3,0],[1,0],[0,1]] },
         { text: "你觉得自己“值得被爱”的程度（1-5分）？", opts: ["1-2分（经常自我否定）","3分（还行）","4-5分（挺自信的）"], scores: [[3,0],[1,0],[0,1]] },
-        { text: "你目前的生活状态（工作/学习/搬家等）是否极度忙碌或不稳定？", opts: ["是，忙到没空想感情","一般忙，但能挤时间","不忙，有大把空余"], scores: [[0,3],[0,1],[1,0]] },
-        { text: "你和异性/潜在对象交流时，会不会经常想‘TA肯定不喜欢我’或‘我是不是说错话了’？", opts: ["总是这样","偶尔会","很少，比较放松"], scores: [[3,0],[1,0],[0,1]] },
+        { text: "你目前的生活状态是否极度忙碌或不稳定？", opts: ["是，忙到没空想感情","一般忙，但能挤时间","不忙，有大把空余"], scores: [[0,3],[0,1],[1,0]] },
+        { text: "你和异性交流时，会不会经常想“TA肯定不喜欢我”或“我是不是说错话了”？", opts: ["总是这样","偶尔会","很少，比较放松"], scores: [[3,0],[1,0],[0,1]] },
         { text: "你所在的圈子环境氛围是？", opts: ["几乎都是同性，或都是已婚/已有对象","男女比例均衡，但大家都不谈恋爱","有很多单身且活跃的人"], scores: [[0,3],[0,2],[1,0]] }
     ];
-
     let answers = new Array(questions.length).fill(null);
+    let currentResultKey = "";
+    let currentResultText = "";
 
     function render() {
         let html = '';
@@ -81,16 +86,16 @@
     }
 
     function getResult() {
-        let selfScore = 0, envScore = 0;
+        let self = 0, env = 0;
         for (let i = 0; i < questions.length; i++) {
             let idx = answers[i];
             if (idx === null) return null;
             let [s, e] = questions[i].scores[idx];
-            selfScore += s;
-            envScore += e;
+            self += s;
+            env += e;
         }
-        if (selfScore >= envScore + 2) return "来自自己";
-        if (envScore >= selfScore + 2) return "来自环境";
+        if (self >= env + 2) return "来自自己";
+        if (env >= self + 2) return "来自环境";
         return "各半";
     }
 
@@ -100,15 +105,86 @@
         "各半": "“你和环境各背一半的锅。你的圈子不算差，但你也不够主动；你有自信，但又有点小别扭。解决办法很简单：降低期待，提高行动。别想着‘一见钟情’、‘灵魂伴侣’，先想着‘多认识一个有趣的人’就行。建议：本周主动约一个你觉得‘还行’的人出来喝咖啡，就一杯咖啡的时间，聊完就走。别给自己加戏，你就会发现阻碍没那么大。”"
     };
 
+    function startIntenseConfetti() {
+        const colors = ['#ff77c6', '#ffb347', '#6eff70', '#47a3ff', '#c56eff', '#ff4d4d'];
+        for (let i = 0; i < 180; i++) {
+            let conf = document.createElement("div");
+            conf.className = "confetti";
+            const size = Math.random() * 12 + 6;
+            conf.style.width = size + "px";
+            conf.style.height = size + "px";
+            conf.style.left = Math.random() * window.innerWidth + "px";
+            conf.style.top = "-30px";
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 1200);
+        }
+    }
+
+    async function generateShareImage(moduleTitle, resultKey, resultDetail) {
+        startIntenseConfetti();
+        const container = document.getElementById("shareImageContainer");
+        const today = new Date().toLocaleDateString('zh-CN');
+        const homeUrl = window.location.origin + '/index.html';
+        container.innerHTML = `
+            <div class="module-title">${moduleTitle}</div>
+            <div class="result-text"><strong>✨ 结果：${resultKey} ✨</strong><br><br>${resultDetail}</div>
+            <div class="date">📅 占卜日期：${today}</div>
+            <div class="footer-invite">🎉 快邀请你的好友一起来测试吧！ 🎉</div>
+            <div class="qrcode-wrapper" id="qrcodeWrapper"></div>
+        `;
+        const qrWrapper = document.getElementById("qrcodeWrapper");
+        const qrDiv = document.createElement("div");
+        qrWrapper.appendChild(qrDiv);
+        new QRCode(qrDiv, {
+            text: homeUrl,
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        await new Promise(r => setTimeout(r, 300));
+        const canvas = await html2canvas(container, {
+            scale: 2.5,
+            backgroundColor: null,
+            logging: false,
+            useCORS: true,
+            allowTaint: false
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const modal = document.getElementById("modalOverlay");
+        const modalImg = document.getElementById("modalImage");
+        modalImg.src = imgData;
+        modal.classList.add("active");
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.classList.remove("active");
+        };
+    }
+
     document.getElementById("submitBtn").onclick = () => {
-        let res = getResult();
-        if (res === null) {
+        let key = getResult();
+        if (key === null) {
             alert("请先完成所有题目");
             return;
         }
+        let text = resultTexts[key];
+        currentResultKey = key;
+        currentResultText = text;
         let resultDiv = document.getElementById("resultArea");
-        resultDiv.innerHTML = `<strong>✨ 恋爱阻障来源：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.innerHTML = `<strong>✨ ${key} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
+        document.getElementById("shareSection").style.display = "block";
+        document.getElementById("rewardSection").style.display = "block";
+    };
+
+    document.getElementById("shareBtn").onclick = async () => {
+        if (!currentResultKey) {
+            alert("请先完成测试并查看结果");
+            return;
+        }
+        await generateShareImage("恋爱阻障", currentResultKey, currentResultText);
     };
 
     render();

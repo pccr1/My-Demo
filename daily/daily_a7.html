@@ -4,144 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>日常占卜 · 心情行动数字</title>
+    <link rel="stylesheet" href="/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #0a0718;
-            font-family: 'Inter', sans-serif;
-            color: #f0eefc;
-            padding: 2rem 1rem;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        .back-home {
-            display: inline-block;
-            margin-bottom: 1.5rem;
-            background: rgba(255,255,255,0.1);
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #ffbbf0;
-            font-size: 0.8rem;
-        }
-        .card {
-            background: rgba(18, 16, 40, 0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            border-left: 5px solid #ff77c6;
-        }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: #ffd6f0;
-        }
-        .question-item {
-            margin-bottom: 1.5rem;
-            background: rgba(0,0,0,0.25);
-            border-radius: 1rem;
-            padding: 1rem;
-        }
-        .question-text {
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-        }
-        .number-input {
-            background: #2a2348;
-            border: 1px solid #c08eff;
-            border-radius: 40px;
-            padding: 0.7rem 1rem;
-            color: white;
-            font-size: 1rem;
-            width: 150px;
-            text-align: center;
-        }
-        button {
-            background: linear-gradient(95deg, #b45eff, #ff6bc0);
-            border: none;
-            padding: 0.8rem 1.8rem;
-            font-weight: 700;
-            border-radius: 60px;
-            color: #0a041a;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 1rem;
-            width: 100%;
-        }
-        .result {
-            margin-top: 1.5rem;
-            background: rgba(0,0,0,0.45);
-            border-radius: 1.5rem;
-            padding: 1rem;
-            border-left: 4px solid #ff7bc2;
-            display: none;
-        }
-        /* 分享按钮和赞赏码区域 */
-        .action-area {
-            margin-top: 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            align-items: center;
-        }
-        .share-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid #ff86c6;
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .share-btn:hover {
-            background: #ff44aa30;
-            border-color: #ff69b4;
-        }
-        .reward-codes {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 0.5rem;
-        }
-        .reward-item {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #cbb1ff;
-        }
-        .reward-item img {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            background: white;
-            padding: 5px;
-            margin-bottom: 4px;
-        }
-        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
-        @media (max-width: 680px) {
-            .reward-item img { width: 70px; height: 70px; }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -154,9 +21,27 @@
         </div>
         <button id="submitBtn">✨ 查看心情行动 ✨</button>
         <div id="resultArea" class="result"></div>
-        <div id="actionArea" class="action-area" style="display: none;"></div>
+        <div id="shareSection" class="share-section">
+            <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
+            <div class="share-tip">✨ 点击生成精美图片，长按保存分享 ✨</div>
+        </div>
+        <div id="rewardSection" class="reward-section">
+            <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
+            <div class="reward-codes">
+                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=微信'"><br>微信赞赏</div>
+                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=支付宝'"><br>支付宝赞赏</div>
+            </div>
+        </div>
     </div>
     <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
+</div>
+
+<div id="shareImageContainer" class="share-image-container"></div>
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="分享图片">
+        <div class="close-tip">✨ 长按图片保存，点击空白处关闭 ✨</div>
+    </div>
 </div>
 
 <script>
@@ -173,56 +58,88 @@
         10: "“直接躺平，闭上眼睛，深呼吸10次。每次呼气的时候在心里说‘烦死了，出去’。10次之后如果还烦，就再来10次。如果还是烦，那就睡一觉。今天你已经很棒了（虽然可能并没有），但躺平不丢人。”"
     };
 
-    function getResult() {
-        let num = parseInt(document.getElementById("moodNumber").value);
-        if (isNaN(num)) num = 5;
-        num = Math.min(10, Math.max(1, num));
-        return { num, text: moodTexts[num] };
-    }
+    let currentNumber = 5;
+    let currentResultText = "";
 
-    function showShareAndReward(resultText) {
-        let actionDiv = document.getElementById("actionArea");
-        actionDiv.innerHTML = `
-            <div class="share-btn" id="shareResultBtn"><i class="fab fa-share-alt"></i> 分享结果</div>
-            <div class="reward-codes">
-                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=微信'"><br>微信赞赏</div>
-                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=支付宝'"><br>支付宝赞赏</div>
-            </div>
-        `;
-        actionDiv.style.display = "flex";
-        // 绑定分享事件
-        const shareBtn = document.getElementById("shareResultBtn");
-        if (shareBtn) {
-            shareBtn.onclick = () => {
-                let shareText = `【灵犀运势馆】今日心情行动：${resultText.substring(0, 80)}... 测测你的今日好运 → 遇事不决灵占馆`;
-                if (navigator.share) {
-                    navigator.share({
-                        title: '灵犀运势馆 · 每日一占',
-                        text: shareText,
-                        url: window.location.href
-                    }).catch(() => {});
-                } else {
-                    // 降级：复制链接
-                    navigator.clipboard.writeText(window.location.href).then(() => {
-                        alert("链接已复制，可分享给朋友啦！");
-                    }).catch(() => {
-                        alert("手动分享吧：复制链接给好友~");
-                    });
-                }
-            };
+    function startIntenseConfetti() {
+        const colors = ['#ff77c6', '#ffb347', '#6eff70', '#47a3ff', '#c56eff', '#ff4d4d'];
+        for (let i = 0; i < 180; i++) {
+            let conf = document.createElement("div");
+            conf.className = "confetti";
+            const size = Math.random() * 12 + 6;
+            conf.style.width = size + "px";
+            conf.style.height = size + "px";
+            conf.style.left = Math.random() * window.innerWidth + "px";
+            conf.style.top = "-30px";
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 1200);
         }
     }
 
+    async function generateShareImage(moduleTitle, resultKey, resultDetail) {
+        startIntenseConfetti();
+        const container = document.getElementById("shareImageContainer");
+        const today = new Date().toLocaleDateString('zh-CN');
+        const homeUrl = window.location.origin + '/index.html';
+        container.innerHTML = `
+            <div class="module-title">${moduleTitle}</div>
+            <div class="result-text"><strong>✨ 你的心情数字：${resultKey} ✨</strong><br><br>${resultDetail}</div>
+            <div class="date">📅 占卜日期：${today}</div>
+            <div class="footer-invite">🎉 快邀请你的好友一起来测试吧！ 🎉</div>
+            <div class="qrcode-wrapper" id="qrcodeWrapper"></div>
+        `;
+        const qrWrapper = document.getElementById("qrcodeWrapper");
+        const qrDiv = document.createElement("div");
+        qrWrapper.appendChild(qrDiv);
+        new QRCode(qrDiv, {
+            text: homeUrl,
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        await new Promise(r => setTimeout(r, 300));
+        const canvas = await html2canvas(container, {
+            scale: 2.5,
+            backgroundColor: null,
+            logging: false,
+            useCORS: true,
+            allowTaint: false
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const modal = document.getElementById("modalOverlay");
+        const modalImg = document.getElementById("modalImage");
+        modalImg.src = imgData;
+        modal.classList.add("active");
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.classList.remove("active");
+        };
+    }
+
     document.getElementById("submitBtn").onclick = () => {
-        let { num, text } = getResult();
+        let num = parseInt(document.getElementById("moodNumber").value);
+        if (isNaN(num)) num = 5;
+        num = Math.min(10, Math.max(1, num));
+        currentNumber = num;
+        let text = moodTexts[num];
+        currentResultText = text;
         let resultDiv = document.getElementById("resultArea");
         resultDiv.innerHTML = `<strong>✨ 你的心情行动数字：${num} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
-        showShareAndReward(text);
+        document.getElementById("shareSection").style.display = "block";
+        document.getElementById("rewardSection").style.display = "block";
     };
 
-    // 初始化
-    getResult();
+    document.getElementById("shareBtn").onclick = async () => {
+        if (!currentResultText) {
+            alert("请先完成测试并查看结果");
+            return;
+        }
+        await generateShareImage("心情行动数字", currentNumber.toString(), currentResultText);
+    };
 </script>
 </body>
 </html>

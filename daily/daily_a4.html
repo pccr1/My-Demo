@@ -3,132 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>日常占卜 · 出击还是等待</title>
+    <title>日常占卜 · 出击 or 等待</title>
+    <link rel="stylesheet" href="/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #0a0718;
-            font-family: 'Inter', sans-serif;
-            color: #f0eefc;
-            padding: 2rem 1rem;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        .back-home {
-            display: inline-block;
-            margin-bottom: 1.5rem;
-            background: rgba(255,255,255,0.1);
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #ffbbf0;
-            font-size: 0.8rem;
-        }
-        .card {
-            background: rgba(18, 16, 40, 0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            border-left: 5px solid #ff77c6;
-        }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: #ffd6f0;
-        }
-        .question-item {
-            margin-bottom: 1.5rem;
-            background: rgba(0,0,0,0.25);
-            border-radius: 1rem;
-            padding: 1rem;
-        }
-        .question-text {
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-        }
-        .options-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-        }
-        .opt-label {
-            background: rgba(255,255,240,0.07);
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.1s;
-            border: 1px solid transparent;
-        }
-        .opt-label.selected {
-            background: #bf5eff40;
-            border-color: #e27eff;
-            color: white;
-        }
-        input[type="radio"] { display: none; }
-        button {
-            background: linear-gradient(95deg, #b45eff, #ff6bc0);
-            border: none;
-            padding: 0.8rem 1.8rem;
-            font-weight: 700;
-            border-radius: 60px;
-            color: #0a041a;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 1rem;
-            width: 100%;
-        }
-        .result {
-            margin-top: 1.5rem;
-            background: rgba(0,0,0,0.45);
-            border-radius: 1.5rem;
-            padding: 1rem;
-            border-left: 4px solid #ff7bc2;
-            display: none;
-        }
-        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <div class="container">
     <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
     <div class="card">
-        <h1>⚡ 今天适合主动出击，还是先观察等待？</h1>
+        <h1>⚔️ 今天适合主动出击，还是先观察等待？</h1>
         <div id="questionsContainer"></div>
-        <button id="submitBtn">✨ 获取今日策略 ✨</button>
+        <button id="submitBtn">✨ 获取策略 ✨</button>
         <div id="resultArea" class="result"></div>
+        <div id="shareSection" class="share-section">
+            <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
+            <div class="share-tip">✨ 点击生成精美图片，长按保存分享 ✨</div>
+        </div>
+        <div id="rewardSection" class="reward-section">
+            <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
+            <div class="reward-codes">
+                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=微信'"><br>微信赞赏</div>
+                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=支付宝'"><br>支付宝赞赏</div>
+            </div>
+        </div>
     </div>
     <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
 </div>
 
+<div id="shareImageContainer" class="share-image-container"></div>
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="分享图片">
+        <div class="close-tip">✨ 长按图片保存，点击空白处关闭 ✨</div>
+    </div>
+</div>
+
 <script>
     const questions = [
-        { text: "对于你目前最在意的那件事，你手头掌握的信息量够做决定吗？", opts: ["够了，就差行动了", "还差一点关键信息", "完全蒙圈，信息太少"], scores: [[2,0], [0,1], [0,2]] },
-        { text: "你现在的心情状态是？", opts: ["急躁，想马上解决", "平静，能等", "佛系，无所谓"], scores: [[1,0], [0,1], [0,2]] },
-        { text: "如果今天主动出击，最坏的结果你能承受吗？", opts: ["能，大不了丢脸/被拒", "不太能，会后悔", "不知道，没想过"], scores: [[2,0], [0,2], [0,1]] },
-        { text: "这件事的deadline（截止时间）是？", opts: ["就在今天或明天", "本周内", "还早（一周以上）"], scores: [[3,0], [1,0], [0,2]] },
-        { text: "过去类似的事情，你“主动”的结果通常如何？", opts: ["挺好的，主动了就有好消息", "一般，有时好有时坏", "经常搞砸，不如等"], scores: [[2,0], [1,1], [0,2]] },
-        { text: "如果今天完全什么都不做，你会更焦虑还是更轻松？", opts: ["更焦虑，闲不住", "更轻松，省心了", "没区别"], scores: [[2,0], [0,2], [0,0]] }
+        { text: "对于你目前最在意的那件事，你手头掌握的信息量够做决定吗？", opts: ["够了，就差行动了","还差一点关键信息","完全蒙圈，信息太少"], scores: [[2,0],[0,1],[0,2]] },
+        { text: "你现在的心情状态是？", opts: ["急躁，想马上解决","平静，能等","佛系，无所谓"], scores: [[1,0],[0,1],[0,2]] },
+        { text: "如果今天主动出击，最坏的结果你能承受吗？", opts: ["能，大不了丢脸/被拒","不太能，会后悔","不知道，没想过"], scores: [[2,0],[0,2],[0,1]] },
+        { text: "这件事的deadline（截止时间）是？", opts: ["就在今天或明天","本周内","还早（一周以上）"], scores: [[3,0],[1,0],[0,2]] },
+        { text: "过去类似的事情，你“主动”的结果通常如何？", opts: ["挺好的，主动了就有好消息","一般，有时好有时坏","经常搞砸，不如等"], scores: [[2,0],[1,1],[0,2]] },
+        { text: "如果今天完全什么都不做，你会更焦虑还是更轻松？", opts: ["更焦虑，闲不住","更轻松，省心了","没区别"], scores: [[2,0],[0,2],[0,0]] }
     ];
-
     let answers = new Array(questions.length).fill(null);
+    let currentResultKey = "";
+    let currentResultText = "";
 
     function render() {
         let html = '';
@@ -167,8 +91,7 @@
             let idx = answers[i];
             if (idx === null) return null;
             let [a, w] = questions[i].scores[idx];
-            attack += a;
-            wait += w;
+            attack += a; wait += w;
         }
         return attack > wait ? "出击" : "等待";
     }
@@ -178,15 +101,86 @@
         "等待": "“你今天是一只警觉的猫头鹰，但别白天扑腾。任何冲动决定都会在傍晚让你后悔得想扇自己。建议你只做‘收集信息’的事（看资料、听八卦、列清单、观察对方反应），晚饭后再判断。等待不是偷懒，是让子弹飞一会儿。如果实在手痒，就去整理桌面，但别碰那件事。”"
     };
 
+    function startIntenseConfetti() {
+        const colors = ['#ff77c6', '#ffb347', '#6eff70', '#47a3ff', '#c56eff', '#ff4d4d'];
+        for (let i = 0; i < 180; i++) {
+            let conf = document.createElement("div");
+            conf.className = "confetti";
+            const size = Math.random() * 12 + 6;
+            conf.style.width = size + "px";
+            conf.style.height = size + "px";
+            conf.style.left = Math.random() * window.innerWidth + "px";
+            conf.style.top = "-30px";
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 1200);
+        }
+    }
+
+    async function generateShareImage(moduleTitle, resultKey, resultDetail) {
+        startIntenseConfetti();
+        const container = document.getElementById("shareImageContainer");
+        const today = new Date().toLocaleDateString('zh-CN');
+        const homeUrl = window.location.origin + '/index.html';
+        container.innerHTML = `
+            <div class="module-title">${moduleTitle}</div>
+            <div class="result-text"><strong>✨ 结果：${resultKey} ✨</strong><br><br>${resultDetail}</div>
+            <div class="date">📅 占卜日期：${today}</div>
+            <div class="footer-invite">🎉 快邀请你的好友一起来测试吧！ 🎉</div>
+            <div class="qrcode-wrapper" id="qrcodeWrapper"></div>
+        `;
+        const qrWrapper = document.getElementById("qrcodeWrapper");
+        const qrDiv = document.createElement("div");
+        qrWrapper.appendChild(qrDiv);
+        new QRCode(qrDiv, {
+            text: homeUrl,
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        await new Promise(r => setTimeout(r, 300));
+        const canvas = await html2canvas(container, {
+            scale: 2.5,
+            backgroundColor: null,
+            logging: false,
+            useCORS: true,
+            allowTaint: false
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const modal = document.getElementById("modalOverlay");
+        const modalImg = document.getElementById("modalImage");
+        modalImg.src = imgData;
+        modal.classList.add("active");
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.classList.remove("active");
+        };
+    }
+
     document.getElementById("submitBtn").onclick = () => {
-        let res = getResult();
-        if (res === null) {
+        let key = getResult();
+        if (key === null) {
             alert("请先完成所有题目");
             return;
         }
+        let text = resultTexts[key];
+        currentResultKey = key;
+        currentResultText = text;
         let resultDiv = document.getElementById("resultArea");
-        resultDiv.innerHTML = `<strong>✨ 今日策略：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.innerHTML = `<strong>✨ 今日策略：${key} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
+        document.getElementById("shareSection").style.display = "block";
+        document.getElementById("rewardSection").style.display = "block";
+    };
+
+    document.getElementById("shareBtn").onclick = async () => {
+        if (!currentResultKey) {
+            alert("请先完成测试并查看结果");
+            return;
+        }
+        await generateShareImage("出击 or 等待", currentResultKey, currentResultText);
     };
 
     render();

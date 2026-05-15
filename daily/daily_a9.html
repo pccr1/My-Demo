@@ -4,107 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>日常占卜 · 饮食运势</title>
+    <link rel="stylesheet" href="/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #0a0718;
-            font-family: 'Inter', sans-serif;
-            color: #f0eefc;
-            padding: 2rem 1rem;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        .back-home {
-            display: inline-block;
-            margin-bottom: 1.5rem;
-            background: rgba(255,255,255,0.1);
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #ffbbf0;
-            font-size: 0.8rem;
-        }
-        .card {
-            background: rgba(18, 16, 40, 0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            border-left: 5px solid #ff77c6;
-        }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: #ffd6f0;
-        }
-        .question-item {
-            margin-bottom: 1.5rem;
-            background: rgba(0,0,0,0.25);
-            border-radius: 1rem;
-            padding: 1rem;
-        }
-        .question-text {
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-        }
-        .options-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-        }
-        .opt-label {
-            background: rgba(255,255,240,0.07);
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.1s;
-            border: 1px solid transparent;
-        }
-        .opt-label.selected {
-            background: #bf5eff40;
-            border-color: #e27eff;
-            color: white;
-        }
-        input[type="radio"] { display: none; }
-        button {
-            background: linear-gradient(95deg, #b45eff, #ff6bc0);
-            border: none;
-            padding: 0.8rem 1.8rem;
-            font-weight: 700;
-            border-radius: 60px;
-            color: #0a041a;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 1rem;
-            width: 100%;
-        }
-        .result {
-            margin-top: 1.5rem;
-            background: rgba(0,0,0,0.45);
-            border-radius: 1.5rem;
-            padding: 1rem;
-            border-left: 4px solid #ff7bc2;
-            display: none;
-        }
-        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -112,21 +16,41 @@
     <div class="card">
         <h1>🍽️ 今天适合吃哪种食物来提升运势？</h1>
         <div id="questionsContainer"></div>
-        <button id="submitBtn">✨ 推荐今日美食 ✨</button>
+        <button id="submitBtn">✨ 查看饮食建议 ✨</button>
         <div id="resultArea" class="result"></div>
+        <div id="shareSection" class="share-section">
+            <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
+            <div class="share-tip">✨ 点击生成精美图片，长按保存分享 ✨</div>
+        </div>
+        <div id="rewardSection" class="reward-section">
+            <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
+            <div class="reward-codes">
+                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=微信'"><br>微信赞赏</div>
+                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=支付宝'"><br>支付宝赞赏</div>
+            </div>
+        </div>
     </div>
     <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
 </div>
 
+<div id="shareImageContainer" class="share-image-container"></div>
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="分享图片">
+        <div class="close-tip">✨ 长按图片保存，点击空白处关闭 ✨</div>
+    </div>
+</div>
+
 <script>
     const questions = [
-        { text: "你现在身体最直接的感觉是什么？", opts: ["心慌、手抖、胃紧绷", "眼皮打架、哈欠连天", "浑身是劲、坐不住", "没什么感觉、麻木、无聊"], types: ["焦虑型", "困倦型", "兴奋型", "平淡型"] },
-        { text: "你上一顿吃了什么？", opts: ["没吃，或只喝了咖啡", "碳水炸弹（米饭/面条/面包）", "甜食/奶茶", "正常饭菜"], types: ["焦虑型", "困倦型", "兴奋型", "平淡型"] },
-        { text: "你现在最渴望的味道是？", opts: ["酸的或苦的", "没胃口，什么都不想吃", "辣的或甜的", "咸的或淡的"], types: ["焦虑型", "困倦型", "兴奋型", "平淡型"] },
-        { text: "如果现在必须吃一口东西，你会选？", opts: ["香蕉", "苹果", "黑巧克力", "苏打饼干"], types: ["焦虑型", "困倦型", "兴奋型", "平淡型"] }
+        { text: "你现在身体最直接的感觉是什么？", opts: ["心慌、手抖、胃紧绷","眼皮打架、哈欠连天","浑身是劲、坐不住","没什么感觉、麻木、无聊"], types: ["焦虑型","困倦型","兴奋型","平淡型"] },
+        { text: "你上一顿吃了什么？", opts: ["没吃，或只喝了咖啡","碳水炸弹（米饭/面条/面包）","甜食/奶茶","正常饭菜"], types: ["焦虑型","困倦型","兴奋型","平淡型"] },
+        { text: "你现在最渴望的味道是？", opts: ["酸的或苦的","没胃口，什么都不想吃","辣的或甜的","咸的或淡的"], types: ["焦虑型","困倦型","兴奋型","平淡型"] },
+        { text: "如果现在必须吃一口东西，你会选？", opts: ["香蕉","苹果","黑巧克力","苏打饼干"], types: ["焦虑型","困倦型","兴奋型","平淡型"] }
     ];
-
     let answers = new Array(questions.length).fill(null);
+    let currentResultKey = "";
+    let currentResultText = "";
 
     function render() {
         let html = '';
@@ -160,18 +84,18 @@
     }
 
     function getResult() {
-        let scores = { "焦虑型":0, "困倦型":0, "兴奋型":0, "平淡型":0 };
+        let counts = { "焦虑型":0, "困倦型":0, "兴奋型":0, "平淡型":0 };
         for (let i = 0; i < questions.length; i++) {
             let idx = answers[i];
             if (idx === null) return null;
             let type = questions[i].types[idx];
-            scores[type] += 1;
+            counts[type] += 1;
         }
-        let priority = ["焦虑型", "困倦型", "兴奋型", "平淡型"];
-        let maxScore = -1, bestType = "平淡型";
+        let priority = ["焦虑型","困倦型","兴奋型","平淡型"];
+        let maxCount = -1, bestType = "平淡型";
         for (let t of priority) {
-            if (scores[t] > maxScore) {
-                maxScore = scores[t];
+            if (counts[t] > maxCount) {
+                maxCount = counts[t];
                 bestType = t;
             }
         }
@@ -185,15 +109,86 @@
         "平淡型": "“你今天像一碗白粥，不咸不淡，活着但没意思。适合吃：一小把原味坚果或者一杯温水。别追求刺激，你今天经不起折腾。平淡的日子就吃平淡的东西，但加一点点变化（比如换个杯子喝水）。你会发现：无聊也是一种幸福。”"
     };
 
+    function startIntenseConfetti() {
+        const colors = ['#ff77c6', '#ffb347', '#6eff70', '#47a3ff', '#c56eff', '#ff4d4d'];
+        for (let i = 0; i < 180; i++) {
+            let conf = document.createElement("div");
+            conf.className = "confetti";
+            const size = Math.random() * 12 + 6;
+            conf.style.width = size + "px";
+            conf.style.height = size + "px";
+            conf.style.left = Math.random() * window.innerWidth + "px";
+            conf.style.top = "-30px";
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 1200);
+        }
+    }
+
+    async function generateShareImage(moduleTitle, resultKey, resultDetail) {
+        startIntenseConfetti();
+        const container = document.getElementById("shareImageContainer");
+        const today = new Date().toLocaleDateString('zh-CN');
+        const homeUrl = window.location.origin + '/index.html';
+        container.innerHTML = `
+            <div class="module-title">${moduleTitle}</div>
+            <div class="result-text"><strong>✨ 你的饮食状态：${resultKey} ✨</strong><br><br>${resultDetail}</div>
+            <div class="date">📅 占卜日期：${today}</div>
+            <div class="footer-invite">🎉 快邀请你的好友一起来测试吧！ 🎉</div>
+            <div class="qrcode-wrapper" id="qrcodeWrapper"></div>
+        `;
+        const qrWrapper = document.getElementById("qrcodeWrapper");
+        const qrDiv = document.createElement("div");
+        qrWrapper.appendChild(qrDiv);
+        new QRCode(qrDiv, {
+            text: homeUrl,
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        await new Promise(r => setTimeout(r, 300));
+        const canvas = await html2canvas(container, {
+            scale: 2.5,
+            backgroundColor: null,
+            logging: false,
+            useCORS: true,
+            allowTaint: false
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const modal = document.getElementById("modalOverlay");
+        const modalImg = document.getElementById("modalImage");
+        modalImg.src = imgData;
+        modal.classList.add("active");
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.classList.remove("active");
+        };
+    }
+
     document.getElementById("submitBtn").onclick = () => {
-        let res = getResult();
-        if (res === null) {
+        let key = getResult();
+        if (key === null) {
             alert("请先完成所有题目");
             return;
         }
+        let text = resultTexts[key];
+        currentResultKey = key;
+        currentResultText = text;
         let resultDiv = document.getElementById("resultArea");
-        resultDiv.innerHTML = `<strong>✨ 今日推荐饮食类型：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.innerHTML = `<strong>✨ 你的饮食状态：${key} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
+        document.getElementById("shareSection").style.display = "block";
+        document.getElementById("rewardSection").style.display = "block";
+    };
+
+    document.getElementById("shareBtn").onclick = async () => {
+        if (!currentResultKey) {
+            alert("请先完成测试并查看结果");
+            return;
+        }
+        await generateShareImage("饮食运势", currentResultKey, currentResultText);
     };
 
     render();

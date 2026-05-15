@@ -3,27 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>感情占卜 · 内心渴望的爱情模式</title>
+    <title>感情占卜 · 渴望的爱情模式</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0a0718; font-family: 'Inter', sans-serif; color: #f0eefc; padding: 2rem 1rem; }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(110,70,200,0.15), transparent 60%); pointer-events: none; z-index: 0; }
-        .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
-        .back-home { display: inline-block; margin-bottom: 1.5rem; background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; color: #ffbbf0; font-size: 0.8rem; }
-        .card { background: rgba(18, 16, 40, 0.7); backdrop-filter: blur(12px); border-radius: 2rem; padding: 1.5rem; border-left: 5px solid #ff77c6; }
-        h1 { font-size: 1.8rem; margin-bottom: 1rem; color: #ffd6f0; }
-        .question-item { margin-bottom: 1.5rem; background: rgba(0,0,0,0.25); border-radius: 1rem; padding: 1rem; }
-        .question-text { font-weight: 600; margin-bottom: 0.8rem; }
-        .options-group { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-        .opt-label { background: rgba(255,255,240,0.07); padding: 0.5rem 1rem; border-radius: 40px; font-size: 0.85rem; cursor: pointer; transition: 0.1s; border: 1px solid transparent; }
-        .opt-label.selected { background: #bf5eff40; border-color: #e27eff; color: white; }
-        input[type="radio"] { display: none; }
-        button { background: linear-gradient(95deg, #b45eff, #ff6bc0); border: none; padding: 0.8rem 1.8rem; font-weight: 700; border-radius: 60px; color: #0a041a; cursor: pointer; font-size: 1rem; margin-top: 1rem; width: 100%; }
-        .result { margin-top: 1.5rem; background: rgba(0,0,0,0.45); border-radius: 1.5rem; padding: 1rem; border-left: 4px solid #ff7bc2; display: none; }
-        .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -33,22 +18,42 @@
         <div id="questionsContainer"></div>
         <button id="submitBtn">✨ 查看结果 ✨</button>
         <div id="resultArea" class="result"></div>
+        <div id="shareSection" class="share-section">
+            <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
+            <div class="share-tip">✨ 点击生成精美图片，长按保存分享 ✨</div>
+        </div>
+        <div id="rewardSection" class="reward-section">
+            <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
+            <div class="reward-codes">
+                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=微信'"><br>微信赞赏</div>
+                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=支付宝'"><br>支付宝赞赏</div>
+            </div>
+        </div>
     </div>
     <div class="footer">🌙 遇事不决灵占馆 · 感情占卜</div>
+</div>
+
+<div id="shareImageContainer" class="share-image-container"></div>
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="分享图片">
+        <div class="close-tip">✨ 长按图片保存，点击空白处关闭 ✨</div>
+    </div>
 </div>
 
 <script>
     const questions = [
         { text: "你想象中和伴侣最理想的一个画面是？", opts: ["你在难过时，TA抱着你说“有我在”","你们一起在厨房做饭，边拌嘴边笑","你们一起旅行、冒险、打卡新鲜事","你们各自做自己的事，安静地待在一起就很舒服"], scores: [[2,0,0,2],[0,2,0,0],[0,0,3,0],[0,0,0,2]] },
-        { text: "你过去对有好感的人，是不是常常想“TA需要被照顾/被保护/被我改变”？", opts: ["是的，经常","偶尔会这样","不会，我是被照顾的那方","不会，我觉得对方是独立的"], scores: [[3,0,0,0],[1,0,0,0],[0,0,0,2],[0,1,0,0]] },
+        { text: "你过去对有好感的人，是不是常常想“TA需要被照顾/被保护/被我改变”？", opts: ["是的，经常","偶尔会这样想","不会，我是被照顾的那方","不会，我觉得对方是独立的"], scores: [[3,0,0,0],[1,0,0,0],[0,0,0,2],[0,1,0,0]] },
         { text: "你更向往以下哪种关系动态？", opts: ["你强TA弱，你主导","你们是平等的合伙人，互相支撑","你们像最好的朋友，一起玩乐","你们像两只猫，各玩各的但偶尔蹭蹭"], scores: [[2,0,0,0],[0,3,0,0],[0,0,3,0],[0,0,0,2]] },
         { text: "当你们发生矛盾时，你更希望TA怎么做？", opts: ["先低头哄你，然后再说问题","和你一起理性分析，找到解决办法","用幽默或转移注意力化解，别较真","给你空间冷静，之后再聊"], scores: [[1,0,0,0],[0,3,0,0],[0,0,2,0],[0,0,0,2]] },
         { text: "你觉得自己对爱情的需求，更像在找？", opts: ["一个能把你从糟糕生活中拉出来的人","一个能和你并肩打怪升级的队友","一个能陪你疯、让你不无聊的人","一个能包容你所有情绪的安全港湾"], scores: [[3,0,0,0],[0,3,0,0],[0,0,3,0],[0,0,0,3]] },
         { text: "你父母的相处模式，对你有怎样的潜在影响？", opts: ["一方牺牲/控制，你不想这样但容易重复","比较平等合作，你觉得挺好","像朋友一样轻松，但也有点疏离","一方依赖另一方，你觉得很安心"], scores: [[2,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,2]] },
         { text: "你最近一次觉得“这就是我想要的爱情”，是因为看到了什么？", opts: ["电影/小说里有人无条件为对方付出","朋友夫妻一起创业或克服困难","看到一对情侣在路边打闹大笑","看到老夫妻安静散步"], scores: [[2,0,0,0],[0,2,0,0],[0,0,3,0],[0,0,0,2]] }
     ];
-
     let answers = new Array(questions.length).fill(null);
+    let currentResultKey = "";
+    let currentResultText = "";
 
     function render() {
         let html = '';
@@ -82,18 +87,22 @@
     }
 
     function getResult() {
-        let save = 0, comrade = 0, play = 0, heal = 0;
+        let scores = [0,0,0,0]; // 拯救,战友,玩伴,疗愈
         for (let i = 0; i < questions.length; i++) {
             let idx = answers[i];
             if (idx === null) return null;
-            let [s, c, p, h] = questions[i].scores[idx];
-            save += s; comrade += c; play += p; heal += h;
+            let s = questions[i].scores[idx];
+            for (let j=0; j<4; j++) scores[j] += s[j];
         }
-        let max = Math.max(save, comrade, play, heal);
-        if (save === max) return "拯救型";
-        if (comrade === max) return "战友型";
-        if (play === max) return "玩伴型";
-        return "疗愈型";
+        let priority = ["拯救型","战友型","玩伴型","疗愈型"];
+        let maxScore = -1, bestIdx = 0;
+        for (let i=0; i<4; i++) {
+            if (scores[i] > maxScore) {
+                maxScore = scores[i];
+                bestIdx = i;
+            }
+        }
+        return priority[bestIdx];
     }
 
     const resultTexts = {
@@ -103,15 +112,86 @@
         "疗愈型": "“你渴望的像一个情绪港湾——无论你多糟，TA都能接住你。你不是要拯救，是要被理解。这很温暖，但容易变成‘情感单方面依赖’。你可能希望TA永远情绪稳定、永远包容，但TA也是人，也会累。建议：把‘疗愈’变成双向的。今天你接受安慰，明天你学着安慰TA。如果对方一直输出而你一直输入，TA会干涸。另外，疗愈型的人容易被‘回避型’吸引，因为回避型让你更渴望安全感，形成死循环。找个愿意和你互相充电的人，别找个充电宝。”"
     };
 
+    function startIntenseConfetti() {
+        const colors = ['#ff77c6', '#ffb347', '#6eff70', '#47a3ff', '#c56eff', '#ff4d4d'];
+        for (let i = 0; i < 180; i++) {
+            let conf = document.createElement("div");
+            conf.className = "confetti";
+            const size = Math.random() * 12 + 6;
+            conf.style.width = size + "px";
+            conf.style.height = size + "px";
+            conf.style.left = Math.random() * window.innerWidth + "px";
+            conf.style.top = "-30px";
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 1200);
+        }
+    }
+
+    async function generateShareImage(moduleTitle, resultKey, resultDetail) {
+        startIntenseConfetti();
+        const container = document.getElementById("shareImageContainer");
+        const today = new Date().toLocaleDateString('zh-CN');
+        const homeUrl = window.location.origin + '/index.html';
+        container.innerHTML = `
+            <div class="module-title">${moduleTitle}</div>
+            <div class="result-text"><strong>✨ 你渴望的爱情模式：${resultKey} ✨</strong><br><br>${resultDetail}</div>
+            <div class="date">📅 占卜日期：${today}</div>
+            <div class="footer-invite">🎉 快邀请你的好友一起来测试吧！ 🎉</div>
+            <div class="qrcode-wrapper" id="qrcodeWrapper"></div>
+        `;
+        const qrWrapper = document.getElementById("qrcodeWrapper");
+        const qrDiv = document.createElement("div");
+        qrWrapper.appendChild(qrDiv);
+        new QRCode(qrDiv, {
+            text: homeUrl,
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        await new Promise(r => setTimeout(r, 300));
+        const canvas = await html2canvas(container, {
+            scale: 2.5,
+            backgroundColor: null,
+            logging: false,
+            useCORS: true,
+            allowTaint: false
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const modal = document.getElementById("modalOverlay");
+        const modalImg = document.getElementById("modalImage");
+        modalImg.src = imgData;
+        modal.classList.add("active");
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.classList.remove("active");
+        };
+    }
+
     document.getElementById("submitBtn").onclick = () => {
-        let res = getResult();
-        if (res === null) {
+        let key = getResult();
+        if (key === null) {
             alert("请先完成所有题目");
             return;
         }
+        let text = resultTexts[key];
+        currentResultKey = key;
+        currentResultText = text;
         let resultDiv = document.getElementById("resultArea");
-        resultDiv.innerHTML = `<strong>✨ 你内心渴望的爱情模式：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.innerHTML = `<strong>✨ 你渴望的爱情模式：${key} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
+        document.getElementById("shareSection").style.display = "block";
+        document.getElementById("rewardSection").style.display = "block";
+    };
+
+    document.getElementById("shareBtn").onclick = async () => {
+        if (!currentResultKey) {
+            alert("请先完成测试并查看结果");
+            return;
+        }
+        await generateShareImage("渴望的爱情模式", currentResultKey, currentResultText);
     };
 
     render();
