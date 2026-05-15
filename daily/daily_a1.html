@@ -59,15 +59,8 @@
             border-radius: 1rem;
             padding: 1rem;
         }
-        .question-text {
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-        }
-        .options-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-        }
+        .question-text { font-weight: 600; margin-bottom: 0.8rem; }
+        .options-group { display: flex; flex-wrap: wrap; gap: 0.6rem; }
         .opt-label {
             background: rgba(255,255,240,0.07);
             padding: 0.5rem 1rem;
@@ -103,7 +96,88 @@
             border-left: 4px solid #ff7bc2;
             display: none;
         }
+        /* 分享区域 */
+        .share-section {
+            margin-top: 1.5rem;
+            text-align: center;
+            display: none;
+        }
+        .share-btn {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: bold;
+            color: #2d1b4e;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(255,120,200,0.3);
+        }
+        .share-btn:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(255,120,200,0.5); }
+        .share-tip {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #ffd966;
+            animation: float 1.5s infinite ease-in-out;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        /* 撒花特效简单CSS */
+        @keyframes confetti {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(100px) rotate(720deg); }
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff77c6;
+            pointer-events: none;
+            z-index: 9999;
+            animation: confetti 0.8s ease-out forwards;
+        }
+        /* 赞赏区域 */
+        .reward-section {
+            margin-top: 1.5rem;
+            text-align: center;
+            border-top: 1px dashed rgba(255,135,200,0.4);
+            padding-top: 1rem;
+            display: none;
+        }
+        .reward-title {
+            font-size: 0.9rem;
+            color: #cbb1ff;
+            margin-bottom: 0.8rem;
+        }
+        .reward-codes {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .reward-item {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #cbb1ff;
+        }
+        .reward-item img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            background: white;
+            padding: 5px;
+            margin-bottom: 4px;
+        }
         .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
+        @media (max-width: 680px) {
+            .reward-item img { width: 70px; height: 70px; }
+        }
     </style>
 </head>
 <body>
@@ -114,6 +188,17 @@
         <div id="questionsContainer"></div>
         <button id="submitBtn">✨ 查看幸运色 ✨</button>
         <div id="resultArea" class="result"></div>
+        <div id="shareSection" class="share-section">
+            <button id="shareBtn" class="share-btn"><i class="fas fa-share-alt"></i> 分享给朋友</button>
+            <div class="share-tip">✨ 快点分享给朋友吧 ✨</div>
+        </div>
+        <div id="rewardSection" class="reward-section">
+            <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
+            <div class="reward-codes">
+                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=微信'"><br>微信赞赏</div>
+                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码" onerror="this.src='https://placehold.co/80x80/2a1e45/ffb3e6?text=支付宝'"><br>支付宝赞赏</div>
+            </div>
+        </div>
     </div>
     <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
 </div>
@@ -127,8 +212,8 @@
         { text: "如果今天必须做一件无聊的事，你选？", opts: ["整理表格", "排队", "听人吹牛"], colors: ["蓝色", "黑色", "红色"] },
         { text: "你今天的袜子颜色？", opts: ["深色", "亮色", "没穿"], colors: ["黑色", "黄色", "粉色"] }
     ];
-
     let answers = new Array(questions.length).fill(null);
+    let currentResultText = "";
 
     function render() {
         let html = '';
@@ -191,17 +276,49 @@
         "黑色": "“你今天是一件黑色高领毛衣——很酷，但也很装。适合怼人、删好友、写一篇阴阳怪气的微博。能量提示：下午4点你会突然很丧，去吃一块黑巧克力，别喝酒。如果还是丧，就睡一觉，明天再做人。”"
     };
 
+    function showShareAndReward(color) {
+        let shareDiv = document.getElementById("shareSection");
+        let rewardDiv = document.getElementById("rewardSection");
+        shareDiv.style.display = "block";
+        rewardDiv.style.display = "block";
+        const shareBtn = document.getElementById("shareBtn");
+        shareBtn.onclick = () => {
+            // 撒花特效
+            for (let i = 0; i < 30; i++) {
+                let conf = document.createElement("div");
+                conf.className = "confetti";
+                conf.style.left = Math.random() * window.innerWidth + "px";
+                conf.style.top = "-20px";
+                conf.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 1000);
+            }
+            let shareText = `【灵犀运势馆】今日幸运能量色：${color}\n${resultTexts[color].substring(0, 100)}...\n测测你的今日运势 → 遇事不决灵占馆`;
+            if (navigator.share) {
+                navigator.share({
+                    title: '灵犀运势馆 · 每日一占',
+                    text: shareText,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => alert("链接已复制，可分享给朋友！")).catch(() => alert("手动分享吧~"));
+            }
+        };
+    }
+
     document.getElementById("submitBtn").onclick = () => {
-        let res = getResult();
-        if (res === null) {
+        let color = getResult();
+        if (color === null) {
             alert("请先完成所有题目");
             return;
         }
+        let text = resultTexts[color];
+        currentResultText = text;
         let resultDiv = document.getElementById("resultArea");
-        resultDiv.innerHTML = `<strong>✨ 你的幸运能量色：${res} ✨</strong><br><br>${resultTexts[res]}`;
+        resultDiv.innerHTML = `<strong>✨ 你的幸运能量色：${color} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
+        showShareAndReward(color);
     };
-
     render();
 </script>
 </body>
