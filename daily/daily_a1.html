@@ -6,7 +6,6 @@
     <title>日常占卜 · 幸运能量色</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- 引入 html2canvas 和 QRCode -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
@@ -163,7 +162,7 @@
             padding: 5px;
             margin-bottom: 4px;
         }
-        /* 分享图片容器（隐藏） */
+        /* 分享图片生成容器（隐藏） */
         .share-image-container {
             position: fixed;
             left: -9999px;
@@ -177,43 +176,64 @@
             border: 1px solid #ff77c6;
             font-family: 'Inter', sans-serif;
         }
-        .share-image-container .module-title {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffd6f0;
-            margin-bottom: 1rem;
-        }
-        .share-image-container .result-text {
-            font-size: 1rem;
-            color: #f0eefc;
-            line-height: 1.4;
-            margin: 1rem 0;
-            background: rgba(0,0,0,0.3);
-            padding: 1rem;
-            border-radius: 20px;
-        }
-        .share-image-container .date {
-            font-size: 0.8rem;
-            color: #cbb1ff;
-            margin-bottom: 1rem;
-        }
-        .share-image-container .footer-invite {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #ffbcfa;
-            margin: 1rem 0;
-        }
-        .share-image-container .qrcode-area {
+        /* 弹窗模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
             display: flex;
+            align-items: center;
             justify-content: center;
-            margin-top: 0.5rem;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
         }
-        .share-image-container .qrcode-area img {
-            width: 100px;
-            height: 100px;
-            border-radius: 12px;
-            background: white;
-            padding: 5px;
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            background: transparent;
+            border-radius: 32px;
+            overflow: auto;
+            text-align: center;
+        }
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+        }
+        .close-tip {
+            margin-top: 1rem;
+            color: #ffd6f0;
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.5);
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+        }
+        /* 撒花特效 */
+        @keyframes confetti {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(100px) rotate(720deg); }
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff77c6;
+            pointer-events: none;
+            z-index: 10001;
+            animation: confetti 0.8s ease-out forwards;
         }
         .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
         @media (max-width: 680px) {
@@ -231,7 +251,7 @@
         <div id="resultArea" class="result"></div>
         <div id="shareSection" class="share-section">
             <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
-            <div class="share-tip">✨ 生成图片后长按保存，分享给朋友 ✨</div>
+            <div class="share-tip">✨ 点击生成图片，长按保存分享 ✨</div>
         </div>
         <div id="rewardSection" class="reward-section">
             <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
@@ -244,11 +264,18 @@
     <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
 </div>
 
-<!-- 隐藏的分享图片容器 -->
+<!-- 隐藏的分享图片生成容器 -->
 <div id="shareImageContainer" class="share-image-container"></div>
+<!-- 模态框 -->
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="分享图片">
+        <div class="close-tip">✨ 长按图片保存，点击空白处关闭 ✨</div>
+    </div>
+</div>
 
 <script>
-    // 题目配置（与本问题匹配）
+    // ================= 题目配置（请根据不同问题替换） =================
     const questions = [
         { text: "今天起床后第一个念头是什么？", opts: ["又要搬砖", "今天可能有好事", "啥也没想，像具尸体"], colors: ["红色", "黄色", "黑色"] },
         { text: "你今天最不想面对的事情是？", opts: ["开会/回消息", "社交/假笑", "做决定"], colors: ["蓝色", "绿色", "紫色"] },
@@ -322,11 +349,24 @@
         "黑色": "“你今天是一件黑色高领毛衣——很酷，但也很装。适合怼人、删好友、写一篇阴阳怪气的微博。能量提示：下午4点你会突然很丧，去吃一块黑巧克力，别喝酒。如果还是丧，就睡一觉，明天再做人。”"
     };
 
-    // 生成分享图片
+    // 撒花特效
+    function startConfetti() {
+        for (let i = 0; i < 50; i++) {
+            let conf = document.createElement("div");
+            conf.className = "confetti";
+            conf.style.left = Math.random() * window.innerWidth + "px";
+            conf.style.top = "-20px";
+            conf.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 800);
+        }
+    }
+
+    // 生成分享图片（不下载，只弹窗）
     async function generateShareImage(moduleTitle, resultColor, resultDetail) {
+        startConfetti(); // 撒花
         const container = document.getElementById("shareImageContainer");
         const today = new Date().toLocaleDateString('zh-CN');
-        // 动态生成二维码（首页URL）
         const homeUrl = window.location.origin + '/index.html';
         container.innerHTML = `
             <div class="module-title">${moduleTitle}</div>
@@ -344,23 +384,21 @@
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
         });
-        // 等待二维码渲染完成
-        await new Promise(r => setTimeout(r, 200));
-        // 截图
+        await new Promise(r => setTimeout(r, 300));
         const canvas = await html2canvas(container, { scale: 2, backgroundColor: null });
         const imgData = canvas.toDataURL("image/png");
-        // 创建临时链接并提示保存
-        const link = document.createElement('a');
-        link.download = `灵犀运势_${moduleTitle}_${today}.png`;
-        link.href = imgData;
-        link.click();
-        // 移动端：直接在新窗口打开图片，用户可长按保存
-        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            const newWindow = window.open();
-            newWindow.document.write(`<img src="${imgData}" style="width:100%;" />`);
-        } else {
-            alert("图片已生成，请查看下载文件夹。");
-        }
+        // 显示模态框
+        const modal = document.getElementById("modalOverlay");
+        const modalImg = document.getElementById("modalImage");
+        modalImg.src = imgData;
+        modal.classList.add("active");
+        // 点击模态框外部关闭
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.classList.remove("active");
+            }
+        };
+        // 可选：长按图片提示保存（移动端原生支持长按保存）
     }
 
     // 提交结果
@@ -376,7 +414,6 @@
         let resultDiv = document.getElementById("resultArea");
         resultDiv.innerHTML = `<strong>✨ 你的幸运能量色：${color} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
-        // 显示分享区和赞赏区
         document.getElementById("shareSection").style.display = "block";
         document.getElementById("rewardSection").style.display = "block";
     };
