@@ -6,6 +6,9 @@
     <title>日常占卜 · 幸运能量色</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 引入 html2canvas 和 QRCode -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -117,7 +120,7 @@
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 15px rgba(255,120,200,0.3);
         }
-        .share-btn:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(255,120,200,0.5); }
+        .share-btn:hover { transform: scale(1.02); }
         .share-tip {
             margin-top: 8px;
             font-size: 0.85rem;
@@ -128,20 +131,6 @@
             0% { transform: translateY(0px); }
             50% { transform: translateY(-5px); }
             100% { transform: translateY(0px); }
-        }
-        /* 撒花特效简单CSS */
-        @keyframes confetti {
-            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
-            100% { opacity: 0; transform: translateY(100px) rotate(720deg); }
-        }
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #ff77c6;
-            pointer-events: none;
-            z-index: 9999;
-            animation: confetti 0.8s ease-out forwards;
         }
         /* 赞赏区域 */
         .reward-section {
@@ -174,6 +163,58 @@
             padding: 5px;
             margin-bottom: 4px;
         }
+        /* 分享图片容器（隐藏） */
+        .share-image-container {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 500px;
+            background: linear-gradient(135deg, #1e1a3a, #0c0a20);
+            border-radius: 32px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            border: 1px solid #ff77c6;
+            font-family: 'Inter', sans-serif;
+        }
+        .share-image-container .module-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd6f0;
+            margin-bottom: 1rem;
+        }
+        .share-image-container .result-text {
+            font-size: 1rem;
+            color: #f0eefc;
+            line-height: 1.4;
+            margin: 1rem 0;
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 20px;
+        }
+        .share-image-container .date {
+            font-size: 0.8rem;
+            color: #cbb1ff;
+            margin-bottom: 1rem;
+        }
+        .share-image-container .footer-invite {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ffbcfa;
+            margin: 1rem 0;
+        }
+        .share-image-container .qrcode-area {
+            display: flex;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+        .share-image-container .qrcode-area img {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            background: white;
+            padding: 5px;
+        }
         .footer { text-align: center; font-size: 0.7rem; color: #6b62a0; margin-top: 2rem; }
         @media (max-width: 680px) {
             .reward-item img { width: 70px; height: 70px; }
@@ -189,8 +230,8 @@
         <button id="submitBtn">✨ 查看幸运色 ✨</button>
         <div id="resultArea" class="result"></div>
         <div id="shareSection" class="share-section">
-            <button id="shareBtn" class="share-btn"><i class="fas fa-share-alt"></i> 分享给朋友</button>
-            <div class="share-tip">✨ 快点分享给朋友吧 ✨</div>
+            <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
+            <div class="share-tip">✨ 生成图片后长按保存，分享给朋友 ✨</div>
         </div>
         <div id="rewardSection" class="reward-section">
             <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
@@ -203,7 +244,11 @@
     <div class="footer">🌙 遇事不决灵占馆 · 每日一占</div>
 </div>
 
+<!-- 隐藏的分享图片容器 -->
+<div id="shareImageContainer" class="share-image-container"></div>
+
 <script>
+    // 题目配置（与本问题匹配）
     const questions = [
         { text: "今天起床后第一个念头是什么？", opts: ["又要搬砖", "今天可能有好事", "啥也没想，像具尸体"], colors: ["红色", "黄色", "黑色"] },
         { text: "你今天最不想面对的事情是？", opts: ["开会/回消息", "社交/假笑", "做决定"], colors: ["蓝色", "绿色", "紫色"] },
@@ -213,6 +258,7 @@
         { text: "你今天的袜子颜色？", opts: ["深色", "亮色", "没穿"], colors: ["黑色", "黄色", "粉色"] }
     ];
     let answers = new Array(questions.length).fill(null);
+    let currentResultColor = "";
     let currentResultText = "";
 
     function render() {
@@ -276,36 +322,48 @@
         "黑色": "“你今天是一件黑色高领毛衣——很酷，但也很装。适合怼人、删好友、写一篇阴阳怪气的微博。能量提示：下午4点你会突然很丧，去吃一块黑巧克力，别喝酒。如果还是丧，就睡一觉，明天再做人。”"
     };
 
-    function showShareAndReward(color) {
-        let shareDiv = document.getElementById("shareSection");
-        let rewardDiv = document.getElementById("rewardSection");
-        shareDiv.style.display = "block";
-        rewardDiv.style.display = "block";
-        const shareBtn = document.getElementById("shareBtn");
-        shareBtn.onclick = () => {
-            // 撒花特效
-            for (let i = 0; i < 30; i++) {
-                let conf = document.createElement("div");
-                conf.className = "confetti";
-                conf.style.left = Math.random() * window.innerWidth + "px";
-                conf.style.top = "-20px";
-                conf.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
-                document.body.appendChild(conf);
-                setTimeout(() => conf.remove(), 1000);
-            }
-            let shareText = `【灵犀运势馆】今日幸运能量色：${color}\n${resultTexts[color].substring(0, 100)}...\n测测你的今日运势 → 遇事不决灵占馆`;
-            if (navigator.share) {
-                navigator.share({
-                    title: '灵犀运势馆 · 每日一占',
-                    text: shareText,
-                    url: window.location.href
-                }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(window.location.href).then(() => alert("链接已复制，可分享给朋友！")).catch(() => alert("手动分享吧~"));
-            }
-        };
+    // 生成分享图片
+    async function generateShareImage(moduleTitle, resultColor, resultDetail) {
+        const container = document.getElementById("shareImageContainer");
+        const today = new Date().toLocaleDateString('zh-CN');
+        // 动态生成二维码（首页URL）
+        const homeUrl = window.location.origin + '/index.html';
+        container.innerHTML = `
+            <div class="module-title">${moduleTitle}</div>
+            <div class="result-text"><strong>✨ 你的幸运能量色：${resultColor} ✨</strong><br><br>${resultDetail}</div>
+            <div class="date">📅 占卜日期：${today}</div>
+            <div class="footer-invite">🎉 快邀请你的好友一起来测试吧！ 🎉</div>
+            <div class="qrcode-area" id="qrcodeContainer"></div>
+        `;
+        // 生成二维码
+        new QRCode(document.getElementById("qrcodeContainer"), {
+            text: homeUrl,
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        // 等待二维码渲染完成
+        await new Promise(r => setTimeout(r, 200));
+        // 截图
+        const canvas = await html2canvas(container, { scale: 2, backgroundColor: null });
+        const imgData = canvas.toDataURL("image/png");
+        // 创建临时链接并提示保存
+        const link = document.createElement('a');
+        link.download = `灵犀运势_${moduleTitle}_${today}.png`;
+        link.href = imgData;
+        link.click();
+        // 移动端：直接在新窗口打开图片，用户可长按保存
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            const newWindow = window.open();
+            newWindow.document.write(`<img src="${imgData}" style="width:100%;" />`);
+        } else {
+            alert("图片已生成，请查看下载文件夹。");
+        }
     }
 
+    // 提交结果
     document.getElementById("submitBtn").onclick = () => {
         let color = getResult();
         if (color === null) {
@@ -313,12 +371,25 @@
             return;
         }
         let text = resultTexts[color];
+        currentResultColor = color;
         currentResultText = text;
         let resultDiv = document.getElementById("resultArea");
         resultDiv.innerHTML = `<strong>✨ 你的幸运能量色：${color} ✨</strong><br><br>${text}`;
         resultDiv.style.display = "block";
-        showShareAndReward(color);
+        // 显示分享区和赞赏区
+        document.getElementById("shareSection").style.display = "block";
+        document.getElementById("rewardSection").style.display = "block";
     };
+
+    // 分享按钮
+    document.getElementById("shareBtn").onclick = async () => {
+        if (!currentResultColor) {
+            alert("请先完成测试并查看结果");
+            return;
+        }
+        await generateShareImage("今日幸运能量色", currentResultColor, currentResultText);
+    };
+
     render();
 </script>
 </body>
