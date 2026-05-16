@@ -93,54 +93,54 @@
 
     function initTest(data) {
         const logic = data.resultLogic;
+
+        // 特殊逻辑：无需题目，直接渲染特殊组件
         if (logic === 'special_zodiac') {
             renderZodiacTest(data);
-            return;
-        }
-        if (logic === 'special_mood_number') {
+        } else if (logic === 'special_mood_number') {
             renderMoodNumberTest(data);
-            return;
-        }
-        if (logic === 'special_random_sign') {
+        } else if (logic === 'special_random_sign') {
             renderRandomSignTest(data);
-            return;
+        } else {
+            // 普通计分测试：渲染题目
+            const questions = data.questions;
+            window.answers = new Array(questions.length).fill(null);
+
+            let html = '';
+            questions.forEach((q, idx) => {
+                html += `<div class="question-item">
+                            <div class="question-text">${escapeHtml(q.text)}</div>
+                            <div class="options-group" data-qidx="${idx}">`;
+                q.options.forEach((opt, oidx) => {
+                    html += `<label class="opt-label" data-oidx="${oidx}">${escapeHtml(opt)}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
+                });
+                html += `</div></div>`;
+            });
+            document.getElementById('questionsContainer').innerHTML = html;
+            document.getElementById('submitBtn').style.display = 'block';
+            attachOptionEvents();
+
+            document.getElementById('submitBtn').onclick = () => {
+                const result = computeResult(data);
+                if (result === null) {
+                    alert('请先完成所有题目');
+                    return;
+                }
+                currentResultKey = result.name;
+                currentResultText = result.text;
+                const resultDiv = document.getElementById('resultArea');
+                resultDiv.innerHTML = `<strong>✨ ${data.title} 结果：${result.name} ✨</strong><br><br>${result.text}`;
+                resultDiv.style.display = 'block';
+                showShareAndReward();
+                scrollToResult();
+            };
         }
 
-        const questions = data.questions;
-        window.answers = new Array(questions.length).fill(null);
-
-        let html = '';
-        questions.forEach((q, idx) => {
-            html += `<div class="question-item">
-                        <div class="question-text">${escapeHtml(q.text)}</div>
-                        <div class="options-group" data-qidx="${idx}">`;
-            q.options.forEach((opt, oidx) => {
-                html += `<label class="opt-label" data-oidx="${oidx}">${escapeHtml(opt)}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
-            });
-            html += `</div></div>`;
-        });
-        document.getElementById('questionsContainer').innerHTML = html;
-        document.getElementById('submitBtn').style.display = 'block';
-        attachOptionEvents();
-
-        document.getElementById('submitBtn').onclick = () => {
-            const result = computeResult(data);
-            if (result === null) {
-                alert('请先完成所有题目');
-                return;
-            }
-            currentResultKey = result.name;
-            currentResultText = result.text;
-            const resultDiv = document.getElementById('resultArea');
-            resultDiv.innerHTML = `<strong>✨ ${data.title} 结果：${result.name} ✨</strong><br><br>${result.text}`;
-            resultDiv.style.display = 'block';
-            showShareAndReward();
-            scrollToResult();
-        };
-
-        // ===== 添加分享按钮绑定 =====
+        // ========== 统一绑定分享按钮（所有类型共用） ==========
         const shareBtn = document.getElementById('shareBtn');
         if (shareBtn) {
+            // 移除旧监听，避免重复绑定
+            shareBtn.onclick = null;
             shareBtn.onclick = async () => {
                 if (!currentResultKey) {
                     alert('请先完成测试并查看结果');
@@ -151,7 +151,7 @@
         }
     }
 
-    // ========== 星座贵人测试（无题目，直接选择星座） ==========
+    // ========== 星座贵人测试 ==========
     function renderZodiacTest(data) {
         const zodiacs = ["白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座"];
         let html = `<div class="question-item">
@@ -177,7 +177,7 @@
         };
     }
 
-    // ========== 心情数字测试（输入1-10） ==========
+    // ========== 心情数字测试 ==========
     function renderMoodNumberTest(data) {
         let html = `<div class="question-item">
                         <div class="question-text">请凭直觉输入一个数字（1-10）：</div>
@@ -204,7 +204,7 @@
         };
     }
 
-    // ========== 随机签语测试（点击抽签） ==========
+    // ========== 随机签语测试 ==========
     function renderRandomSignTest(data) {
         let html = `<button id="drawSignBtn" class="sign-btn"><i class="fas fa-hand-peace"></i> 摇一摇 / 抽一签</button>`;
         document.getElementById('specialInputArea').innerHTML = html;
