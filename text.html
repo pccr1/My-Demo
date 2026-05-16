@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>灵犀运势馆 · 测试</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="/common.js"></script>
+    <style>
+        .modal-overlay.active { display: flex; }
+        .zodiac-select, .number-input {
+            background: #2a2348;
+            border: 1px solid #c08eff;
+            border-radius: 40px;
+            padding: 0.7rem 1rem;
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        .sign-btn {
+            background: linear-gradient(95deg, #b45eff, #ff6bc0);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #0a041a;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/index.html" class="back-home"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    <div class="card">
+        <h1 id="testTitle">加载中...</h1>
+        <div id="questionsContainer"></div>
+        <button id="submitBtn" style="display: none;">✨ 查看结果 ✨</button>
+        <div id="specialInputArea"></div>
+        <div id="resultArea" class="result"></div>
+        <div id="shareSection" class="share-section">
+            <button id="shareBtn" class="share-btn"><i class="fas fa-camera"></i> 生成分享图片</button>
+            <div class="share-tip">✨ 点击生成精美图片，长按保存分享 ✨</div>
+        </div>
+        <div id="rewardSection" class="reward-section">
+            <div class="reward-title">🌸 如果觉得不错，可以赏我一点辛苦费~ 🌸</div>
+            <div class="reward-codes">
+                <div class="reward-item"><img src="/picture/weixin.jpg" alt="微信赞赏码"><br>微信赞赏</div>
+                <div class="reward-item"><img src="/picture/zhifubao.jpg" alt="支付宝赞赏码"><br>支付宝赞赏</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">🌙 遇事不决灵占馆 · 运势占卜</div>
+</div>
+
+<div id="shareImageContainer" class="share-image-container"></div>
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="分享图片">
+        <div class="close-tip">✨ 长按图片保存，点击空白处关闭 ✨</div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const testId = urlParams.get('id');
+    if (!testId) {
+        document.getElementById('testTitle').innerText = '参数错误，请返回首页重新进入。';
+    } else {
+        fetch(`/data/${testId}.json`)
+            .then(res => res.json())
+            .then(data => {
+                window.testData = data;
+                document.getElementById('testTitle').innerHTML = data.title;
+                initTest(data);
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('testTitle').innerText = '加载失败，请刷新重试。';
+            });
+    }
+
+    let answers = [];
+    let currentResultKey = '';
+    let currentResultText = '';
+
+    function initTest(data) {
+        const logic = data.resultLogic;
+        // 特殊逻辑：无需题目，直接渲染特殊组件
+        if (logic === 'special_zodiac') {
+            renderZodiacTest(data);
+            return;
+        }
+        if (logic === 'special_mood_number') {
+            renderMoodNumberTest(data);
+            return;
+        }
+        if (logic === 'special_random_sign') {
+            renderRandomSignTest(data);
+            return;
+        }
+
+        // 普通计分测试：渲染题目
+        const questions = data.questions;
+        answers = new Array(questions.length).fill(null);
+        window.answers = answers;
+
+        let html = '';
+        questions.forEach((q, idx) => {
+            html += `<div class="question-item">
+                        <div class="question-text">${escapeHtml(q.text)}</div>
+                        <div class="options-group" data-qidx="${idx}">`;
+            q.options.forEach((opt, oidx) => {
+                html += `<label class="opt-label" data-oidx="${oidx}">${escapeHtml(opt)}<input type="radio" name="q${idx}" value="${oidx}"></label>`;
+            });
+            html += `</div></div>`;
+        });
+        document.getElementById('questionsContainer').innerHTML = html;
+        document.getElementById('submitBtn').style.display = 'block';
+        attachOptionEvents();
+
+        // 提交按钮逻辑
+        document.getElementById('submitBtn').onclick = () => {
+            const result = computeResult(data);
+            if (result === null) {
+                alert('请先完成所有题目');
+                return;
+            }
+            currentResultKey = result.name;
+            currentResultText = result.text;
+            const resultDiv = document.getElementById('resultArea');
+            resultDiv.innerHTML = `<strong>✨ ${data.title} 结果：${result.name} ✨</strong><br><br>${result.text}`;
+            resultDiv.style.display = 'block';
+            showShareAndReward();
+            scrollToResult();
+        };
+    }
+
+    // ========== 星座贵人测试（无题目，直接选择星座） ==========
+    function renderZodiacTest(data) {
+        const zodiacs = ["白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座"];
+        let html = `<div class="question-item">
+                        <div class="question-text">你的星座是什么？</div>
+                        <select id="zodiacSelect" class="zodiac-select">`;
+        zodiacs.forEach(z => { html += `<option value="${z}">${z}</option>`; });
+        html += `</select></div><button id="zodiacSubmitBtn" class="sign-btn">✨ 查看贵人 ✨</button>`;
+        document.getElementById('specialInputArea').innerHTML = html;
+        document.getElementById('zodiacSubmitBtn').onclick = () => {
+            const zodiac = document.getElementById('zodiacSelect').value;
+            const result = data.resultMap[zodiac];
+            if (result) {
+                currentResultKey = zodiac;
+                currentResultText = result;
+                const resultDiv = document.getElementById('resultArea');
+                resultDiv.innerHTML = `<strong>✨ 你的贵人指引 ✨</strong><br><br>${result}`;
+                resultDiv.style.display = 'block';
+                showShareAndReward();
+                scrollToResult();
+            } else {
+                alert('星座数据错误');
+            }
+        };
+    }
+
+    // ========== 心情数字测试（输入1-10） ==========
+    function renderMoodNumberTest(data) {
+        let html = `<div class="question-item">
+                        <div class="question-text">请凭直觉输入一个数字（1-10）：</div>
+                        <input type="number" id="moodNumber" class="number-input" min="1" max="10" step="1" value="5">
+                    </div>
+                    <button id="moodSubmitBtn" class="sign-btn">✨ 查看心情行动 ✨</button>`;
+        document.getElementById('specialInputArea').innerHTML = html;
+        document.getElementById('moodSubmitBtn').onclick = () => {
+            let num = parseInt(document.getElementById('moodNumber').value);
+            if (isNaN(num)) num = 5;
+            num = Math.min(10, Math.max(1, num));
+            const text = data.resultMap[num.toString()];
+            if (text) {
+                currentResultKey = num.toString();
+                currentResultText = text;
+                const resultDiv = document.getElementById('resultArea');
+                resultDiv.innerHTML = `<strong>✨ 你的心情行动数字：${num} ✨</strong><br><br>${text}`;
+                resultDiv.style.display = 'block';
+                showShareAndReward();
+                scrollToResult();
+            } else {
+                alert('数据错误');
+            }
+        };
+    }
+
+    // ========== 随机签语测试（点击抽签） ==========
+    function renderRandomSignTest(data) {
+        let html = `<button id="drawSignBtn" class="sign-btn"><i class="fas fa-hand-peace"></i> 摇一摇 / 抽一签</button>`;
+        document.getElementById('specialInputArea').innerHTML = html;
+        document.getElementById('drawSignBtn').onclick = () => {
+            const signs = data.signs;
+            const randomIndex = Math.floor(Math.random() * signs.length);
+            const text = signs[randomIndex];
+            currentResultKey = `签语${randomIndex+1}`;
+            currentResultText = text;
+            const resultDiv = document.getElementById('resultArea');
+            resultDiv.innerHTML = `<strong>✨ 今日能量签语 ✨</strong><br><br>${text}`;
+            resultDiv.style.display = 'block';
+            showShareAndReward();
+            scrollToResult();
+        };
+    }
+
+    // ========== 通用计分逻辑 ==========
+    function computeResult(data) {
+        const logic = data.resultLogic;
+        const questions = data.questions;
+        for (let i = 0; i < questions.length; i++) {
+            if (answers[i] === null) return null;
+        }
+
+        if (logic === 'sum_range') {
+            let total = 0;
+            for (let i = 0; i < questions.length; i++) {
+                const scoreMap = questions[i].scoreMap;
+                if (scoreMap) total += scoreMap[answers[i]];
+                else total += (answers[i] + 1);
+            }
+            for (let range of data.resultRanges) {
+                if (total >= range.min && total <= range.max) return { name: range.name, text: range.text };
+            }
+            return { name: '未知', text: '结果计算有误。' };
+        }
+        else if (logic === 'dimension_highest') {
+            let dimScores = {};
+            data.dimensions.forEach(d => { dimScores[d] = 0; });
+            for (let i = 0; i < questions.length; i++) {
+                const dims = questions[i].dimensions[answers[i]];
+                if (dims) {
+                    for (let [dim, score] of Object.entries(dims)) {
+                        dimScores[dim] += score;
+                    }
+                }
+            }
+            // 全零判断：如果所有维度分数都为0，且 JSON 中配置了 specialZeroResult，则返回特殊结果
+            const totalScore = Object.values(dimScores).reduce((a, b) => a + b, 0);
+            if (totalScore === 0 && data.specialZeroResult) {
+                return { name: data.specialZeroResult.name, text: data.specialZeroResult.text };
+            }
+            // 否则找出得分最高的维度（若同分按优先级）
+            let maxScore = -1, bestDim = null;
+            for (let dim of data.dimensionsPriority) {
+                if (dimScores[dim] > maxScore) {
+                    maxScore = dimScores[dim];
+                    bestDim = dim;
+                }
+            }
+            return { name: bestDim, text: data.resultTexts[bestDim] };
+        }
+        else if (logic === 'comparison') {
+            let scoreA = 0, scoreB = 0;
+            for (let i = 0; i < questions.length; i++) {
+                const [a, b] = questions[i].scores[answers[i]];
+                scoreA += a;
+                scoreB += b;
+            }
+            const diff = data.comparisonDiff || 3;
+            if (scoreA >= scoreB + diff) return { name: data.resultNames[0], text: data.resultTexts[data.resultNames[0]] };
+            if (scoreB >= scoreA + diff) return { name: data.resultNames[1], text: data.resultTexts[data.resultNames[1]] };
+            return { name: data.resultNames[2], text: data.resultTexts[data.resultNames[2]] };
+        }
+        else if (logic === 'special_love_q4') {
+            let compound = 0, release = 0;
+            let q3Answer = null, q4Answer = null;
+            for (let i = 0; i < questions.length; i++) {
+                const [c, r] = questions[i].scores[answers[i]];
+                compound += c;
+                release += r;
+                if (i === 2) q3Answer = answers[i];
+                if (i === 3) q4Answer = answers[i];
+            }
+            if (compound >= 14 && q3Answer === 3) return { name: "雨停牌", text: data.resultTexts["雨停牌"] };
+            if (compound >= 14 && q4Answer === 2) return { name: "未完成牌", text: data.resultTexts["未完成牌"] };
+            if (release >= 14) return { name: "枯木牌", text: data.resultTexts["枯木牌"] };
+            return { name: "回廊牌", text: data.resultTexts["回廊牌"] };
+        }
+        else if (logic === 'special_love_q8') {
+            let total = 0;
+            for (let i = 0; i < questions.length; i++) total += questions[i].scores[answers[i]];
+            for (let range of data.resultRanges) {
+                if (total >= range.min && total <= range.max) return { name: range.name, text: range.text };
+            }
+            return { name: '未知', text: '结果计算有误。' };
+        }
+        else if (logic === 'special_love_q9') {
+            let total = 0;
+            let q6Answer = null;
+            for (let i = 0; i < questions.length; i++) {
+                total += questions[i].scores[answers[i]];
+                if (i === 5) q6Answer = answers[i];
+            }
+            if (total >= 6) {
+                if (q6Answer === 0) return { name: "会明朗 + 对方后撤或你下头", text: data.resultTexts["会明朗 + 对方后撤或你下头"] };
+                else return { name: "会明朗 + 可能在一起", text: data.resultTexts["会明朗 + 可能在一起"] };
+            }
+            if (total <= -5) return { name: "不会明朗", text: data.resultTexts["不会明朗"] };
+            return { name: "视情况而定", text: data.resultTexts["视情况而定"] };
+        }
+        else {
+            return { name: '未知', text: '暂不支持此结果逻辑。' };
+        }
+    }
+</script>
+</body>
+</html>

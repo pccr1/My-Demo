@@ -267,3 +267,42 @@
             .reward-item img { width: 70px; height: 70px; }
             .share-image-container { width: 95%; padding: 1rem; }
         }
+        /* 返回顶部按钮 */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #b45eff, #ff6bc0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.2s;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+        }
+        #backToTop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        #backToTop:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #c56eff, #ff80cb);
+        }
+        @media (max-width: 680px) {
+            #backToTop {
+                bottom: 20px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
