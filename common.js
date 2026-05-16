@@ -12,17 +12,13 @@ function optionClickHandler(e) {
     const target = e.currentTarget;
     const group = target.closest('.options-group');
     if (!group) return;
-
     const qidx = group.dataset.qidx;
     const oidx = target.dataset.oidx;
-
     if (typeof window.answers !== 'undefined' && qidx !== undefined) {
         window.answers[qidx] = parseInt(oidx);
     }
-
     group.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
     target.classList.add('selected');
-
     const radio = target.querySelector('input');
     if (radio) radio.checked = true;
 }
@@ -56,11 +52,9 @@ function showShareAndReward() {
 // ========== 4. 生成分享图片 ==========
 async function generateShareImage(moduleTitle, resultKey, resultDetail) {
     startConfetti();
-
     const container = document.getElementById('shareImageContainer');
     const today = new Date().toLocaleDateString('zh-CN');
     const homeUrl = window.location.origin + '/index.html';
-
     container.innerHTML = `
         <div class="module-title">${escapeHtml(moduleTitle)}</div>
         <div class="result-text"><strong>✨ 结果：${escapeHtml(resultKey)} ✨</strong><br><br>${escapeHtml(resultDetail)}</div>
@@ -68,7 +62,6 @@ async function generateShareImage(moduleTitle, resultKey, resultDetail) {
         <div class="footer-invite">🎉 快邀请你的好友一起来测试吧！ 🎉</div>
         <div class="qrcode-wrapper" id="qrcodeWrapper"></div>
     `;
-
     const qrWrapper = document.getElementById('qrcodeWrapper');
     qrWrapper.innerHTML = '';
     const qrDiv = document.createElement('div');
@@ -81,7 +74,6 @@ async function generateShareImage(moduleTitle, resultKey, resultDetail) {
         colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.H
     });
-
     await new Promise(r => setTimeout(r, 300));
     const canvas = await html2canvas(container, {
         scale: 2.5,
@@ -91,12 +83,10 @@ async function generateShareImage(moduleTitle, resultKey, resultDetail) {
         allowTaint: false
     });
     const imgData = canvas.toDataURL('image/png');
-
     const modal = document.getElementById('modalOverlay');
     const modalImg = document.getElementById('modalImage');
     modalImg.src = imgData;
     modal.classList.add('active');
-
     modal.onclick = (e) => {
         if (e.target === modal) modal.classList.remove('active');
     };
@@ -123,7 +113,6 @@ function scrollToResult() {
     if (resultDiv && resultDiv.style.display !== 'none') {
         resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-        // 如果结果还没显示，稍等再试
         setTimeout(() => {
             const res = document.getElementById('resultArea');
             if (res && res.style.display !== 'none') res.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -133,20 +122,14 @@ function scrollToResult() {
 
 // ========== 7. 返回顶部按钮逻辑 ==========
 function initBackToTop() {
-    // 创建按钮
     const btn = document.createElement('div');
     btn.id = 'backToTop';
     btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
     document.body.appendChild(btn);
-
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            btn.classList.add('show');
-        } else {
-            btn.classList.remove('show');
-        }
+        if (window.scrollY > 300) btn.classList.add('show');
+        else btn.classList.remove('show');
     });
-
     btn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
