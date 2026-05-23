@@ -69,6 +69,60 @@
 </div>
 
 <script>
+    // ========== 新增：地支计算与彩蛋 ==========
+    function getEarthlyBranchInfo() {
+        const today = new Date();
+        const dayNum = today.getDate();
+        const index = (dayNum - 1) % 12 + 1;
+        const branchNames = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+        const branch = branchNames[index - 1];
+        const branchElement = {
+            "寅":"木","卯":"木","巳":"火","午":"火","申":"金","酉":"金",
+            "亥":"水","子":"水","辰":"土","戌":"土","丑":"土","未":"土"
+        };
+        const element = branchElement[branch] || "土";
+        return { branch, element, dayNum };
+    }
+
+    const branchEggMap = {
+        "木": "地支今日带木，别光想不做，动起来比躺着管用。",
+        "火": "地支今日带火，容易上头。建议先深呼吸3次再行动。",
+        "土": "地支今日带土，适合稳稳地做，别求快。慢就是顺。",
+        "金": "地支今日带金，别跟钱过不去——省下一杯奶茶钱也算赚。",
+        "水": "地支今日带水，情绪容易泛滥。找个人说说话，别憋着。"
+    };
+
+    // ========== 原有辅助函数（保留） ==========
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function scrollToResult() {
+        const resultDiv = document.getElementById('resultArea');
+        if (resultDiv && resultDiv.style.display !== 'none') {
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            setTimeout(() => {
+                const res = document.getElementById('resultArea');
+                if (res && res.style.display !== 'none') res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+    }
+
+    function showShareAndReward() {
+        const shareSection = document.getElementById('shareSection');
+        const rewardSection = document.getElementById('rewardSection');
+        if (shareSection) shareSection.style.display = 'block';
+        if (rewardSection) rewardSection.style.display = 'block';
+    }
+
+    // ========== 原有 URL 参数与全局变量 ==========
     const urlParams = new URLSearchParams(window.location.search);
     const testId = urlParams.get('id');
     if (!testId) {
@@ -94,15 +148,17 @@
     function initTest(data) {
         const logic = data.resultLogic;
 
-        // 特殊逻辑：无需题目，直接渲染特殊组件
-        if (logic === 'special_zodiac') {
+        // 特殊逻辑分支
+        if (logic === 'special_zodiac_advanced') {
+            renderAdvancedZodiacTest(data);
+        } else if (logic === 'special_zodiac') {
             renderZodiacTest(data);
         } else if (logic === 'special_mood_number') {
             renderMoodNumberTest(data);
         } else if (logic === 'special_random_sign') {
             renderRandomSignTest(data);
         } else {
-            // 普通计分测试：渲染题目
+            // 普通计分测试
             const questions = data.questions;
             window.answers = new Array(questions.length).fill(null);
 
@@ -136,10 +192,9 @@
             };
         }
 
-        // ========== 统一绑定分享按钮（所有类型共用） ==========
+        // 统一绑定分享按钮
         const shareBtn = document.getElementById('shareBtn');
         if (shareBtn) {
-            // 移除旧监听，避免重复绑定
             shareBtn.onclick = null;
             shareBtn.onclick = async () => {
                 if (!currentResultKey) {
@@ -151,7 +206,75 @@
         }
     }
 
-    // ========== 星座贵人测试 ==========
+    // ========== 新版：高级星座贵人（带3个小问题） ==========
+    function renderAdvancedZodiacTest(data) {
+        // 构建星座下拉列表
+        const zodiacs = data.zodiacList || ["白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座"];
+        let html = `<div class="question-item">
+                        <div class="question-text">你的星座是什么？</div>
+                        <select id="userZodiacSelect" class="zodiac-select">`;
+        zodiacs.forEach(z => { html += `<option value="${z}">${z}</option>`; });
+        html += `</select></div>`;
+        // 添加3个小问题
+        data.questions.forEach((q, idx) => {
+            html += `<div class="question-item">
+                        <div class="question-text">${escapeHtml(q.text)}</div>
+                        <div class="options-group" data-qidx="${idx}">`;
+            q.options.forEach((opt, oidx) => {
+                html += `<label class="opt-label" data-oidx="${oidx}">${escapeHtml(opt)}<input type="radio" name="advanced_q${idx}" value="${q.scores[oidx]}"></label>`;
+            });
+            html += `</div></div>`;
+        });
+        html += `<button id="advancedZodiacSubmitBtn" class="sign-btn">✨ 查看今日贵人 ✨</button>`;
+        document.getElementById('specialInputArea').innerHTML = html;
+        attachOptionEvents();
+
+        document.getElementById('advancedZodiacSubmitBtn').onclick = () => {
+            const userZodiac = document.getElementById('userZodiacSelect').value;
+            // 收集3题得分
+            let totalScore = 0;
+            for (let i = 0; i < 3; i++) {
+                let selected = document.querySelector(`input[name="advanced_q${i}"]:checked`);
+                if (!selected) { alert("请完成所有小问题"); return; }
+                totalScore += parseInt(selected.value);
+            }
+            const { element: earthElement, dayNum } = getEarthlyBranchInfo();
+            const userElement = data.userElementMap[userZodiac];
+            // 生我者为贵人
+            const elementGenerate = { "火":"木", "土":"火", "木":"水", "水":"金", "金":"土" };
+            const guiElement = elementGenerate[userElement];
+            const guiPool = data.elementToZodiacs[guiElement];
+            const baseIdx = (dayNum - 1) % 3;
+            const offset = totalScore % 3;
+            const finalIdx = (baseIdx + offset) % 3;
+            const guiZodiac = guiPool[finalIdx];
+            // 地支毒舌（五行生克关系）
+            const shengMap = { "木":"火", "火":"土", "土":"金", "金":"水", "水":"木" };
+            let relationship = "";
+            if (shengMap[earthElement] === userElement) relationship = "相生";
+            else if (shengMap[userElement] === earthElement) relationship = "相克";
+            else if (earthElement === userElement) relationship = "相同";
+            else relationship = "用户克地支";
+            const duSheMap = {
+                "相生": "今天地气帮你，贵人会主动靠近你。但你懒的话，到嘴的鸭子也会飞。",
+                "相克": "今天天时不太顺，贵人可能需要你主动撩一下。别干等，发个表情包。",
+                "相同": "今天能量同频，贵人会出现得像外卖一样快。但别贪心，一个就够了。",
+                "用户克地支": "今天你气场强，贵人可能有点怕你。温柔点，别把人家吓跑。"
+            };
+            const duShe = duSheMap[relationship];
+            let template = data.resultTexts[userZodiac][guiZodiac];
+            const finalText = template.replace("{{地支毒舌}}", duShe);
+            currentResultKey = `${userZodiac} → ${guiZodiac}`;
+            currentResultText = finalText;
+            const resultDiv = document.getElementById('resultArea');
+            resultDiv.innerHTML = `<strong>✨ 今日星座贵人 ✨</strong><br><br>${finalText}`;
+            resultDiv.style.display = 'block';
+            showShareAndReward();
+            scrollToResult();
+        };
+    }
+
+    // ========== 原版简单星座贵人（保留） ==========
     function renderZodiacTest(data) {
         const zodiacs = ["白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座"];
         let html = `<div class="question-item">
@@ -177,7 +300,7 @@
         };
     }
 
-    // ========== 心情数字测试 ==========
+    // ========== 心情数字测试（增加地支彩蛋） ==========
     function renderMoodNumberTest(data) {
         let html = `<div class="question-item">
                         <div class="question-text">请凭直觉输入一个数字（1-10）：</div>
@@ -189,12 +312,15 @@
             let num = parseInt(document.getElementById('moodNumber').value);
             if (isNaN(num)) num = 5;
             num = Math.min(10, Math.max(1, num));
-            const text = data.resultMap[num.toString()];
+            let text = data.resultMap[num.toString()];
             if (text) {
+                const { element } = getEarthlyBranchInfo();
+                const egg = branchEggMap[element] || "";
+                const finalText = text + (egg ? "\n\n" + egg : "");
                 currentResultKey = num.toString();
-                currentResultText = text;
+                currentResultText = finalText;
                 const resultDiv = document.getElementById('resultArea');
-                resultDiv.innerHTML = `<strong>✨ 你的心情行动数字：${num} ✨</strong><br><br>${text}`;
+                resultDiv.innerHTML = `<strong>✨ 你的心情行动数字：${num} ✨</strong><br><br>${finalText}`;
                 resultDiv.style.display = 'block';
                 showShareAndReward();
                 scrollToResult();
@@ -204,25 +330,28 @@
         };
     }
 
-    // ========== 随机签语测试 ==========
+    // ========== 随机签语测试（增加地支彩蛋） ==========
     function renderRandomSignTest(data) {
         let html = `<button id="drawSignBtn" class="sign-btn"><i class="fas fa-hand-peace"></i> 摇一摇 / 抽一签</button>`;
         document.getElementById('specialInputArea').innerHTML = html;
         document.getElementById('drawSignBtn').onclick = () => {
             const signs = data.signs;
             const randomIndex = Math.floor(Math.random() * signs.length);
-            const text = signs[randomIndex];
+            let text = signs[randomIndex];
+            const { element } = getEarthlyBranchInfo();
+            const egg = branchEggMap[element] || "";
+            const finalText = text + (egg ? "\n\n" + egg : "");
             currentResultKey = `签语${randomIndex+1}`;
-            currentResultText = text;
+            currentResultText = finalText;
             const resultDiv = document.getElementById('resultArea');
-            resultDiv.innerHTML = `<strong>✨ 今日能量签语 ✨</strong><br><br>${text}`;
+            resultDiv.innerHTML = `<strong>✨ 今日能量签语 ✨</strong><br><br>${finalText}`;
             resultDiv.style.display = 'block';
             showShareAndReward();
             scrollToResult();
         };
     }
 
-    // ========== 通用计分逻辑 ==========
+    // ========== 原有通用计分逻辑（保持不变） ==========
     function computeResult(data) {
         const logic = data.resultLogic;
         const questions = data.questions;
@@ -243,7 +372,6 @@
             return { name: '未知', text: '结果计算有误。' };
         }
         else if (logic === 'dimension_highest') {
-            // 防御：确保 dimensions 字段存在
             if (!data.dimensions || !data.dimensionsPriority) {
                 return { name: '错误', text: '数据配置错误：缺少 dimensions 字段。' };
             }
@@ -257,12 +385,10 @@
                     }
                 }
             }
-            // 全零判断：如果所有维度分数都为0，且 JSON 中配置了 specialZeroResult，则返回特殊结果
             const totalScore = Object.values(dimScores).reduce((a, b) => a + b, 0);
             if (totalScore === 0 && data.specialZeroResult) {
                 return { name: data.specialZeroResult.name, text: data.specialZeroResult.text };
             }
-            // 否则找出得分最高的维度（若同分按优先级）
             let maxScore = -1, bestDim = null;
             for (let dim of data.dimensionsPriority) {
                 if (dimScores[dim] > maxScore) {
